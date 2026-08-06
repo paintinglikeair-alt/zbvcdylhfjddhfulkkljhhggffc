@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>رحلة عبر الزمن - أسرار الساعات والدقائق</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700;900&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Tajawal', sans-serif;
+            background-color: #f5f3ff; /* خلفية بنفسجي فاتح تطابق الوحدة */
+            background-image: radial-gradient(#ede9fe 2px, transparent 2px);
+            background-size: 30px 30px;
+            overflow-x: hidden;
+        }
+
+        /* */
+        .btn-playful {
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 6px 0 rgba(0,0,0,0.2);
+        }
+        .btn-playful:active:not(:disabled) {
+            transform: translateY(6px);
+            box-shadow: 0 0 0 rgba(0,0,0,0);
+        }
+        .btn-playful:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none !important;
+            box-shadow: 0 6px 0 rgba(0,0,0,0.2) !important;
+        }
+
+        .math-input {
+            width: 4rem;
+            text-align: center;
+            font-size: 1.5rem;
+            font-weight: 900;
+            border: 3px solid #cbd5e1;
+            border-radius: 0.75rem;
+            background-color: white;
+            transition: all 0.3s;
+            font-family: monospace;
+        }
+        .math-input:focus {
+            outline: none;
+            border-color: #8b5cf6;
+            box-shadow: 0 0 0 4px rgba(139, 92, 246, 0.3);
+        }
+        .input-correct {
+            background-color: #dcfce7 !important;
+            border-color: #22c55e !important;
+            color: #166534 !important;
+        }
+
+        .shake { animation: shake 0.5s cubic-bezier(.36,.07,.19,.97) both; }
+        @keyframes shake {
+            10%, 90% { transform: translate3d(-1px, 0, 0); }
+            20%, 80% { transform: translate3d(2px, 0, 0); }
+            30%, 50%, 70% { transform: translate3d(-4px, 0, 0); }
+            40%, 60% { transform: translate3d(4px, 0, 0); }
+        }
+
+        /* */
+        /* تصميم مفاصل الأصابع للقسم التاريخي */
+        .finger-joint {
+            width: 100%;
+            height: 35px;
+            background-color: #fef08a; /* أصفر فاتح */
+            border: 3px solid #eab308;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            color: #854d0e;
+            user-select: none;
+        }
+        .finger-joint:hover:not(.counted) {
+            background-color: #fde047;
+            transform: scale(1.05);
+        }
+        .finger-joint.counted {
+            background-color: #86efac; /* أخضر */
+            border-color: #22c55e;
+            color: #14532d;
+            transform: scale(0.95);
+            cursor: default;
+        }
+        
+        .hand-container {
+            background-color: #fffbeb;
+            border-radius: 2rem 2rem 1rem 1rem;
+            padding: 1rem;
+            border: 4px solid #fcd34d;
+        }
+    </style>
+</head>
+<body class="min-h-screen text-gray-800 flex flex-col items-center py-6 px-4 relative">
+
+    <!-- -->
+    <header class="w-full max-w-4xl text-center mb-8 z-10">
+        <div class="bg-white rounded-3xl p-6 shadow-xl border-4 border-indigo-400 relative overflow-hidden">
+            <span class="bg-indigo-500 text-white font-bold px-4 py-1 rounded-full text-sm absolute top-4 right-4">الدرس الخامس</span>
+            <div class="absolute -top-4 -left-4 text-6xl opacity-20 animate-pulse">⏳</div>
+            
+            <h1 class="text-3xl md:text-5xl font-black text-indigo-900 mb-2 mt-4 flex items-center justify-center gap-3">
+                <span>🕰️</span> رحلة عبر الزمن <span>🚀</span>
+            </h1>
+            <p class="text-lg md:text-xl text-indigo-700 font-bold mb-4">
+                تطبيقات على قياس الوقت، وأسرار الحضارات القديمة!
+            </p>
+        </div>
+    </header>
+
+    <main class="w-full max-w-4xl z-10 flex flex-col gap-8">
+        
+        <!-- -->
+        <section id="mission1" class="bg-white rounded-3xl shadow-xl border-4 border-amber-500 p-6 md:p-8">
+            <div class="flex items-center gap-3 mb-6 border-b-2 border-amber-100 pb-4">
+                <span class="text-4xl">🐜</span>
+                <h2 class="text-2xl md:text-3xl font-black text-amber-800">مهمة البحث عن الطعام (الوقت المنقضي)</h2>
+            </div>
+
+            <div class="bg-amber-50 rounded-2xl p-6 border-2 border-amber-200 mb-6 text-center text-lg font-bold text-gray-800 leading-relaxed">
+                خرجت عاملات النمل للبحث عن طعام للمستعمرة. <br>
+                لقد غادرت العاملات الساعة <span class="bg-amber-200 px-2 rounded inline-block mx-1 font-mono font-black text-amber-900" dir="ltr">6:30</span> صباحاً، <br>
+                وعادت الساعة <span class="bg-amber-200 px-2 rounded inline-block mx-1 font-mono font-black text-amber-900" dir="ltr">7:42</span> صباحاً.
+            </div>
+
+            <div class="bg-white border-2 border-gray-200 rounded-2xl p-6 text-center">
+                <p class="text-xl font-black text-indigo-900 mb-4">ما المدة التي استغرقتها عاملات النمل؟</p>
+                <p class="text-sm text-gray-500 font-bold mb-4">تلميح: احسب الدقائق من 6:30 إلى 7:30 (ساعة كاملة)، ثم أضف الدقائق المتبقية حتى 7:42.</p>
+                
+                <div class="flex items-center justify-center gap-4 flex-wrap">
+                    <div class="flex items-center gap-2">
+                        <input type="number" id="m1-hours" class="math-input text-amber-700" placeholder="0">
+                        <span class="font-bold text-gray-700">ساعة</span>
+                    </div>
+                    <span class="font-black text-gray-400">و</span>
+                    <div class="flex items-center gap-2">
+                        <input type="number" id="m1-mins" class="math-input text-amber-700" placeholder="0">
+                        <span class="font-bold text-gray-700">دقيقة</span>
+                    </div>
+                </div>
+
+                <div class="mt-6">
+                    <button onclick="checkMission1()" id="btn-m1" class="btn-playful bg-amber-500 hover:bg-amber-600 text-white font-black py-2 px-8 rounded-xl text-xl">
+                        التحقق من الوقت ⏱️
+                    </button>
+                    <p id="fb-m1" class="hidden mt-4 font-bold text-lg p-3 rounded-xl"></p>
+                </div>
+            </div>
+        </section>
+
+
+        <!-- -->
+        <section id="mission2" class="bg-white rounded-3xl shadow-xl border-4 border-rose-400 p-6 md:p-8 opacity-50 pointer-events-none transition-opacity duration-500 relative">
+            
+            <div id="lock2" class="absolute inset-0 z-20 flex flex-col items-center justify-center bg-white/70 backdrop-blur-sm rounded-3xl">
+                <span class="text-6xl mb-4">🔒</span>
+                <p class="text-xl font-bold text-gray-800">أنهِ مهمة النمل لفتح مهمة السينما!</p>
+            </div>
+
+            <div class="flex items-center gap-3 mb-6 border-b-2 border-rose-100 pb-4">
+                <span class="text-4xl">🎬</span>
+                <h2 class="text-2xl md:text-3xl font-black text-rose-800">ماراثون الأفلام (جمع الوقت)</h2>
+            </div>
+
+            <div class="bg-rose-50 rounded-2xl p-6 border-2 border-rose-200 mb-6 text-center text-lg font-bold text-gray-800 leading-relaxed">
+                قررت البنتان مشاهدة فيلمين متتاليين. إجمالي مدة الفيلمين معاً هو <span class="text-rose-700 font-black">ساعة و 15 دقيقة</span>.<br>
+                إذا بدأت البنتان المشاهدة في الساعة <span class="bg-rose-200 px-2 rounded inline-block mx-1 font-mono font-black text-rose-900" dir="ltr">5:30</span> مساءً.
+            </div>
+
+            <div class="bg-white border-2 border-gray-200 rounded-2xl p-6 text-center">
+                <p class="text-xl font-black text-indigo-900 mb-4">متى سينتهي الفيلمان؟</p>
+                
+                <div class="flex items-center justify-center gap-2 bg-gray-100 p-4 rounded-xl inline-flex font-mono" dir="ltr">
+                    <input type="number" id="m2-hours" class="math-input text-rose-700 h-14 text-2xl" placeholder="HH" min="1" max="12">
+                    <span class="text-3xl font-black text-gray-600 animate-pulse">:</span>
+                    <input type="number" id="m2-mins" class="math-input text-rose-700 h-14 text-2xl" placeholder="MM" min="0" max="59">
+                </div>
+
+                <div class="mt-6">
+                    <button onclick="checkMission2()" id="btn-m2" class="btn-playful bg-rose-500 hover:bg-rose-600 text-white font-black py-2 px-8 rounded-xl text-xl">
+                        حساب وقت النهاية 🍿
+                    </button>
+                    <p id="fb-m2" class="hidden mt-4 font-bold text-lg p-3 rounded-xl"></p>
+                </div>
+            </div>
+        </section>
+
+
+        <!-- -->
+        <section id="mission3" class="bg-white rounded-3xl shadow-xl border-4 border-teal-500 p-6 md:p-8 opacity-50 pointer-events-none transition-opacity duration-500 relative">
+            
+            <div id="lock3" class="absolute inset-0 z-20 flex flex-col items-center justify-center bg-white/70 backdrop-blur-sm rounded-3xl">
+                <span class="text-6xl mb-4">🔒</span>
+                <p class="text-xl font-bold text-gray-800">أنهِ مهمة الأفلام لفتح لغز الأجداد!</p>
+            </div>
+
+            <div class="flex items-center gap-3 mb-6 border-b-2 border-teal-100 pb-4">
+                <span class="text-4xl">📜</span>
+                <h2 class="text-2xl md:text-3xl font-black text-teal-800">فكر: سر الحضارات القديمة</h2>
+            </div>
+
+            <div class="bg-teal-50 rounded-2xl p-6 border-2 border-teal-200 mb-6 text-right">
+                <p class="text-xl font-black text-teal-900 mb-3">لماذا يوجد 12 ساعة، والساعة 60 دقيقة؟ 🤔</p>
+                <p class="text-lg text-gray-700 font-bold leading-relaxed mb-4">
+                    نحن نستخدم النظام العشري (أساس 10)، لكن السومريين والبابليين القدماء استخدموا نظاماً يعتمد على الرقم <span class="bg-teal-200 px-1 rounded text-teal-900 font-black">12</span> والرقم <span class="bg-teal-200 px-1 rounded text-teal-900 font-black">60</span>! 
+                </p>
+                <p class="text-lg text-gray-700 font-bold leading-relaxed bg-white p-3 rounded-xl border border-teal-100 shadow-sm">
+                    <strong>السر في يدك:</strong> استخدموا الإبهام للعدّ على <span class="text-teal-700 underline">مفاصل أصابع اليد الأخرى</span>. كل إصبع فيه 3 مفاصل.. اضرب 4 أصابع × 3 مفاصل = 12 مفصلاً!
+                </p>
+            </div>
+
+            <div class="text-center">
+                <h3 class="text-xl font-black text-gray-800 mb-4 animate-pulse text-teal-600">جرب بنفسك! اضغط على كل مفصل في الأصابع الأربعة للعد حتى 12:</h3>
+                
+                <div class="flex flex-col items-center">
+                    <!-- شكل اليد التفاعلي -->
+                    <div class="hand-container w-full max-w-xs flex gap-2 justify-center items-end h-64 relative pb-4">
+                        
+                        <!-- الخنصر -->
+                        <div class="flex flex-col gap-1 w-12 h-32">
+                            <div class="finger-joint" onclick="countJoint(this)">1</div>
+                            <div class="finger-joint" onclick="countJoint(this)">2</div>
+                            <div class="finger-joint" onclick="countJoint(this)">3</div>
+                        </div>
+                        
+                        <!-- البنصر -->
+                        <div class="flex flex-col gap-1 w-12 h-40">
+                            <div class="finger-joint" onclick="countJoint(this)">4</div>
+                            <div class="finger-joint" onclick="countJoint(this)">5</div>
+                            <div class="finger-joint" onclick="countJoint(this)">6</div>
+                        </div>
+
+                        <!-- الوسطى (الأطول) -->
+                        <div class="flex flex-col gap-1 w-12 h-44">
+                            <div class="finger-joint" onclick="countJoint(this)">7</div>
+                            <div class="finger-joint" onclick="countJoint(this)">8</div>
+                            <div class="finger-joint" onclick="countJoint(this)">9</div>
+                        </div>
+
+                        <!-- السبابة -->
+                        <div class="flex flex-col gap-1 w-12 h-36">
+                            <div class="finger-joint" onclick="countJoint(this)">10</div>
+                            <div class="finger-joint" onclick="countJoint(this)">11</div>
+                            <div class="finger-joint" onclick="countJoint(this)">12</div>
+                        </div>
+
+                        <!-- الإبهام (مائل، للعد فقط) -->
+                        <div class="absolute -right-6 bottom-4 w-12 h-20 bg-yellow-200 border-4 border-yellow-400 rounded-lg transform rotate-45 flex items-center justify-center font-bold text-yellow-800 text-sm">
+                            الإبهام <br>(العداد)
+                        </div>
+
+                    </div>
+                    
+                    <div class="mt-4 bg-teal-600 text-white font-black px-6 py-2 rounded-full text-2xl shadow-md">
+                        العدّاد: <span id="jointCounter" class="font-mono ml-2">0</span> / 12
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- رسالة الختام -->
+            <div id="finalFeedback" class="hidden mt-8 text-center p-6 bg-gradient-to-r from-teal-100 to-emerald-100 border-4 border-teal-500 rounded-3xl shadow-lg relative overflow-hidden">
+                <div class="text-6xl mb-4 animate-bounce">🌍</div>
+                <h3 class="text-3xl font-black text-teal-800 mb-2">لقد اكتشفت سر القدماء!</h3>
+                <p class="text-xl font-bold text-teal-700 leading-relaxed">
+                    منذ 3500 سنة قبل الميلاد والناس يستخدمون هذا النظام المريح في أيديهم، ولذلك ما زلنا حتى اليوم نقسم اليوم إلى (12 + 12) ساعة!
+                </p>
+                <button onclick="location.reload()" class="mt-6 btn-playful bg-teal-600 hover:bg-teal-700 text-white font-black py-3 px-10 rounded-xl text-xl">
+                    إعادة الرحلة 🔄
+                </button>
+            </div>
+
+        </section>
+
+    </main>
+
+    <!-- -->
+    <script>
+        // --- Mission 1 Logic ---
+        function checkMission1() {
+            const h = document.getElementById('m1-hours');
+            const m = document.getElementById('m1-mins');
+            const fb = document.getElementById('fb-m1');
+            const btn = document.getElementById('btn-m1');
+            let isCorrect = true;
+
+            // Elapsed time: 6:30 -> 7:42. (1 hour, 12 mins)
+            if(parseInt(h.value) === 1) {
+                h.classList.add('input-correct');
+                h.disabled = true;
+            } else {
+                shakeInput(h);
+                isCorrect = false;
+            }
+
+            if(parseInt(m.value) === 12) {
+                m.classList.add('input-correct');
+                m.disabled = true;
+            } else {
+                shakeInput(m);
+                isCorrect = false;
+            }
+
+            if(isCorrect) {
+                btn.style.display = 'none';
+                fb.innerHTML = "✅ إجابة دقيقة! استغرق النمل ساعة و 12 دقيقة (أو 72 دقيقة إجمالاً).";
+                fb.className = "mt-4 font-bold text-lg p-3 rounded-xl bg-green-100 text-green-800 border-2 border-green-400 block";
+                
+                // Unlock Mission 2
+                setTimeout(() => {
+                    document.getElementById('lock2').style.display = 'none';
+                    document.getElementById('mission2').classList.remove('opacity-50', 'pointer-events-none');
+                    document.getElementById('mission2').scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }, 1000);
+            } else {
+                fb.innerHTML = "❌ راجع حساباتك. من 6:30 إلى 7:30 ساعة كاملة، كم دقيقة بقيت حتى 7:42؟";
+                fb.className = "mt-4 font-bold text-lg p-3 rounded-xl bg-red-100 text-red-800 border-2 border-red-300 block";
+            }
+        }
+
+        // --- Mission 2 Logic ---
+        function checkMission2() {
+            const h = document.getElementById('m2-hours');
+            const m = document.getElementById('m2-mins');
+            const fb = document.getElementById('fb-m2');
+            const btn = document.getElementById('btn-m2');
+            let isCorrect = true;
+
+            // Start 5:30. Add 1h 15m. Result: 6:45
+            if(parseInt(h.value) === 6) {
+                h.classList.add('input-correct');
+                h.disabled = true;
+            } else {
+                shakeInput(h);
+                isCorrect = false;
+            }
+
+            if(parseInt(m.value) === 45) {
+                m.classList.add('input-correct');
+                m.disabled = true;
+            } else {
+                shakeInput(m);
+                isCorrect = false;
+            }
+
+            if(isCorrect) {
+                btn.style.display = 'none';
+                fb.innerHTML = "✅ إجابة ممتازة! سينتهي الفيلمان في تمام السادسة وخمس وأربعين دقيقة (6:45).";
+                fb.className = "mt-4 font-bold text-lg p-3 rounded-xl bg-green-100 text-green-800 border-2 border-green-400 block";
+                
+                // Unlock Mission 3
+                setTimeout(() => {
+                    document.getElementById('lock3').style.display = 'none';
+                    document.getElementById('mission3').classList.remove('opacity-50', 'pointer-events-none');
+                    document.getElementById('mission3').scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }, 1000);
+            } else {
+                fb.innerHTML = "❌ راجع الجمع. 5:30 + ساعة = 6:30. أضف الآن 15 دقيقة لـ 30.";
+                fb.className = "mt-4 font-bold text-lg p-3 rounded-xl bg-red-100 text-red-800 border-2 border-red-300 block";
+            }
+        }
+
+        function shakeInput(el) {
+            el.classList.add('shake', 'bg-red-50', 'border-red-400', 'text-red-700');
+            setTimeout(() => {
+                el.classList.remove('shake', 'bg-red-50', 'border-red-400', 'text-red-700');
+            }, 500);
+        }
+
+        // --- Mission 3 Logic (Historical Hand) ---
+        let jointsCounted = 0;
+        function countJoint(element) {
+            if(!element.classList.contains('counted')) {
+                element.classList.add('counted');
+                jointsCounted++;
+                document.getElementById('jointCounter').innerText = jointsCounted;
+
+                // Pop animation for the thumb to simulate counting
+                const thumb = document.querySelector('.bg-yellow-200.rotate-45');
+                thumb.style.transform = "rotate(45deg) scale(1.1)";
+                setTimeout(() => { thumb.style.transform = "rotate(45deg) scale(1)"; }, 150);
+
+                if(jointsCounted === 12) {
+                    setTimeout(() => {
+                        document.getElementById('finalFeedback').classList.remove('hidden');
+                        document.getElementById('finalFeedback').scrollIntoView({ behavior: 'smooth', block: 'end' });
+                        confettiEffect();
+                    }, 500);
+                }
+            }
+        }
+
+        // Simple Confetti
+        function confettiEffect() {
+            const colors = ['#14b8a6', '#3b82f6', '#f59e0b', '#8b5cf6'];
+            for(let i=0; i<50; i++) {
+                const conf = document.createElement('div');
+                conf.className = 'absolute w-3 h-3 rounded-full opacity-80 z-50';
+                conf.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                conf.style.left = Math.random() * 100 + 'vw';
+                conf.style.top = (window.scrollY - 20) + 'px';
+                conf.style.transition = 'all 3s ease-in';
+                document.body.appendChild(conf);
+                
+                setTimeout(() => {
+                    conf.style.top = (window.scrollY + window.innerHeight) + 'px';
+                    conf.style.transform = `rotate(${Math.random() * 720}deg) translateX(${Math.random() * 100 - 50}px)`;
+                }, 50);
+            }
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>مختبر الأوزان - قياس الكتلة</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700;900&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Tajawal', sans-serif;
+            background-color: #faf5ff;
+            background-image: radial-gradient(#e9d5ff 2px, transparent 2px);
+            background-size: 30px 30px;
+            overflow-x: hidden;
+        }
+
+        .btn-playful {
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 6px 0 rgba(0,0,0,0.2);
+        }
+        .btn-playful:active:not(:disabled) {
+            transform: translateY(6px);
+            box-shadow: 0 0 0 rgba(0,0,0,0);
+        }
+        .btn-playful:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none !important;
+            box-shadow: 0 6px 0 rgba(0,0,0,0.2) !important;
+        }
+
+        .shake { animation: shake 0.5s cubic-bezier(.36,.07,.19,.97) both; }
+        @keyframes shake {
+            10%, 90% { transform: translate3d(-1px, 0, 0); }
+            20%, 80% { transform: translate3d(2px, 0, 0); }
+            30%, 50%, 70% { transform: translate3d(-4px, 0, 0); }
+            40%, 60% { transform: translate3d(4px, 0, 0); }
+        }
+
+        .math-input {
+            width: 5rem;
+            text-align: center;
+            font-size: 1.5rem;
+            font-weight: 900;
+            border: 3px solid #cbd5e1;
+            border-radius: 0.75rem;
+            background-color: white;
+            transition: all 0.3s;
+            font-family: monospace;
+        }
+        .math-input:focus {
+            outline: none;
+            border-color: #a855f7;
+            box-shadow: 0 0 0 4px rgba(168, 85, 247, 0.3);
+        }
+        .input-correct {
+            background-color: #dcfce7 !important;
+            border-color: #22c55e !important;
+            color: #166534 !important;
+        }
+
+        /* Balance Animation */
+        .balance-scale {
+            animation: seesaw 3s ease-in-out infinite alternate;
+            transform-origin: bottom center;
+        }
+        @keyframes seesaw {
+            0% { transform: rotate(-5deg); }
+            100% { transform: rotate(5deg); }
+        }
+    </style>
+</head>
+<body class="min-h-screen text-gray-800 flex flex-col items-center py-6 px-4 relative">
+
+    <header class="w-full max-w-4xl text-center mb-8 z-10">
+        <div class="bg-white rounded-3xl p-6 shadow-xl border-4 border-purple-500 relative overflow-hidden">
+            <span class="bg-purple-600 text-white font-bold px-4 py-1 rounded-full text-sm absolute top-4 right-4">الدرس الثاني</span>
+            
+            <h1 class="text-3xl md:text-5xl font-black text-purple-900 mb-2 mt-4 flex items-center justify-center gap-3">
+                <span class="balance-scale inline-block">⚖️</span> مختبر قياس الكتلة
+            </h1>
+            <p class="text-lg md:text-xl text-purple-700 font-bold mb-4">
+                من الجرام الخفيف إلى الطن العملاق! لنستكشف الأوزان معاً.
+            </p>
+        </div>
+    </header>
+
+    <main class="w-full max-w-4xl z-10 flex flex-col gap-8">
+        
+        <!-- المهمة 1: تحليل الأخطاء (مراجعة الطول) -->
+        <section id="mission1" class="bg-white rounded-3xl shadow-xl border-4 border-rose-400 p-6 md:p-8">
+            <div class="flex items-center gap-3 mb-6 border-b-2 border-rose-100 pb-4">
+                <span class="text-4xl">🔍</span>
+                <h2 class="text-2xl md:text-3xl font-black text-rose-800">استكشف: فخ التحويلات!</h2>
+            </div>
+
+            <p class="text-xl text-gray-700 mb-6 font-bold">
+                طلب المعلم تحويل <span class="text-rose-600 font-black">7 أمتار و 45 سنتيمتراً</span> إلى سنتيمترات. أخطأ التلميذ في الحل.. اقرأ إجابته واكتشف الخطأ!
+            </p>
+
+            <div class="flex flex-col md:flex-row gap-6 items-center justify-center mb-8">
+                <!-- إجابة التلميذ -->
+                <div class="bg-red-50 rounded-2xl p-6 border-2 border-red-200 shadow-inner flex-1 w-full text-center relative">
+                    <div class="absolute -top-4 -right-2 text-3xl">👦</div>
+                    <p class="text-red-800 font-bold mb-2">إجابة التلميذ (خاطئة ❌):</p>
+                    <p class="text-2xl font-black text-red-900 font-mono mt-4" dir="ltr">
+                        7m 45cm = 7045 cm
+                    </p>
+                </div>
+
+                <!-- خيارات الخطأ -->
+                <div class="flex-1 w-full flex flex-col gap-3">
+                    <h3 class="font-bold text-gray-700 mb-2">أين أخطأ التلميذ؟</h3>
+                    <button onclick="checkError(false, this)" class="text-right p-4 rounded-xl border-2 border-gray-300 hover:bg-gray-100 font-bold transition-colors">
+                        نسي أن يجمع الرقم 45 مع الأمتار.
+                    </button>
+                    <button onclick="checkError(true, this)" class="text-right p-4 rounded-xl border-2 border-gray-300 hover:bg-rose-50 font-bold transition-colors">
+                        حسب أن 7 أمتار = 7000 سم (بدلاً من 700 سم)، فقام بجمع 7000 + 45.
+                    </button>
+                </div>
+            </div>
+
+            <div id="mission1Feedback" class="hidden text-center p-4 bg-green-100 border-2 border-green-400 rounded-xl">
+                <!-- Feedback injected here -->
+            </div>
+        </section>
+
+        <!-- المهمة 2: حفظ العلاقات -->
+        <section id="mission2" class="bg-white rounded-3xl shadow-xl border-4 border-blue-400 p-6 md:p-8 opacity-50 pointer-events-none transition-opacity duration-500 relative">
+            <div id="mission2Lock" class="absolute inset-0 z-20 flex flex-col items-center justify-center bg-white/70 backdrop-blur-sm rounded-3xl">
+                <span class="text-6xl mb-4">🔒</span>
+                <p class="text-2xl font-bold text-gray-800 text-center px-4">أكمل استكشاف الخطأ لفتح مختبر الأوزان!</p>
+            </div>
+
+            <div class="flex items-center gap-3 mb-6 border-b-2 border-blue-100 pb-4">
+                <span class="text-4xl">📚</span>
+                <h2 class="text-2xl md:text-3xl font-black text-blue-800">تعلّم: عائلة الكتل</h2>
+            </div>
+
+            <p class="text-lg font-bold text-gray-700 mb-6 text-center">
+                أكمل الفراغات لتتذكر العلاقة السحرية بين الأوزان (تذكر أن عائلة الأوزان تحب الأصفار الثلاثة!)
+            </p>
+
+            <div class="flex flex-col md:flex-row justify-center gap-8 mb-8">
+                <!-- الطن والكيلو -->
+                <div class="bg-blue-50 border-4 border-blue-200 rounded-2xl p-6 text-center flex-1">
+                    <div class="text-5xl mb-4">🐘</div>
+                    <div class="flex items-center justify-center gap-4 text-xl font-black text-blue-900" dir="ltr">
+                        <span>1 طن</span>
+                        <span>=</span>
+                        <input type="number" id="rule1" class="math-input text-blue-700" placeholder="؟">
+                        <span>كجم</span>
+                    </div>
+                </div>
+
+                <!-- الكيلو والجرام -->
+                <div class="bg-blue-50 border-4 border-blue-200 rounded-2xl p-6 text-center flex-1">
+                    <div class="text-5xl mb-4">🍉</div>
+                    <div class="flex items-center justify-center gap-4 text-xl font-black text-blue-900" dir="ltr">
+                        <span>1 كجم</span>
+                        <span>=</span>
+                        <input type="number" id="rule2" class="math-input text-blue-700" placeholder="؟">
+                        <span>جم</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="text-center">
+                <button onclick="checkRules()" id="btnRules" class="btn-playful bg-blue-500 hover:bg-blue-600 text-white font-black py-3 px-8 rounded-xl text-xl">
+                    تأكيد العلاقات 🔗
+                </button>
+            </div>
+        </section>
+
+        <!-- المهمة 3: التحويل والتطبيق (آلة التفكيك) -->
+        <section id="mission3" class="bg-white rounded-3xl shadow-xl border-4 border-amber-400 p-6 md:p-8 opacity-50 pointer-events-none transition-opacity duration-500 relative">
+            <div id="mission3Lock" class="absolute inset-0 z-20 flex flex-col items-center justify-center bg-white/70 backdrop-blur-sm rounded-3xl">
+                <span class="text-6xl mb-4">🔒</span>
+                <p class="text-2xl font-bold text-gray-800 text-center px-4">أكد علاقات الأوزان أولاً!</p>
+            </div>
+
+            <div class="flex items-center gap-3 mb-6 border-b-2 border-amber-100 pb-4">
+                <span class="text-4xl">⚙️</span>
+                <h2 class="text-2xl md:text-3xl font-black text-amber-800">تطبيق: آلة تفكيك الأوزان</h2>
+            </div>
+
+            <p class="text-lg font-bold text-gray-700 mb-6 text-center">
+                الآلة تفصل <span class="bg-amber-100 text-amber-900 px-2 rounded">الآلاف</span> وتحولها إلى كيلوجرامات، وتترك الباقي بالجرامات. جرب بنفسك!
+            </p>
+
+            <div class="bg-amber-50 border-4 border-amber-200 rounded-3xl p-6 relative overflow-hidden">
+                <!-- رسم توضيحي للآلة -->
+                <div class="text-center mb-8">
+                    <p class="text-gray-500 font-bold mb-2">الوزن الإجمالي:</p>
+                    <div class="inline-block bg-white border-4 border-gray-800 rounded-2xl px-8 py-3 text-4xl font-black font-mono shadow-md" dir="ltr">
+                        4520 <span class="text-2xl font-sans text-gray-500">جم</span>
+                    </div>
+                </div>
+
+                <!-- مسارات التفكيك -->
+                <div class="flex flex-col md:flex-row justify-center items-center gap-4 md:gap-12 relative">
+                    
+                    <!-- مسار الكيلوجرامات -->
+                    <div class="bg-white border-2 border-amber-300 rounded-2xl p-4 text-center w-full max-w-[200px] z-10 relative">
+                        <div class="absolute -top-6 left-1/2 -translate-x-1/2 text-2xl bg-amber-100 rounded-full p-2">📦</div>
+                        <p class="text-sm font-bold text-gray-500 mt-4 mb-2">الكيلوجرامات (الآلاف)</p>
+                        <div class="flex items-center justify-center gap-2" dir="ltr">
+                            <input type="number" id="split-kg" class="math-input text-amber-900 w-20" placeholder="؟">
+                            <span class="font-black text-gray-700">كجم</span>
+                        </div>
+                    </div>
+
+                    <div class="text-4xl font-black text-amber-300 rotate-90 md:rotate-0">+</div>
+
+                    <!-- مسار الجرامات -->
+                    <div class="bg-white border-2 border-amber-300 rounded-2xl p-4 text-center w-full max-w-[200px] z-10 relative">
+                        <div class="absolute -top-6 left-1/2 -translate-x-1/2 text-2xl bg-amber-100 rounded-full p-2">🍎</div>
+                        <p class="text-sm font-bold text-gray-500 mt-4 mb-2">الجرامات المتبقية</p>
+                        <div class="flex items-center justify-center gap-2" dir="ltr">
+                            <input type="number" id="split-g" class="math-input text-amber-900 w-24" placeholder="؟">
+                            <span class="font-black text-gray-700">جم</span>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <div class="text-center mt-8">
+                <button onclick="checkMachine()" id="btnMachine" class="btn-playful bg-amber-500 hover:bg-amber-600 text-white font-black py-3 px-10 rounded-xl text-xl">
+                    شغّل الآلة ⚡
+                </button>
+            </div>
+            
+            <div id="machineFeedback" class="hidden mt-6 text-center p-4 bg-green-100 border-2 border-green-500 rounded-xl text-xl font-black text-green-800">
+                <!-- Feedback -->
+            </div>
+
+        </section>
+
+    </main>
+
+    <script>
+        // --- المهمة 1: تحليل الخطأ ---
+        function checkError(isCorrect, btn) {
+            const btns = btn.parentElement.children;
+            const feedback = document.getElementById('mission1Feedback');
+
+            if (isCorrect) {
+                btn.className = "text-right p-4 rounded-xl border-4 border-green-500 bg-green-100 font-bold text-green-900 transition-colors";
+                for(let b of btns) { if(b !== btn && b.tagName === 'BUTTON') { b.style.opacity = '0.5'; b.disabled = true; } }
+                
+                feedback.innerHTML = `
+                    <p class="text-xl font-black text-green-800 mb-2">✅ محقق رائع!</p>
+                    <p class="text-lg font-bold text-gray-700 font-mono" dir="ltr">
+                        7m = 700cm <br>
+                        700 + 45 = 745 cm (الصحيح)
+                    </p>
+                    <button onclick="unlockMission2()" class="mt-4 btn-playful bg-green-500 hover:bg-green-600 text-white font-black py-2 px-6 rounded-xl text-lg">
+                        الذهاب لمختبر الأوزان ➡️
+                    </button>
+                `;
+                feedback.classList.remove('hidden');
+            } else {
+                btn.classList.add('shake', 'border-red-400', 'bg-red-50', 'text-red-700');
+                setTimeout(() => btn.classList.remove('shake', 'border-red-400', 'bg-red-50', 'text-red-700'), 500);
+            }
+        }
+
+        function unlockMission2() {
+            document.getElementById('mission2Lock').style.display = 'none';
+            document.getElementById('mission2').classList.remove('opacity-50', 'pointer-events-none');
+            document.getElementById('mission2').scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+
+        // --- المهمة 2: حفظ العلاقات ---
+        function checkRules() {
+            const r1 = document.getElementById('rule1');
+            const r2 = document.getElementById('rule2');
+            const btn = document.getElementById('btnRules');
+            let isWin = true;
+
+            if (r1.value === '1000') {
+                r1.classList.add('input-correct');
+                r1.disabled = true;
+            } else {
+                r1.classList.add('shake', 'border-red-500', 'bg-red-50');
+                setTimeout(() => r1.classList.remove('shake', 'border-red-500', 'bg-red-50'), 500);
+                isWin = false;
+            }
+
+            if (r2.value === '1000') {
+                r2.classList.add('input-correct');
+                r2.disabled = true;
+            } else {
+                r2.classList.add('shake', 'border-red-500', 'bg-red-50');
+                setTimeout(() => r2.classList.remove('shake', 'border-red-500', 'bg-red-50'), 500);
+                isWin = false;
+            }
+
+            if (isWin) {
+                btn.innerText = "تم حفظ العلاقات ✅";
+                btn.classList.replace('bg-blue-500', 'bg-green-500');
+                btn.classList.replace('hover:bg-blue-600', 'hover:bg-green-600');
+                btn.disabled = true;
+                
+                // Unlock Mission 3
+                setTimeout(() => {
+                    document.getElementById('mission3Lock').style.display = 'none';
+                    document.getElementById('mission3').classList.remove('opacity-50', 'pointer-events-none');
+                    document.getElementById('mission3').scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }, 1000);
+            }
+        }
+
+        // --- المهمة 3: آلة التفكيك ---
+        function checkMachine() {
+            // Target is 4520g -> 4 Kg and 520 g
+            const kgInput = document.getElementById('split-kg');
+            const gInput = document.getElementById('split-g');
+            const feedback = document.getElementById('machineFeedback');
+            const btn = document.getElementById('btnMachine');
+            
+            let isWin = true;
+
+            if (kgInput.value === '4') {
+                kgInput.classList.add('input-correct');
+                kgInput.disabled = true;
+            } else {
+                kgInput.classList.add('shake', 'border-red-500', 'bg-red-50');
+                setTimeout(() => kgInput.classList.remove('shake', 'border-red-500', 'bg-red-50'), 500);
+                isWin = false;
+            }
+
+            if (gInput.value === '520') {
+                gInput.classList.add('input-correct');
+                gInput.disabled = true;
+            } else {
+                gInput.classList.add('shake', 'border-red-500', 'bg-red-50');
+                setTimeout(() => gInput.classList.remove('shake', 'border-red-500', 'bg-red-50'), 500);
+                isWin = false;
+            }
+
+            if (isWin) {
+                btn.style.display = 'none';
+                feedback.innerHTML = "🎉 ممتاز! لقد قمت بتفكيك الرقم بشكل صحيح: الآلاف أصبحت كيلوجرامات، والباقي جرامات!";
+                feedback.classList.remove('hidden');
+                
+                // Confetti Effect
+                confettiEffect();
+            }
+        }
+
+        function confettiEffect() {
+            const colors = ['#f59e0b', '#3b82f6', '#10b981', '#a855f7'];
+            for(let i=0; i<40; i++) {
+                const conf = document.createElement('div');
+                conf.className = 'absolute w-3 h-3 rounded-full opacity-80 z-50';
+                conf.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                conf.style.left = Math.random() * 100 + 'vw';
+                conf.style.top = (window.scrollY - 20) + 'px';
+                conf.style.transition = 'all 3s ease-in';
+                document.body.appendChild(conf);
+                
+                setTimeout(() => {
+                    conf.style.top = (window.scrollY + window.innerHeight) + 'px';
+                    conf.style.transform = `rotate(${Math.random() * 720}deg) translateX(${Math.random() * 100 - 50}px)`;
+                }, 50);
+            }
+        }
+    </script>
+</body>
+</html

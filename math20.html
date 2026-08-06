@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>محقق الوقت - لغز الدقائق المفقودة</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700;900&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Tajawal', sans-serif;
+            background-color: #f5f3ff; /* خلفية بنفسجي فاتح جداً تطابق الوحدة */
+            background-image: radial-gradient(#ede9fe 2px, transparent 2px);
+            background-size: 30px 30px;
+            overflow-x: hidden;
+        }
+
+        .btn-playful {
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 6px 0 rgba(0,0,0,0.2);
+        }
+        .btn-playful:active:not(:disabled) {
+            transform: translateY(6px);
+            box-shadow: 0 0 0 rgba(0,0,0,0);
+        }
+        .btn-playful:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none !important;
+            box-shadow: 0 6px 0 rgba(0,0,0,0.2) !important;
+        }
+
+        .math-input {
+            width: 5rem;
+            text-align: center;
+            font-size: 1.5rem;
+            font-weight: 900;
+            border: 3px solid #cbd5e1;
+            border-radius: 0.75rem;
+            background-color: white;
+            transition: all 0.3s;
+            font-family: monospace;
+        }
+        .math-input:focus {
+            outline: none;
+            border-color: #8b5cf6;
+            box-shadow: 0 0 0 4px rgba(139, 92, 246, 0.3);
+        }
+        .input-correct {
+            background-color: #dcfce7 !important;
+            border-color: #22c55e !important;
+            color: #166534 !important;
+        }
+
+        .shake { animation: shake 0.5s cubic-bezier(.36,.07,.19,.97) both; }
+        @keyframes shake {
+            10%, 90% { transform: translate3d(-1px, 0, 0); }
+            20%, 80% { transform: translate3d(2px, 0, 0); }
+            30%, 50%, 70% { transform: translate3d(-4px, 0, 0); }
+            40%, 60% { transform: translate3d(4px, 0, 0); }
+        }
+
+        /* زينة متحركة */
+        .floating-clock {
+            animation: floatClock 3s ease-in-out infinite;
+        }
+        @keyframes floatClock {
+            0% { transform: translateY(0) rotate(-10deg); }
+            50% { transform: translateY(-10px) rotate(10deg); }
+            100% { transform: translateY(0) rotate(-10deg); }
+        }
+    </style>
+</head>
+<body class="min-h-screen text-gray-800 flex flex-col items-center py-6 px-4 relative">
+
+    <header class="w-full max-w-4xl text-center mb-8 z-10">
+        <div class="bg-white rounded-3xl p-6 shadow-xl border-4 border-indigo-400 relative overflow-hidden">
+            <span class="bg-indigo-500 text-white font-bold px-4 py-1 rounded-full text-sm absolute top-4 right-4">الدرس الخامس</span>
+            <div class="absolute -top-4 -left-4 text-6xl opacity-20 floating-clock">⏱️</div>
+            
+            <h1 class="text-3xl md:text-5xl font-black text-indigo-900 mb-2 mt-4 flex items-center justify-center gap-3">
+                <span>🕵️‍♂️</span> محقق الوقت <span>⏳</span>
+            </h1>
+            <p class="text-lg md:text-xl text-indigo-700 font-bold mb-4">
+                الوقت المنقضي: لنكتشف أين اختفت الدقائق في مسألة القيادة!
+            </p>
+        </div>
+    </header>
+
+    <main class="w-full max-w-4xl z-10 flex flex-col gap-8">
+        
+        <!-- المرحلة 1: تحليل الخطأ -->
+        <section id="phase1" class="bg-white rounded-3xl shadow-xl border-4 border-rose-400 p-6 md:p-8">
+            <div class="flex items-center gap-3 mb-6 border-b-2 border-rose-100 pb-4">
+                <span class="text-4xl">🚨</span>
+                <h2 class="text-2xl md:text-3xl font-black text-rose-800">استكشف: تحليل الأخطاء</h2>
+            </div>
+
+            <!-- عرض المسألة -->
+            <div class="bg-rose-50 rounded-2xl p-6 border-2 border-rose-200 mb-8 text-center relative overflow-hidden">
+                <div class="absolute top-2 left-2 text-4xl opacity-50">🚗</div>
+                <p class="text-xl font-bold text-gray-800 mb-2">
+                    تستغرق داليا <span class="bg-white px-2 rounded border border-gray-300">ساعتين</span> و <span class="bg-white px-2 rounded border border-gray-300">15 دقيقة</span> في القيادة للوصول إلى منزل جدتها.
+                </p>
+                <p class="text-lg font-black text-indigo-800 mb-6">ما عدد الدقائق المستغرقة في القيادة؟</p>
+
+                <!-- إجابة التلميذ الخاطئة -->
+                <div class="bg-white border-2 border-red-300 rounded-xl p-4 inline-block shadow-sm">
+                    <p class="text-red-700 font-bold mb-2">إجابة التلميذ (خاطئة ❌):</p>
+                    <div class="font-mono text-xl font-black text-gray-700 space-y-2" dir="ltr">
+                        <p class="bg-red-100 px-2 rounded inline-block">2 × 6 = 12</p>
+                        <p>12 + 15 = 27</p>
+                    </div>
+                    <p class="text-gray-600 font-bold mt-2 text-sm">استغرق الأمر 27 دقيقة.</p>
+                </div>
+            </div>
+
+            <!-- سؤال المحقق -->
+            <div class="bg-gray-50 rounded-2xl p-6 border-2 border-gray-200">
+                <h3 class="text-xl font-black text-gray-800 mb-4 text-center">أيها المحقق، ما هو الخطأ الكارثي الذي وقع فيه التلميذ؟</h3>
+                
+                <div class="flex flex-col gap-3" id="errorOptions">
+                    <button onclick="checkError(false, this)" class="text-right p-4 rounded-xl border-2 border-gray-300 hover:bg-gray-100 font-bold text-lg transition-colors">
+                        أ) نسي أن يجمع الـ 15 دقيقة الإضافية في النهاية.
+                    </button>
+                    <button onclick="checkError(true, this)" class="text-right p-4 rounded-xl border-2 border-gray-300 hover:bg-rose-50 hover:border-rose-400 font-bold text-lg transition-colors">
+                        ب) ظن أن الساعة فيها 6 دقائق فقط! فضرب في 6 بدلاً من 60.
+                    </button>
+                    <button onclick="checkError(false, this)" class="text-right p-4 rounded-xl border-2 border-gray-300 hover:bg-gray-100 font-bold text-lg transition-colors">
+                        ج) قام بالضرب بدلاً من أن يقوم بجمع الساعات مع الدقائق.
+                    </button>
+                </div>
+            </div>
+
+            <!-- رسالة التوجيه للمرحلة 2 -->
+            <div id="phase1Feedback" class="hidden mt-6 text-center p-4 bg-green-100 border-2 border-green-400 rounded-xl">
+                <!-- يُضاف عبر JS -->
+            </div>
+        </section>
+
+
+        <!-- المرحلة 2: الحل الصحيح -->
+        <section id="phase2" class="bg-white rounded-3xl shadow-xl border-4 border-emerald-500 p-6 md:p-8 opacity-50 pointer-events-none transition-opacity duration-500 relative">
+            
+            <!-- قفل المرحلة 2 -->
+            <div id="phase2Lock" class="absolute inset-0 z-20 flex flex-col items-center justify-center bg-white/70 backdrop-blur-sm rounded-3xl">
+                <span class="text-6xl mb-4">🔒</span>
+                <p class="text-2xl font-bold text-gray-800 text-center px-4">اكتشف الخطأ أولاً لفتح ورشة التصحيح!</p>
+            </div>
+
+            <div class="flex items-center gap-3 mb-6 border-b-2 border-emerald-100 pb-4">
+                <span class="text-4xl">🛠️</span>
+                <h2 class="text-2xl md:text-3xl font-black text-emerald-800">الحل الصحيح: ورشة التصحيح</h2>
+            </div>
+            
+            <p class="text-lg font-bold text-gray-700 mb-6 text-center">
+                الآن دورك لتحسب الوقت بشكل صحيح! اتبع الخطوات واملأ الفراغات.
+            </p>
+
+            <div class="flex flex-col gap-6 max-w-lg mx-auto">
+                
+                <!-- الخطوة 1 -->
+                <div class="bg-emerald-50 border-2 border-emerald-200 p-5 rounded-2xl flex flex-col items-center gap-3">
+                    <p class="font-bold text-emerald-900">الخطوة الأولى: نحول الساعتين إلى دقائق (نضرب في 60)</p>
+                    <div class="flex items-center gap-3 text-2xl font-black font-mono text-gray-700" dir="ltr">
+                        <span>2 × 60 = </span>
+                        <input type="number" id="ans-step1" class="math-input text-emerald-700" placeholder="؟" dir="ltr">
+                    </div>
+                </div>
+
+                <!-- الخطوة 2 -->
+                <div class="bg-blue-50 border-2 border-blue-200 p-5 rounded-2xl flex flex-col items-center gap-3">
+                    <p class="font-bold text-blue-900">الخطوة الثانية: نجمع الناتج مع الدقائق المتبقية (15)</p>
+                    <div class="flex items-center gap-3 text-2xl font-black font-mono text-gray-700" dir="ltr">
+                        <input type="number" id="ans-step2-a" class="math-input text-blue-700" placeholder="؟" dir="ltr">
+                        <span>+ 15 = </span>
+                        <input type="number" id="ans-step2-b" class="math-input text-blue-700" placeholder="؟" dir="ltr">
+                    </div>
+                </div>
+
+                <button onclick="checkSolution()" id="btnCheckSolution" class="btn-playful bg-emerald-500 hover:bg-emerald-600 text-white font-black py-3 px-8 rounded-xl text-xl w-full shadow-md mt-2">
+                    تحقق من الحل النهائي ✅
+                </button>
+
+            </div>
+
+            <!-- رسالة الفوز النهائية -->
+            <div id="finalFeedback" class="hidden mt-8 text-center p-6 bg-green-100 border-4 border-green-500 rounded-2xl relative overflow-hidden">
+                <div class="text-6xl mb-4 animate-bounce">🏆</div>
+                <h3 class="text-3xl font-black text-green-800 mb-2">محقق وقت عبقري!</h3>
+                <p class="text-xl font-bold text-green-700">لقد صححت الخطأ. إجمالي الوقت هو 135 دقيقة بالضبط.</p>
+                <button onclick="location.reload()" class="mt-6 btn-playful bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-8 rounded-xl text-lg">
+                    العب مرة أخرى 🔄
+                </button>
+            </div>
+
+        </section>
+
+    </main>
+
+    <script>
+        // --- المرحلة 1: التحقيق ---
+        function checkError(isCorrect, btnElement) {
+            const feedback = document.getElementById('phase1Feedback');
+            const btns = document.getElementById('errorOptions').children;
+
+            if (isCorrect) {
+                // إجابة صحيحة
+                btnElement.className = "text-right p-4 rounded-xl border-4 border-green-500 bg-green-100 font-bold text-lg text-green-900 transition-colors";
+                for(let b of btns) { if(b !== btnElement) { b.style.opacity = '0.5'; b.disabled = true; } }
+                
+                feedback.innerHTML = `
+                    <p class="text-xl font-black text-green-800 mb-2">✅ أصبت الهدف تماماً!</p>
+                    <p class="text-lg font-bold text-gray-700 mb-4">التلميذ نسي أن <span class="bg-white px-2 rounded border border-gray-300">1 ساعة = 60 دقيقة</span>. لذلك يجب الضرب في 60 وليس في 6.</p>
+                    <button onclick="unlockPhase2()" class="btn-playful bg-green-500 hover:bg-green-600 text-white font-black py-2 px-8 rounded-xl text-lg">
+                        هيا نصحح المسألة 🛠️
+                    </button>
+                `;
+                feedback.classList.remove('hidden');
+
+            } else {
+                // إجابة خاطئة
+                btnElement.classList.add('shake', 'border-red-400', 'bg-red-50', 'text-red-700');
+                setTimeout(() => btnElement.classList.remove('shake', 'border-red-400', 'bg-red-50', 'text-red-700'), 500);
+            }
+        }
+
+        function unlockPhase2() {
+            document.getElementById('phase2Lock').style.display = 'none';
+            document.getElementById('phase2').classList.remove('opacity-50', 'pointer-events-none');
+            document.getElementById('phase2').scrollIntoView({ behavior: 'smooth', block: 'start' });
+            
+            // Focus on first input
+            setTimeout(() => {
+                document.getElementById('ans-step1').focus();
+            }, 500);
+        }
+
+        // --- المرحلة 2: التصحيح ---
+        function checkSolution() {
+            const step1 = document.getElementById('ans-step1');       // Expected: 120
+            const step2a = document.getElementById('ans-step2-a');    // Expected: 120
+            const step2b = document.getElementById('ans-step2-b');    // Expected: 135
+            
+            let allCorrect = true;
+
+            // Check Step 1 (2 * 60 = 120)
+            if (parseInt(step1.value) === 120) {
+                step1.classList.add('input-correct');
+                step1.disabled = true;
+            } else {
+                shakeInput(step1);
+                allCorrect = false;
+            }
+
+            // Check Step 2a (Carry over 120)
+            if (parseInt(step2a.value) === 120) {
+                step2a.classList.add('input-correct');
+                step2a.disabled = true;
+            } else {
+                shakeInput(step2a);
+                allCorrect = false;
+            }
+
+            // Check Step 2b (120 + 15 = 135)
+            if (parseInt(step2b.value) === 135) {
+                step2b.classList.add('input-correct');
+                step2b.disabled = true;
+            } else {
+                shakeInput(step2b);
+                allCorrect = false;
+            }
+
+            if (allCorrect) {
+                document.getElementById('btnCheckSolution').style.display = 'none';
+                document.getElementById('finalFeedback').classList.remove('hidden');
+                confettiEffect();
+            }
+        }
+
+        function shakeInput(element) {
+            element.classList.add('shake', 'border-red-400', 'bg-red-50');
+            setTimeout(() => {
+                element.classList.remove('shake', 'border-red-400', 'bg-red-50');
+            }, 500);
+        }
+
+        // --- مؤثرات الاحتفال ---
+        function confettiEffect() {
+            const colors = ['#10b981', '#3b82f6', '#f59e0b', '#8b5cf6'];
+            for(let i=0; i<40; i++) {
+                const conf = document.createElement('div');
+                conf.className = 'absolute w-3 h-3 rounded-full opacity-80 z-50';
+                conf.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                conf.style.left = Math.random() * 100 + 'vw';
+                conf.style.top = -10 + 'px';
+                conf.style.transition = 'all 3s ease-in';
+                document.body.appendChild(conf);
+                
+                setTimeout(() => {
+                    conf.style.top = '100vh';
+                    conf.style.transform = `rotate(${Math.random() * 720}deg) translateX(${Math.random() * 100 - 50}px)`;
+                }, 50);
+            }
+        }
+    </script>
+</body>
+</html>

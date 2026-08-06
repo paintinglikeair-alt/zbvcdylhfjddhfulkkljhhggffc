@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>مختبر النمل - خواص الجمع والطرح</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700;900&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Tajawal', sans-serif;
+            background-color: #faf5ff; /* لون بنفسجي فاتح جداً (خلفية الوحدة الثانية) */
+            background-image: radial-gradient(#e9d5ff 2px, transparent 2px);
+            background-size: 30px 30px;
+            overflow-x: hidden;
+        }
+
+        .btn-playful {
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 6px 0 rgba(0,0,0,0.2);
+        }
+        .btn-playful:active:not(:disabled) {
+            transform: translateY(6px);
+            box-shadow: 0 0 0 rgba(0,0,0,0);
+        }
+        .btn-playful:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none !important;
+            box-shadow: 0 6px 0 rgba(0,0,0,0.2) !important;
+        }
+
+        /* Number Line Styling */
+        .number-line {
+            position: relative;
+            width: 100%;
+            height: 4px;
+            background-color: #4b5563; /* gray-600 */
+            margin: 40px 0;
+            border-radius: 2px;
+        }
+        .tick {
+            position: absolute;
+            width: 4px;
+            height: 20px;
+            background-color: #4b5563;
+            top: -8px;
+            transform: translateX(50%);
+        }
+        .tick-label {
+            position: absolute;
+            top: 20px;
+            transform: translateX(50%);
+            font-weight: bold;
+            font-family: monospace;
+            font-size: 1.1rem;
+        }
+        
+        .ant-scientist {
+            position: absolute;
+            top: -45px;
+            font-size: 2.5rem;
+            transition: all 1s cubic-bezier(0.25, 1, 0.5, 1);
+            z-index: 10;
+            filter: drop-shadow(0 4px 4px rgba(0,0,0,0.2));
+            transform: translateX(50%);
+        }
+
+        .jump-arc {
+            animation: jumpArc 1s ease-in-out forwards;
+        }
+        @keyframes jumpArc {
+            0% { top: -45px; }
+            50% { top: -80px; }
+            100% { top: -45px; }
+        }
+
+        .shake-error { animation: shake 0.5s cubic-bezier(.36,.07,.19,.97) both; }
+        @keyframes shake {
+            10%, 90% { transform: translate3d(-1px, 0, 0); }
+            20%, 80% { transform: translate3d(2px, 0, 0); }
+            30%, 50%, 70% { transform: translate3d(-4px, 0, 0); }
+            40%, 60% { transform: translate3d(4px, 0, 0); }
+        }
+
+        /* Hide sections */
+        .lab-station {
+            display: none;
+            animation: fadeIn 0.5s ease-out;
+        }
+        .lab-station.active {
+            display: block;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body class="min-h-screen text-gray-800 flex flex-col items-center py-6 px-4">
+
+    <header class="w-full max-w-4xl text-center mb-8 z-10">
+        <div class="bg-white rounded-3xl p-6 shadow-xl border-4 border-purple-500 relative overflow-hidden">
+            <span class="bg-purple-600 text-white font-bold px-4 py-1 rounded-full text-sm absolute top-4 right-4">الدرس الأول - الوحدة 2</span>
+            
+            <h1 class="text-3xl md:text-5xl font-black text-purple-900 mb-2 mt-4 flex items-center justify-center gap-3">
+                <span>🔬</span> مختبر النمل العلمي <span>🐜</span>
+            </h1>
+            <p class="text-xl text-purple-700 font-bold mb-4">
+                هل تنطبق خواص الجمع (الإبدال، الدمج، العنصر المحايد) على الطرح؟
+            </p>
+            
+            <!-- Progress Tracker -->
+            <div class="flex justify-center gap-4 mt-4">
+                <div id="prog-1" class="w-12 h-12 rounded-full bg-purple-500 text-white font-black flex items-center justify-center text-xl shadow-md border-4 border-white transition-colors">1</div>
+                <div class="w-8 h-1 bg-purple-200 mt-5"></div>
+                <div id="prog-2" class="w-12 h-12 rounded-full bg-gray-200 text-gray-500 font-black flex items-center justify-center text-xl shadow-md border-4 border-white transition-colors">2</div>
+                <div class="w-8 h-1 bg-gray-200 mt-5" id="line-2"></div>
+                <div id="prog-3" class="w-12 h-12 rounded-full bg-gray-200 text-gray-500 font-black flex items-center justify-center text-xl shadow-md border-4 border-white transition-colors">3</div>
+            </div>
+        </div>
+    </header>
+
+    <main class="w-full max-w-4xl z-10">
+        
+        <section id="station1" class="lab-station active bg-white rounded-3xl p-6 md:p-8 shadow-2xl border-4 border-fuchsia-400">
+            <h2 class="text-3xl font-black text-fuchsia-800 mb-4 border-b-2 border-fuchsia-100 pb-2 flex items-center gap-2">
+                <span>🔄</span> التجربة الأولى: خاصية الإبدال
+            </h2>
+            
+            <div class="bg-fuchsia-50 p-4 rounded-xl border border-fuchsia-200 mb-6 flex items-start gap-4">
+                <span class="text-3xl mt-1">💡</span>
+                <div>
+                    <p class="text-lg font-bold text-gray-800 mb-1">في الجمع: <span class="font-mono" dir="ltr">5 + 3 = 8</span> هي نفسها <span class="font-mono" dir="ltr">3 + 5 = 8</span></p>
+                    <p class="text-gray-600">هل يمكننا تبديل الأرقام في عملية الطرح؟ لنستخدم خط الأعداد للتحقق!</p>
+                </div>
+            </div>
+
+            <!-- التجربة العملية -->
+            <div class="bg-white border-2 border-gray-200 rounded-2xl p-6 mb-6">
+                <!-- مسألة 1 -->
+                <div class="mb-8">
+                    <p class="text-xl font-bold mb-4">جرب المسألة: <span class="font-mono text-2xl font-black text-fuchsia-700 bg-fuchsia-100 px-2 rounded" dir="ltr">8 - 3</span></p>
+                    <div class="relative w-full mb-12">
+                        <div class="number-line" id="nl-1"></div>
+                        <div class="ant-scientist" id="ant-1" style="right: 80%;">🐜</div> <!-- Starts at 8 -->
+                    </div>
+                    <button id="btn-jump-1" onclick="jumpAnt(1, 8, -3, 5)" class="btn-playful bg-fuchsia-500 hover:bg-fuchsia-600 text-white font-black py-2 px-6 rounded-xl mx-auto block">اقفز للنقطة 8 وارجع 3 خطوات</button>
+                    <p id="res-1" class="text-center font-bold text-lg mt-2 hidden text-green-600">النتيجة: وصلنا للرقم 5 ✅</p>
+                </div>
+
+                <!-- مسألة 2 (المعكوسة) -->
+                <div class="opacity-50 pointer-events-none transition-opacity" id="part1-b">
+                    <hr class="mb-6 border-dashed border-gray-300">
+                    <p class="text-xl font-bold mb-4">الآن نعكس الأماكن! جرب: <span class="font-mono text-2xl font-black text-red-600 bg-red-100 px-2 rounded" dir="ltr">3 - 8</span></p>
+                    <div class="relative w-full mb-12">
+                        <div class="number-line" id="nl-2"></div>
+                        <div class="ant-scientist" id="ant-2" style="right: 30%;">🐜</div> <!-- Starts at 3 -->
+                    </div>
+                    <button id="btn-jump-2" onclick="failJump()" class="btn-playful bg-fuchsia-500 hover:bg-fuchsia-600 text-white font-black py-2 px-6 rounded-xl mx-auto block">اقفز للنقطة 3 وارجع 8 خطوات</button>
+                    <p id="res-2" class="text-center font-bold text-lg mt-2 hidden text-red-600">عفواً! لا يوجد خطوات كافية للرجوع.. النملة ستقع! ❌</p>
+                </div>
+            </div>
+
+            <!-- سؤال الاستنتاج -->
+            <div class="bg-gray-100 rounded-2xl p-6 text-center hidden" id="conclusion-1">
+                <p class="text-2xl font-black text-gray-800 mb-4">هل نواتج (8-3) و (3-8) متساوية؟ هل تنطبق خاصية الإبدال على الطرح؟</p>
+                <div class="flex justify-center gap-4">
+                    <button onclick="wrongAnswer(this)" class="btn-playful bg-white border-2 border-gray-300 hover:bg-gray-50 text-gray-700 font-black py-3 px-10 rounded-xl text-xl">نعم</button>
+                    <button onclick="correctAnswer(1)" class="btn-playful bg-white border-2 border-gray-300 hover:bg-gray-50 text-gray-700 font-black py-3 px-10 rounded-xl text-xl">لا</button>
+                </div>
+            </div>
+        </section>
+
+        <section id="station2" class="lab-station bg-white rounded-3xl p-6 md:p-8 shadow-2xl border-4 border-blue-400">
+            <h2 class="text-3xl font-black text-blue-800 mb-4 border-b-2 border-blue-100 pb-2 flex items-center gap-2">
+                <span>🫂</span> التجربة الثانية: خاصية الدمج
+            </h2>
+            
+            <div class="bg-blue-50 p-4 rounded-xl border border-blue-200 mb-6">
+                <p class="text-lg font-bold text-gray-800 mb-2">تذكر: في الرياضيات، نحل العمليات الموجودة داخل الأقواس <span class="font-mono text-xl">( )</span> أولاً!</p>
+                <p class="text-gray-600">هل مكان الأقواس يغير النتيجة في عملية الطرح؟ دعنا نحسب المسألتين لنكتشف.</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                <!-- المسار الأول -->
+                <div class="bg-white border-2 border-blue-200 rounded-2xl p-6 text-center shadow-sm relative">
+                    <div class="absolute -top-4 -right-2 text-3xl">🐜</div>
+                    <p class="text-gray-500 font-bold mb-2">المسألة الأولى</p>
+                    <p class="font-mono text-3xl font-black text-blue-900 mb-4" dir="ltr">(10 - 4) - 2</p>
+                    
+                    <div class="text-lg font-bold text-gray-700 space-y-4">
+                        <p>1) نحل ما بداخل القوس أولاً: <span class="font-mono" dir="ltr">10 - 4 = <input type="number" id="q2-a1" class="w-16 bg-gray-100 border border-gray-300 rounded text-center text-blue-700 font-black"></span></p>
+                        <p>2) نطرح الباقي: <span class="font-mono" dir="ltr"><span id="q2-a2-span">؟</span> - 2 = <input type="number" id="q2-a3" class="w-16 bg-gray-100 border border-gray-300 rounded text-center text-blue-700 font-black"></span></p>
+                    </div>
+                </div>
+
+                <!-- المسار الثاني -->
+                <div class="bg-white border-2 border-blue-200 rounded-2xl p-6 text-center shadow-sm relative">
+                    <div class="absolute -top-4 -right-2 text-3xl transform -scale-x-100">🐜</div>
+                    <p class="text-gray-500 font-bold mb-2">المسألة الثانية (نقلنا الأقواس)</p>
+                    <p class="font-mono text-3xl font-black text-blue-900 mb-4" dir="ltr">10 - (4 - 2)</p>
+                    
+                    <div class="text-lg font-bold text-gray-700 space-y-4">
+                        <p>1) نحل ما بداخل القوس أولاً: <span class="font-mono" dir="ltr">4 - 2 = <input type="number" id="q2-b1" class="w-16 bg-gray-100 border border-gray-300 rounded text-center text-blue-700 font-black"></span></p>
+                        <p>2) نطرحه من البداية: <span class="font-mono" dir="ltr">10 - <span id="q2-b2-span">؟</span> = <input type="number" id="q2-b3" class="w-16 bg-gray-100 border border-gray-300 rounded text-center text-blue-700 font-black"></span></p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="text-center mb-6">
+                <button onclick="checkAssocMath()" class="btn-playful bg-blue-500 hover:bg-blue-600 text-white font-black py-3 px-8 rounded-xl text-xl">تحقق من حساباتي 🔍</button>
+                <p id="assoc-error" class="text-red-500 font-bold mt-2 hidden">راجع حساباتك جيداً يا بطل!</p>
+            </div>
+
+            <!-- سؤال الاستنتاج -->
+            <div class="bg-gray-100 rounded-2xl p-6 text-center hidden" id="conclusion-2">
+                <p class="text-2xl font-black text-gray-800 mb-4">هل الناتج النهائي للمسألتين متساوٍ؟ هل تنطبق خاصية الدمج على الطرح؟</p>
+                <div class="flex justify-center gap-4">
+                    <button onclick="wrongAnswer(this)" class="btn-playful bg-white border-2 border-gray-300 hover:bg-gray-50 text-gray-700 font-black py-3 px-10 rounded-xl text-xl">نعم</button>
+                    <button onclick="correctAnswer(2)" class="btn-playful bg-white border-2 border-gray-300 hover:bg-gray-50 text-gray-700 font-black py-3 px-10 rounded-xl text-xl">لا</button>
+                </div>
+            </div>
+        </section>
+
+        <section id="station3" class="lab-station bg-white rounded-3xl p-6 md:p-8 shadow-2xl border-4 border-teal-400">
+            <h2 class="text-3xl font-black text-teal-800 mb-4 border-b-2 border-teal-100 pb-2 flex items-center gap-2">
+                <span>👻</span> التجربة الثالثة: العنصر المحايد
+            </h2>
+            
+            <div class="bg-teal-50 p-4 rounded-xl border border-teal-200 mb-6">
+                <p class="text-lg font-bold text-gray-800 mb-2">في الجمع، الصفر (0) هو العنصر المحايد: أي عدد نجمعه مع 0 يبقى كما هو! <span class="font-mono text-xl" dir="ltr">(5+0=5 , 0+5=5)</span></p>
+                <p class="text-gray-600">لكن، هل يعمل الصفر بنفس الطريقة كـ "محايد" في كلتا الحالتين في عملية الطرح؟</p>
+            </div>
+
+            <div class="flex flex-col md:flex-row gap-6 justify-center items-center mb-8">
+                <!-- الحالة 1 -->
+                <div class="bg-white border-4 border-teal-200 rounded-2xl p-6 text-center shadow-md w-full max-w-sm">
+                    <p class="text-xl font-black text-teal-900 mb-4 font-mono" dir="ltr">15 - 0 = ?</p>
+                    <p class="text-gray-700 font-bold mb-4">معي 15 تفاحة، لم آكل منها شيئاً (0). كم تبقى؟</p>
+                    <div class="bg-teal-100 text-teal-800 font-black text-3xl py-3 rounded-xl border border-teal-300 font-mono" dir="ltr">15</div>
+                    <p class="text-green-600 font-bold mt-2 text-sm">✅ تعمل بشكل صحيح</p>
+                </div>
+
+                <div class="text-4xl font-black text-gray-400">VS</div>
+
+                <!-- الحالة 2 -->
+                <div class="bg-white border-4 border-red-300 rounded-2xl p-6 text-center shadow-md w-full max-w-sm">
+                    <p class="text-xl font-black text-red-900 mb-4 font-mono" dir="ltr">0 - 15 = ?</p>
+                    <p class="text-gray-700 font-bold mb-4">معي (0) تفاحة.. هل يمكنني أن آكل منها 15؟</p>
+                    <div class="bg-red-100 text-red-800 font-black text-2xl py-4 rounded-xl border border-red-300">مستحيل! (لا يصح)</div>
+                    <p class="text-red-600 font-bold mt-2 text-sm">❌ لا تعمل</p>
+                </div>
+            </div>
+
+            <!-- سؤال الاستنتاج -->
+            <div class="bg-gray-100 rounded-2xl p-6 text-center" id="conclusion-3">
+                <p class="text-2xl font-black text-gray-800 mb-4">بما أن الصفر لم يعمل في كلتا الحالتين.. هل تنطبق خاصية العنصر المحايد على الطرح؟</p>
+                <div class="flex justify-center gap-4">
+                    <button onclick="wrongAnswer(this)" class="btn-playful bg-white border-2 border-gray-300 hover:bg-gray-50 text-gray-700 font-black py-3 px-10 rounded-xl text-xl">نعم</button>
+                    <button onclick="correctAnswer(3)" class="btn-playful bg-white border-2 border-gray-300 hover:bg-gray-50 text-gray-700 font-black py-3 px-10 rounded-xl text-xl">لا</button>
+                </div>
+            </div>
+        </section>
+
+        <div id="finalVictory" class="hidden fixed inset-0 bg-black/70 z-50 flex items-center justify-center p-4 backdrop-blur-md">
+            <div class="bg-white rounded-3xl p-10 shadow-2xl border-8 border-purple-500 text-center max-w-lg w-full transform transition-all duration-300">
+                <div class="text-7xl mb-4">🏆🐜</div>
+                <h2 class="text-4xl font-black text-purple-800 mb-2">استنتاج علمي عظيم!</h2>
+                
+                <div class="bg-purple-50 border-2 border-purple-200 rounded-2xl p-6 my-6 text-right">
+                    <p class="text-2xl font-bold text-gray-800 mb-4 text-center">الخلاصة الذهبية:</p>
+                    <ul class="text-lg text-gray-700 space-y-3 font-bold">
+                        <li>❌ خاصية الإبدال <span class="text-red-600">لا تنطبق</span> على الطرح.</li>
+                        <li>❌ خاصية الدمج <span class="text-red-600">لا تنطبق</span> على الطرح.</li>
+                        <li>❌ خاصية العنصر المحايد <span class="text-red-600">لا تنطبق</span> على الطرح.</li>
+                    </ul>
+                </div>
+                
+                <p class="text-xl text-gray-800 font-bold mb-6">لقد أثبت أن خواص الجمع لا يمكن استخدامها مع الطرح أبداً!</p>
+                
+                <button onclick="location.reload()" class="btn-playful bg-purple-600 hover:bg-purple-700 text-white font-black py-4 px-10 rounded-2xl text-2xl w-full">
+                    إعادة التجارب 🔄
+                </button>
+            </div>
+        </div>
+
+    </main>
+
+    <script>
+        // Setup Number Lines for Station 1
+        function createNumberLine(id) {
+            const container = document.getElementById(id);
+            for (let i = 0; i <= 10; i++) {
+                const tick = document.createElement('div');
+                tick.className = 'tick';
+                // RTL layout means 0 is on the right, 10 on the left.
+                // We use 'right' percentage to position.
+                tick.style.right = (i * 10) + '%'; 
+                
+                const label = document.createElement('div');
+                label.className = 'tick-label text-gray-600';
+                label.innerText = i;
+                tick.appendChild(label);
+                container.appendChild(tick);
+            }
+        }
+        createNumberLine('nl-1');
+        createNumberLine('nl-2');
+
+        // Logic Station 1
+        function jumpAnt(stationPart, start, jump, end) {
+            const btn = document.getElementById(`btn-jump-${stationPart}`);
+            const ant = document.getElementById(`ant-${stationPart}`);
+            
+            btn.disabled = true;
+            ant.classList.add('jump-arc');
+            
+            setTimeout(() => {
+                // Move ant to end position (RTL means right % is the value * 10)
+                ant.style.right = (end * 10) + '%';
+            }, 500);
+
+            setTimeout(() => {
+                ant.classList.remove('jump-arc');
+                document.getElementById(`res-${stationPart}`).classList.remove('hidden');
+                
+                if (stationPart === 1) {
+                    // Unlock part B
+                    document.getElementById('part1-b').classList.remove('opacity-50', 'pointer-events-none');
+                }
+            }, 1000);
+        }
+
+        function failJump() {
+            const btn = document.getElementById('btn-jump-2');
+            const ant = document.getElementById('ant-2');
+            
+            btn.disabled = true;
+            ant.classList.add('jump-arc');
+            
+            setTimeout(() => {
+                // Tries to jump to -5 (off screen to the right in RTL)
+                ant.style.right = '-20%'; 
+                ant.style.transform = "translateX(50%) rotate(90deg)"; // falls
+            }, 500);
+
+            setTimeout(() => {
+                document.getElementById('res-2').classList.remove('hidden');
+                setTimeout(() => {
+                    document.getElementById('conclusion-1').classList.remove('hidden');
+                    // Scroll down a bit
+                    document.getElementById('conclusion-1').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+                }, 1000);
+            }, 1000);
+        }
+
+        // Logic Station 2
+        // Update helper spans based on first input
+        document.getElementById('q2-a1').addEventListener('input', (e) => {
+            document.getElementById('q2-a2-span').innerText = e.target.value || '؟';
+        });
+        document.getElementById('q2-b1').addEventListener('input', (e) => {
+            document.getElementById('q2-b2-span').innerText = e.target.value || '؟';
+        });
+
+        function checkAssocMath() {
+            const a1 = document.getElementById('q2-a1').value; // 10-4=6
+            const a3 = document.getElementById('q2-a3').value; // 6-2=4
+            
+            const b1 = document.getElementById('q2-b1').value; // 4-2=2
+            const b3 = document.getElementById('q2-b3').value; // 10-2=8
+
+            if (a1 == 6 && a3 == 4 && b1 == 2 && b3 == 8) {
+                // Correct Math
+                document.getElementById('assoc-error').classList.add('hidden');
+                // Lock inputs
+                ['q2-a1', 'q2-a3', 'q2-b1', 'q2-b3'].forEach(id => {
+                    document.getElementById(id).disabled = true;
+                    document.getElementById(id).classList.add('bg-green-100');
+                });
+                
+                document.getElementById('conclusion-2').classList.remove('hidden');
+                document.getElementById('conclusion-2').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            } else {
+                // Wrong math
+                const err = document.getElementById('assoc-error');
+                err.classList.remove('hidden');
+                err.classList.add('shake-error');
+                setTimeout(() => err.classList.remove('shake-error'), 500);
+            }
+        }
+
+        // Shared Logic
+        function wrongAnswer(btn) {
+            btn.classList.add('shake-error', 'bg-red-100', 'border-red-400', 'text-red-700');
+            btn.innerText = "فكر مجدداً!";
+            setTimeout(() => {
+                btn.classList.remove('shake-error', 'bg-red-100', 'border-red-400', 'text-red-700');
+                btn.innerText = "نعم";
+            }, 1000);
+        }
+
+        function correctAnswer(stationNum) {
+            // Update progress UI
+            const prog = document.getElementById(`prog-${stationNum}`);
+            prog.classList.replace('bg-gray-200', 'bg-green-500');
+            prog.classList.replace('text-gray-500', 'text-white');
+            prog.innerText = '✓';
+            
+            if (stationNum < 3) {
+                // Highlight next line
+                document.getElementById(`line-2`).classList.replace('bg-gray-200', 'bg-purple-200');
+                const nextProg = document.getElementById(`prog-${stationNum + 1}`);
+                nextProg.classList.replace('bg-gray-200', 'bg-purple-500');
+                nextProg.classList.replace('text-gray-500', 'text-white');
+
+                // Hide current, show next
+                document.getElementById(`station${stationNum}`).classList.remove('active');
+                document.getElementById(`station${stationNum + 1}`).classList.add('active');
+                
+                // Scroll top
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            } else {
+                // Final win
+                document.getElementById('finalVictory').classList.remove('hidden');
+            }
+        }
+    </script>
+</body>
+</html>

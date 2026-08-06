@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>المهمة المزدوجة - لغز السؤال الخفي</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700;900&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Tajawal', sans-serif;
+            background-color: #f8fafc; /* خلفية هادئة مريحة للعين */
+            background-image: radial-gradient(#cbd5e1 2px, transparent 2px);
+            background-size: 30px 30px;
+            overflow-x: hidden;
+        }
+
+        .btn-playful {
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 6px 0 rgba(0,0,0,0.2);
+        }
+        .btn-playful:active:not(:disabled) {
+            transform: translateY(6px);
+            box-shadow: 0 0 0 rgba(0,0,0,0);
+        }
+        .btn-playful:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none !important;
+            box-shadow: 0 6px 0 rgba(0,0,0,0.2) !important;
+        }
+
+        .input-math {
+            font-family: monospace;
+            text-align: center;
+            font-weight: 900;
+            font-size: 1.5rem;
+            transition: all 0.3s;
+        }
+        .input-math:focus {
+            outline: none;
+            box-shadow: 0 0 0 4px rgba(139, 92, 246, 0.3);
+            border-color: #8b5cf6;
+        }
+        .input-correct {
+            background-color: #dcfce7 !important;
+            border-color: #22c55e !important;
+            color: #166534 !important;
+        }
+
+        .shake { animation: shake 0.5s cubic-bezier(.36,.07,.19,.97) both; }
+        @keyframes shake {
+            10%, 90% { transform: translate3d(-1px, 0, 0); }
+            20%, 80% { transform: translate3d(2px, 0, 0); }
+            30%, 50%, 70% { transform: translate3d(-4px, 0, 0); }
+            40%, 60% { transform: translate3d(4px, 0, 0); }
+        }
+
+        .fly-down {
+            animation: flyDown 1s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+        }
+        @keyframes flyDown {
+            0% { transform: translateY(-50px) scale(1.5); opacity: 0; color: #22c55e;}
+            50% { transform: translateY(10px) scale(1.2); opacity: 1; color: #16a34a;}
+            100% { transform: translateY(0) scale(1); opacity: 1; color: #1f2937;}
+        }
+
+        /* نمل الخلفية */
+        .bg-ant {
+            position: fixed;
+            font-size: 2rem;
+            opacity: 0.15;
+            z-index: 0;
+            pointer-events: none;
+        }
+        @keyframes crawlDiag {
+            from { transform: translate(-50px, -50px) rotate(45deg); }
+            to { transform: translate(110vw, 110vh) rotate(45deg); }
+        }
+        .bg-ant-1 { animation: crawlDiag 30s linear infinite; top: 10%; left: -10%; }
+        .bg-ant-2 { animation: crawlDiag 35s linear infinite 15s; top: 30%; left: -10%; }
+
+    </style>
+</head>
+<body class="min-h-screen text-gray-800 flex flex-col items-center py-6 px-4 relative">
+
+    <div class="bg-ant bg-ant-1 text-slate-800">🐜</div>
+    <div class="bg-ant bg-ant-2 text-slate-800">🐜</div>
+
+    <header class="w-full max-w-4xl text-center mb-8 z-10">
+        <div class="bg-white rounded-3xl p-6 shadow-xl border-4 border-indigo-500 relative overflow-hidden">
+            <span class="bg-indigo-600 text-white font-bold px-4 py-1 rounded-full text-sm absolute top-4 right-4">الدرس الخامس</span>
+            
+            <h1 class="text-3xl md:text-5xl font-black text-indigo-900 mb-2 mt-4 flex items-center justify-center gap-3">
+                <span>🧩</span> لغز السؤال الخفي <span>🔍</span>
+            </h1>
+            <p class="text-lg md:text-xl text-indigo-700 font-bold mb-4">
+                المسائل متعددة الخطوات ليست مخيفة! هي مجرد مسألتين صغيرتين مندمجتين معاً. حل الأولى لتتمكن من حل الثانية!
+            </p>
+        </div>
+    </header>
+
+    <main class="w-full max-w-4xl z-10 flex flex-col gap-6">
+
+        <section id="step1-container" class="bg-white rounded-3xl shadow-xl border-4 border-amber-400 p-6 md:p-8 relative transition-all">
+            <div class="flex items-center gap-3 mb-4 border-b-2 border-amber-100 pb-4">
+                <span class="text-4xl">👦</span>
+                <h2 class="text-2xl font-black text-amber-800">الخطوة الأولى: مهمة عمر</h2>
+            </div>
+            
+            <div class="bg-amber-50 p-5 rounded-2xl border-2 border-amber-200 mb-6">
+                <p class="text-xl font-bold text-gray-700 leading-relaxed">
+                    وجد عمر أن هناك <span class="font-black text-2xl text-amber-700 bg-amber-100 px-2 rounded">1025</span> نملة في المستعمرة (أ).
+                    وفي يوم الجمعة غادرت <span class="font-black text-2xl text-amber-700 bg-amber-100 px-2 rounded">101</span> نملة.
+                </p>
+                <p class="text-lg font-black text-amber-900 mt-4 flex items-center gap-2">
+                    <span class="text-xl">❓</span> السؤال الخفي: ما عدد النمل المتبقي في المستعمرة (أ)؟
+                </p>
+            </div>
+
+            <!-- Solving Area Step 1 -->
+            <div class="flex flex-col md:flex-row items-center justify-center gap-4 bg-gray-50 p-6 rounded-2xl border border-gray-200">
+                <div class="text-3xl font-black font-mono flex items-center gap-4" dir="ltr">
+                    <span>1025</span>
+                    <span class="text-amber-500">-</span>
+                    <span>101</span>
+                    <span class="text-amber-500">=</span>
+                </div>
+                <div class="flex flex-col items-center gap-2">
+                    <input type="number" id="ans-step1" class="input-math w-32 bg-white border-4 border-gray-300 rounded-xl p-3 text-gray-900" placeholder="؟" dir="ltr">
+                    <button id="btn-check-1" onclick="checkStep1()" class="btn-playful bg-amber-500 hover:bg-amber-600 text-white font-black py-2 px-6 rounded-xl">
+                        تحقق 🔍
+                    </button>
+                </div>
+            </div>
+            
+            <p id="fb-step1" class="hidden text-center mt-4 font-bold text-lg"></p>
+        </section>
+
+        <div id="arrow-connection" class="hidden flex justify-center -my-2 z-20">
+            <div class="bg-emerald-500 text-white rounded-full p-2 shadow-lg animate-bounce">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M19 14l-7 7m0 0l-7-7m7 7V3" />
+                </svg>
+            </div>
+        </div>
+
+        <section id="step2-container" class="bg-gray-100 rounded-3xl shadow-md border-4 border-gray-300 p-6 md:p-8 relative opacity-60 pointer-events-none transition-all duration-500">
+            
+            <div id="step2-lock" class="absolute inset-0 z-20 flex flex-col items-center justify-center bg-gray-100/80 backdrop-blur-sm rounded-3xl">
+                <span class="text-5xl mb-2">🔒</span>
+                <p class="font-bold text-gray-600">يجب حل السؤال الخفي أولاً!</p>
+            </div>
+
+            <div class="flex items-center gap-3 mb-4 border-b-2 border-emerald-100 pb-4">
+                <span class="text-4xl">👧</span>
+                <h2 class="text-2xl font-black text-emerald-800">الخطوة الثانية: مهمة مريم</h2>
+            </div>
+            
+            <div class="bg-emerald-50 p-5 rounded-2xl border-2 border-emerald-200 mb-6">
+                <p class="text-xl font-bold text-gray-700 leading-relaxed">
+                    وجدت مريم أن هناك <span class="font-black text-2xl text-emerald-700 bg-emerald-100 px-2 rounded">1555</span> نملة في المستعمرة (ب).
+                </p>
+                <p class="text-lg font-black text-emerald-900 mt-4 flex items-center gap-2">
+                    <span class="text-xl">🎯</span> السؤال النهائي: ما مقدار الزيادة في المستعمرة (ب) مقارنة بما تبقى في المستعمرة (أ)؟
+                </p>
+            </div>
+
+            <!-- Solving Area Step 2 -->
+            <div class="flex flex-col md:flex-row items-center justify-center gap-4 bg-white p-6 rounded-2xl border-2 border-emerald-100 shadow-sm">
+                <div class="text-3xl font-black font-mono flex items-center gap-4" dir="ltr">
+                    <span>1555</span>
+                    <span class="text-emerald-500">-</span>
+                    <!-- المربع الذي سيستقبل الرقم من الخطوة الأولى -->
+                    <div id="transferred-ans" class="w-24 h-14 border-4 border-dashed border-emerald-300 bg-emerald-50 rounded-xl flex items-center justify-center text-gray-400 text-xl font-bold">
+                        ؟
+                    </div>
+                    <span class="text-emerald-500">=</span>
+                </div>
+                <div class="flex flex-col items-center gap-2">
+                    <input type="number" id="ans-step2" class="input-math w-32 bg-gray-100 border-4 border-gray-300 rounded-xl p-3 text-gray-900" placeholder="؟" dir="ltr" disabled>
+                    <button id="btn-check-2" onclick="checkStep2()" class="btn-playful bg-emerald-500 hover:bg-emerald-600 text-white font-black py-2 px-6 rounded-xl hidden">
+                        تحقق 🔍
+                    </button>
+                </div>
+            </div>
+            <p id="fb-step2" class="hidden text-center mt-4 font-bold text-lg"></p>
+
+        </section>
+
+        <section id="recap-container" class="hidden bg-white rounded-3xl shadow-xl border-4 border-purple-400 p-6 md:p-8 mt-4">
+            <h2 class="text-2xl font-black text-purple-800 mb-4 flex items-center justify-center gap-2">
+                <span>💡</span> تعلم: ربط جميع الأجزاء
+            </h2>
+            <p class="text-lg font-bold text-gray-700 mb-4 text-center">
+                هكذا تبدو المسألة عندما يتم دمج الخطوتين في قصة واحدة بدون فواصل!
+            </p>
+            <div class="bg-purple-50 p-6 rounded-2xl border-2 border-purple-200">
+                <p class="text-xl font-bold text-purple-900 leading-relaxed text-center">
+                    "مستعمرة نمل (أ) بها 1025 نملة غادر منها 101 نملة، ومستعمرة أخرى (ب) بها 1555 نملة. كم يزيد عدد النمل في المستعمرة (ب) عن المستعمرة (أ)؟"
+                </p>
+            </div>
+            <div class="text-center mt-8">
+                 <button onclick="location.reload()" class="btn-playful bg-purple-600 hover:bg-purple-700 text-white font-black py-3 px-10 rounded-2xl text-xl">
+                    لعب مسألة أخرى 🔄
+                </button>
+            </div>
+        </section>
+
+    </main>
+
+    <script>
+        const correctAnswer1 = 924; // 1025 - 101
+        const correctAnswer2 = 631; // 1555 - 924
+
+        function checkStep1() {
+            const inputEl = document.getElementById('ans-step1');
+            const btnEl = document.getElementById('btn-check-1');
+            const fbEl = document.getElementById('fb-step1');
+            const val = parseInt(inputEl.value);
+
+            if (val === correctAnswer1) {
+                // Correct!
+                inputEl.classList.add('input-correct');
+                inputEl.disabled = true;
+                btnEl.style.display = 'none';
+                
+                fbEl.innerHTML = "✅ أحسنت! هذا هو حل السؤال الخفي. الآن يمكننا استخدام هذا الرقم في الخطوة الثانية.";
+                fbEl.className = "mt-4 text-center font-bold text-lg text-green-700 bg-green-100 p-3 rounded-xl";
+                fbEl.classList.remove('hidden');
+
+                unlockStep2();
+            } else {
+                // Wrong
+                inputEl.classList.add('shake', 'bg-red-50', 'border-red-400');
+                fbEl.innerHTML = "❌ راجع عملية الطرح (1025 - 101)";
+                fbEl.className = "mt-4 text-center font-bold text-lg text-red-700";
+                fbEl.classList.remove('hidden');
+                
+                setTimeout(() => {
+                    inputEl.classList.remove('shake', 'bg-red-50', 'border-red-400');
+                }, 500);
+            }
+        }
+
+        function unlockStep2() {
+            // Visual un-locking
+            const arrow = document.getElementById('arrow-connection');
+            const step2Container = document.getElementById('step2-container');
+            const step2Lock = document.getElementById('step2-lock');
+            const transferredBox = document.getElementById('transferred-ans');
+            const ans2Input = document.getElementById('ans-step2');
+            const btnCheck2 = document.getElementById('btn-check-2');
+
+            arrow.classList.remove('hidden');
+            step2Lock.style.display = 'none';
+            step2Container.classList.remove('opacity-60', 'pointer-events-none');
+            step2Container.classList.replace('border-gray-300', 'border-emerald-400');
+            step2Container.classList.replace('bg-gray-100', 'bg-white');
+            
+            // Transfer the number with animation
+            setTimeout(() => {
+                transferredBox.innerHTML = correctAnswer1;
+                transferredBox.classList.remove('border-dashed', 'text-gray-400');
+                transferredBox.classList.add('border-solid', 'text-gray-900', 'fly-down', 'border-emerald-500', 'bg-white');
+                
+                // Enable step 2 inputs
+                ans2Input.disabled = false;
+                ans2Input.classList.replace('bg-gray-100', 'bg-white');
+                btnCheck2.classList.remove('hidden');
+
+                // Scroll slightly down
+                step2Container.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }, 800);
+        }
+
+        function checkStep2() {
+            const inputEl = document.getElementById('ans-step2');
+            const btnEl = document.getElementById('btn-check-2');
+            const fbEl = document.getElementById('fb-step2');
+            const val = parseInt(inputEl.value);
+
+            if (val === correctAnswer2) {
+                // Ultimate Win!
+                inputEl.classList.add('input-correct');
+                inputEl.disabled = true;
+                btnEl.style.display = 'none';
+                
+                fbEl.innerHTML = "🎉 بطل الرياضيات! لقد حليت اللغز متعدد الخطوات ببراعة.";
+                fbEl.className = "mt-4 text-center font-black text-xl text-emerald-800 bg-emerald-200 border-2 border-emerald-400 p-4 rounded-xl";
+                fbEl.classList.remove('hidden');
+
+                // Show Recap
+                setTimeout(() => {
+                    const recap = document.getElementById('recap-container');
+                    recap.classList.remove('hidden');
+                    recap.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    confettiEffect();
+                }, 1000);
+
+            } else {
+                // Wrong
+                inputEl.classList.add('shake', 'bg-red-50', 'border-red-400');
+                fbEl.innerHTML = `❌ راجع عملية الطرح (1555 - ${correctAnswer1})`;
+                fbEl.className = "mt-4 text-center font-bold text-lg text-red-700";
+                fbEl.classList.remove('hidden');
+                
+                setTimeout(() => {
+                    inputEl.classList.remove('shake', 'bg-red-50', 'border-red-400');
+                }, 500);
+            }
+        }
+
+        function confettiEffect() {
+            const colors = ['#10b981', '#3b82f6', '#f59e0b', '#8b5cf6'];
+            for(let i=0; i<50; i++) {
+                const conf = document.createElement('div');
+                conf.className = 'absolute w-3 h-3 rounded-full opacity-80 z-50';
+                conf.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                conf.style.left = Math.random() * 100 + 'vw';
+                conf.style.top = (window.scrollY - 20) + 'px';
+                conf.style.transition = 'all 3s ease-in';
+                document.body.appendChild(conf);
+                
+                setTimeout(() => {
+                    conf.style.top = (window.scrollY + window.innerHeight) + 'px';
+                    conf.style.transform = `rotate(${Math.random() * 720}deg) translateX(${Math.random() * 100 - 50}px)`;
+                }, 50);
+            }
+        }
+    </script>
+</body>
+</html>

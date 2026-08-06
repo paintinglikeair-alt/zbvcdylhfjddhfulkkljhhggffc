@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>استقصاء وسائل النقل - عملية الضرب كعلاقة</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Tajawal', sans-serif;
+            background-color: #f3f4f6;
+            background-image: 
+                linear-gradient(45deg, #e5e7eb 25%, transparent 25%, transparent 75%, #e5e7eb 75%, #e5e7eb), 
+                linear-gradient(45deg, #e5e7eb 25%, transparent 25%, transparent 75%, #e5e7eb 75%, #e5e7eb);
+            background-size: 20px 20px;
+            background-position: 0 0, 10px 10px;
+        }
+
+        .book-cover-color {
+            background-color: #5b21b6; /* لون مقارب للون الوحدة في الكتاب */
+        }
+
+        .input-box {
+            width: 4rem;
+            height: 4rem;
+            text-align: center;
+            font-size: 2rem;
+            font-weight: 900;
+            border: 4px solid #d1d5db;
+            border-radius: 1rem;
+            background-color: white;
+            transition: all 0.3s;
+            color: #4b5563;
+        }
+        .input-box:focus {
+            outline: none;
+            border-color: #8b5cf6;
+            box-shadow: 0 0 0 4px rgba(139, 92, 246, 0.3);
+        }
+        .input-correct {
+            border-color: #10b981 !important;
+            background-color: #d1fae5 !important;
+            color: #047857 !important;
+        }
+        .input-wrong {
+            border-color: #ef4444 !important;
+            background-color: #fee2e2 !important;
+            color: #b91c1c !important;
+            animation: shake 0.5s;
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            50% { transform: translateX(5px); }
+            75% { transform: translateX(-5px); }
+        }
+
+        .vehicle-bounce {
+            animation: bounceVehicle 2s infinite ease-in-out;
+        }
+
+        @keyframes bounceVehicle {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        .btn-action {
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 6px 0 rgba(0,0,0,0.2);
+        }
+        .btn-action:active:not(:disabled) {
+            transform: translateY(6px);
+            box-shadow: 0 0 0 rgba(0,0,0,0);
+        }
+
+        /* Confetti */
+        .confetti {
+            position: fixed;
+            width: 10px;
+            height: 10px;
+            background-color: #f00;
+            z-index: 9999;
+            animation: fall linear forwards;
+        }
+        @keyframes fall {
+            to { transform: translateY(100vh) rotate(720deg); }
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col items-center py-8 px-4 text-gray-800">
+
+    <!-- Header Section matching the book cover theme -->
+    <header class="w-full max-w-3xl bg-white rounded-3xl shadow-xl overflow-hidden mb-8 border-b-8 border-purple-800">
+        <div class="book-cover-color text-white p-6 text-center relative overflow-hidden">
+            <div class="absolute inset-0 opacity-20" style="background-image: url('data:image/svg+xml,%3Csvg width=\'60\' height=\'60\' viewBox=\'0 0 60 60\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cg fill=\'none\' fill-rule=\'evenodd\'%3E%3Cg fill=\'%23ffffff\' fill-opacity=\'1\'%3E%3Cpath d=\'M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z\'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E');"></div>
+            <span class="inline-block bg-white text-purple-800 font-bold px-4 py-1 rounded-full text-sm mb-2 shadow">الوحدة الخامسة</span>
+            <h1 class="text-4xl font-black mb-2">عملية الضرب كعلاقة</h1>
+            <p class="text-purple-200 text-lg font-bold">المحور الثاني | العمليات الحسابية والتفكير الجبري</p>
+        </div>
+        <div class="p-6 text-center bg-purple-50">
+            <div class="flex items-center justify-center gap-4 mb-4">
+                <span class="text-5xl vehicle-bounce">👦🏽</span>
+                <div class="text-right flex-1 bg-white p-4 rounded-2xl shadow-sm border-2 border-purple-100">
+                    <p class="text-lg font-bold text-gray-700">
+                        مرحباً! نحن <span class="text-purple-600 font-black">عمر ومريم</span>.
+                        نُجري استقصاءً عن أنواع وسائل النقل المختلفة في مدينتنا.
+                    </p>
+                    <p class="text-md text-gray-600 mt-2 font-bold">
+                        هل يمكنك مساعدتنا في استخدام <span class="text-green-600">عملية الضرب</span> للمقارنة بين أعداد الركاب بدلاً من عملية الجمع المتكرر؟
+                    </p>
+                </div>
+                <span class="text-5xl vehicle-bounce" style="animation-delay: 0.5s;">👧🏽</span>
+            </div>
+        </div>
+    </header>
+
+    <!-- Interactive Game Section -->
+    <main class="w-full max-w-3xl bg-white rounded-3xl shadow-xl p-6 md:p-10 border-4 border-gray-200 relative">
+        
+        <!-- Progress Bar -->
+        <div class="w-full bg-gray-200 rounded-full h-3 mb-8">
+            <div id="progressBar" class="bg-purple-600 h-3 rounded-full transition-all duration-500" style="width: 0%"></div>
+        </div>
+
+        <div id="levelContainer" class="transition-opacity duration-300">
+            <!-- Level Content will be injected here -->
+        </div>
+
+        <!-- Success overlay for each level -->
+        <div id="levelSuccess" class="hidden absolute inset-0 bg-white/90 rounded-2xl flex flex-col items-center justify-center z-10 backdrop-blur-sm">
+            <div class="text-6xl mb-4 animate-bounce">🌟</div>
+            <h3 class="text-3xl font-black text-green-600 mb-2">إجابة رائعة!</h3>
+            <p class="text-xl font-bold text-gray-700 mb-6">لقد استخدمت الضرب بشكل صحيح.</p>
+            <button onclick="nextLevel()" class="btn-action bg-purple-600 hover:bg-purple-700 text-white font-black py-3 px-8 rounded-xl text-xl">
+                التالي ➡️
+            </button>
+        </div>
+
+    </main>
+
+    <!-- Final Victory Screen -->
+    <div id="finalVictory" class="hidden fixed inset-0 bg-purple-900/90 z-50 flex items-center justify-center p-4 backdrop-blur-md">
+        <div class="bg-white rounded-3xl p-10 shadow-2xl text-center max-w-lg w-full transform transition-all duration-300 border-8 border-yellow-400">
+            <div class="text-8xl mb-6">🏆</div>
+            <h2 class="text-4xl font-black text-purple-800 mb-4">عمل رائع!</h2>
+            <p class="text-xl font-bold text-gray-700 mb-6 leading-relaxed">
+                شكراً لمساعدتك لعمر ومريم.<br>
+                لقد أثبتّ أن عملية الضرب هي طريق مختصر وذكي لجمع الأعداد المتكررة الكبيرة!
+            </p>
+            <button onclick="location.reload()" class="btn-action bg-yellow-400 hover:bg-yellow-500 text-purple-900 font-black py-4 px-10 rounded-2xl text-2xl w-full">
+                العب مرة أخرى 🔄
+            </button>
+        </div>
+    </div>
+
+    <script>
+        // Game Data based on the concept of multiplication as scaling/comparison
+        const levels = [
+            {
+                baseEmoji: '🚗', baseName: 'السيارة', baseCount: 4,
+                targetEmoji: '🚐', targetName: 'الميكروباص', multiplier: 3,
+                story: 'السيارة العادية تحمل ٤ ركاب. الميكروباص يمكنه أن يحمل <strong>٣ أضعاف</strong> هذا العدد.',
+                question: 'ما هي معادلة الضرب التي تعبر عن عدد ركاب الميكروباص؟',
+                calcHint: '(عدد ركاب السيارة × عدد الأضعاف = الإجمالي)'
+            },
+            {
+                baseEmoji: '🚐', baseName: 'الميكروباص', baseCount: 12,
+                targetEmoji: '🚌', targetName: 'الأتوبيس', multiplier: 4,
+                story: 'الميكروباص يحمل ١٢ راكباً. بينما الأتوبيس الكبير يحمل <strong>٤ أضعاف</strong> عدد ركاب الميكروباص.',
+                question: 'كيف نحسب عدد ركاب الأتوبيس باستخدام الضرب؟',
+                calcHint: '(العدد الأصلي × عدد الأضعاف)'
+            },
+            {
+                baseEmoji: '🚌', baseName: 'الأتوبيس', baseCount: 48,
+                targetEmoji: '🚆', targetName: 'القطار', multiplier: 10,
+                story: 'الأتوبيس يحمل ٤٨ راكباً. القطار السريع يحمل <strong>١٠ أضعاف</strong> عدد ركاب الأتوبيس!',
+                question: 'كيف نستخدم عملية الضرب لحساب هذا العدد الكبير جداً؟',
+                calcHint: '(فكر في قاعدة الضرب في ١٠)'
+            }
+        ];
+
+        let currentLevel = 0;
+
+        function renderLevel() {
+            const container = document.getElementById('levelContainer');
+            const level = levels[currentLevel];
+            const answer = level.baseCount * level.multiplier;
+
+            // Update Progress
+            document.getElementById('progressBar').style.width = `${((currentLevel) / levels.length) * 100}%`;
+
+            container.innerHTML = `
+                <div class="flex items-center justify-between bg-purple-50 p-4 rounded-2xl border-2 border-purple-100 mb-6">
+                    <div class="text-center w-1/3">
+                        <div class="text-5xl mb-2">${level.baseEmoji}</div>
+                        <div class="font-bold text-gray-700">${level.baseName}</div>
+                        <div class="bg-white px-3 py-1 rounded-full text-purple-700 font-black mt-2 shadow-sm inline-block">${level.baseCount} ركاب</div>
+                    </div>
+                    
+                    <div class="text-center w-1/3 text-2xl font-black text-purple-400">
+                        × ${level.multiplier} أضعاف
+                        <div class="text-3xl mt-2">➡️</div>
+                    </div>
+
+                    <div class="text-center w-1/3">
+                        <div class="text-6xl mb-2 vehicle-bounce">${level.targetEmoji}</div>
+                        <div class="font-bold text-gray-700">${level.targetName}</div>
+                        <div class="bg-purple-600 px-3 py-1 rounded-full text-white font-black mt-2 shadow-sm inline-block">؟ ركاب</div>
+                    </div>
+                </div>
+
+                <div class="text-center mb-8">
+                    <p class="text-xl text-gray-800 font-bold leading-loose mb-2">${level.story}</p>
+                    <p class="text-lg text-purple-700 font-black mb-1">${level.question}</p>
+                    <p class="text-sm text-gray-500 font-bold">${level.calcHint}</p>
+                </div>
+
+                <div class="flex flex-wrap items-center justify-center gap-4 text-3xl font-black text-gray-600 mb-8 dir-ltr" dir="ltr">
+                    <input type="number" id="inp-base" class="input-box" placeholder="؟" oninput="checkInputs()">
+                    <span class="text-purple-600">×</span>
+                    <input type="number" id="inp-mult" class="input-box" placeholder="؟" oninput="checkInputs()">
+                    <span class="text-purple-600">=</span>
+                    <input type="number" id="inp-ans" class="input-box w-20" placeholder="؟" oninput="checkInputs()">
+                </div>
+
+                <div class="text-center">
+                    <button id="btn-check" onclick="verifyAnswer()" disabled class="btn-action bg-gray-400 text-white font-black py-3 px-10 rounded-xl text-xl w-full max-w-sm">
+                        تحقق من المعادلة 🔍
+                    </button>
+                </div>
+            `;
+            
+            // Add animation class
+            container.classList.remove('opacity-0');
+        }
+
+        function checkInputs() {
+            const base = document.getElementById('inp-base').value;
+            const mult = document.getElementById('inp-mult').value;
+            const ans = document.getElementById('inp-ans').value;
+            const btn = document.getElementById('btn-check');
+
+            if (base !== '' && mult !== '' && ans !== '') {
+                btn.disabled = false;
+                btn.classList.remove('bg-gray-400');
+                btn.classList.add('bg-purple-600', 'hover:bg-purple-700');
+            } else {
+                btn.disabled = true;
+                btn.classList.add('bg-gray-400');
+                btn.classList.remove('bg-purple-600', 'hover:bg-purple-700');
+            }
+        }
+
+        function verifyAnswer() {
+            const level = levels[currentLevel];
+            const inpBase = document.getElementById('inp-base');
+            const inpMult = document.getElementById('inp-mult');
+            const inpAns = document.getElementById('inp-ans');
+            
+            const vBase = parseInt(inpBase.value);
+            const vMult = parseInt(inpMult.value);
+            const vAns = parseInt(inpAns.value);
+
+            let isCorrect = true;
+            const expectedAns = level.baseCount * level.multiplier;
+
+            // Check if they entered Base x Mult OR Mult x Base (Commutative property)
+            if ((vBase === level.baseCount && vMult === level.multiplier) || 
+                (vBase === level.multiplier && vMult === level.baseCount)) {
+                inpBase.classList.add('input-correct');
+                inpMult.classList.add('input-correct');
+            } else {
+                inpBase.classList.add('input-wrong');
+                inpMult.classList.add('input-wrong');
+                setTimeout(() => {
+                    inpBase.classList.remove('input-wrong');
+                    inpMult.classList.remove('input-wrong');
+                }, 800);
+                isCorrect = false;
+            }
+
+            if (vAns === expectedAns) {
+                inpAns.classList.add('input-correct');
+            } else {
+                inpAns.classList.add('input-wrong');
+                setTimeout(() => inpAns.classList.remove('input-wrong'), 800);
+                isCorrect = false;
+            }
+
+            if (isCorrect) {
+                document.getElementById('btn-check').style.display = 'none';
+                setTimeout(() => {
+                    document.getElementById('levelSuccess').classList.remove('hidden');
+                    createConfetti(20);
+                }, 500);
+            }
+        }
+
+        function nextLevel() {
+            document.getElementById('levelSuccess').classList.add('hidden');
+            const container = document.getElementById('levelContainer');
+            container.classList.add('opacity-0');
+            
+            currentLevel++;
+            
+            setTimeout(() => {
+                if (currentLevel < levels.length) {
+                    renderLevel();
+                } else {
+                    document.getElementById('progressBar').style.width = '100%';
+                    document.getElementById('finalVictory').classList.remove('hidden');
+                    createConfetti(100);
+                }
+            }, 300);
+        }
+
+        function createConfetti(amount) {
+            const colors = ['#8b5cf6', '#10b981', '#f59e0b', '#ef4444', '#3b82f6'];
+            for (let i = 0; i < amount; i++) {
+                const conf = document.createElement('div');
+                conf.className = 'confetti';
+                conf.style.left = Math.random() * 100 + 'vw';
+                conf.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                conf.style.animationDuration = (Math.random() * 3 + 2) + 's';
+                conf.style.top = '-20px';
+                document.body.appendChild(conf);
+                
+                // Cleanup
+                setTimeout(() => {
+                    conf.remove();
+                }, 5000);
+            }
+        }
+
+        // Initialize game
+        window.onload = renderLevel;
+    </script>
+</body>
+</html>

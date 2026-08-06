@@ -1,0 +1,448 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>خوارزمية عملية الضرب بالتجزئة</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700;900&display=swap" rel="stylesheet">
+    
+    <style>
+        body {
+            font-family: 'Tajawal', sans-serif;
+            background-color: #f8fafc; /* خلفية رمادية فاتحة */
+            background-image: radial-gradient(#cbd5e1 2px, transparent 2px);
+            background-size: 30px 30px;
+            overflow-x: hidden;
+        }
+
+        .btn-playful {
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 6px 0 rgba(0,0,0,0.2);
+        }
+        .btn-playful:active:not(:disabled) {
+            transform: translateY(6px);
+            box-shadow: 0 0 0 rgba(0,0,0,0);
+        }
+        .btn-playful:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none !important;
+            box-shadow: 0 6px 0 rgba(0,0,0,0.2) !important;
+        }
+
+        .math-input {
+            text-align: center;
+            font-size: 1.5rem;
+            font-weight: 900;
+            border: 3px solid #cbd5e1;
+            border-radius: 0.75rem;
+            background-color: white;
+            transition: all 0.3s;
+            font-family: monospace;
+        }
+        .math-input:focus {
+            outline: none;
+            border-color: #8b5cf6;
+            box-shadow: 0 0 0 4px rgba(139, 92, 246, 0.3);
+        }
+        .input-correct {
+            background-color: #dcfce7 !important;
+            border-color: #22c55e !important;
+            color: #166534 !important;
+        }
+
+        .shake { animation: shake 0.5s cubic-bezier(.36,.07,.19,.97) both; }
+        @keyframes shake {
+            10%, 90% { transform: translate3d(-1px, 0, 0); }
+            20%, 80% { transform: translate3d(2px, 0, 0); }
+            30%, 50%, 70% { transform: translate3d(-4px, 0, 0); }
+            40%, 60% { transform: translate3d(4px, 0, 0); }
+        }
+
+        .pop-in { animation: popIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; }
+        @keyframes popIn {
+            0% { transform: scale(0.5); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        /* تنسيقات خاصة لنموذج المساحة */
+        .area-box {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+            transition: all 0.3s;
+        }
+        
+        /* ربط الألوان بين المساحة والخوارزمية */
+        .color-ones { background-color: #fee2e2; border-color: #f87171; color: #991b1b; } /* أحمر للآحاد */
+        .color-tens { background-color: #dcfce7; border-color: #4ade80; color: #166534; } /* أخضر للعشرات */
+        .color-hundreds { background-color: #e0e7ff; border-color: #818cf8; color: #3730a3; } /* أزرق للمئات */
+
+    </style>
+</head>
+<body class="min-h-screen text-gray-800 flex flex-col items-center py-6 px-4 relative">
+
+    <header class="w-full max-w-5xl text-center mb-8 z-10">
+        <div class="bg-white rounded-3xl p-6 shadow-xl border-4 border-purple-600 relative overflow-hidden">
+            <span class="bg-purple-700 text-white font-bold px-4 py-1 rounded-full text-sm absolute top-4 right-4">الدرس الثالث - الوحدة 7</span>
+            
+            <h1 class="text-3xl md:text-5xl font-black text-purple-900 mb-2 mt-4 flex items-center justify-center gap-3">
+                <span>🧩</span> خوارزمية عملية الضرب بالتجزئة <span>✖️</span>
+            </h1>
+            <p class="text-lg md:text-xl text-purple-700 font-bold mb-4">
+                الانتقال من رسم المستطيلات إلى حل المسائل في خطوات مرتبة!
+            </p>
+        </div>
+    </header>
+
+    <main class="w-full max-w-5xl z-10 flex flex-col gap-8">
+        
+        <section id="explore" class="bg-white rounded-3xl shadow-xl border-4 border-sky-400 p-6 md:p-8">
+            <div class="flex items-center gap-3 mb-6 border-b-2 border-sky-100 pb-4">
+                <span class="text-4xl">🚀</span>
+                <h2 class="text-2xl md:text-3xl font-black text-sky-800">استكشف: السباق الرائع</h2>
+            </div>
+            
+            <p class="text-lg font-bold text-gray-700 mb-6 text-center leading-relaxed">
+                اكتب أكبر عدد ممكن من الطرق المختلفة لتمثيل العدد <span class="bg-sky-100 text-sky-900 font-black px-2 rounded text-2xl mx-1" dir="ltr">136</span>.
+                <br><span class="text-sm text-gray-500">استخدم علامة الجمع (+) بين الأرقام. مثال: 100+30+6 أو 130+6</span>
+            </p>
+
+            <!-- لوحة التفكير الإبداعي -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-8" id="brainstorm-board">
+                <!-- المربعات -->
+                <div class="bg-sky-50 border-2 border-sky-200 p-4 rounded-xl text-center shadow-sm">
+                    <input type="text" id="exp-1" class="math-input w-full h-12 text-lg text-sky-900" placeholder="... + ... + ..." dir="ltr">
+                </div>
+                <div class="bg-sky-50 border-2 border-sky-200 p-4 rounded-xl text-center shadow-sm">
+                    <input type="text" id="exp-2" class="math-input w-full h-12 text-lg text-sky-900" placeholder="... + ..." dir="ltr">
+                </div>
+                <div class="bg-sky-50 border-2 border-sky-200 p-4 rounded-xl text-center shadow-sm">
+                    <input type="text" id="exp-3" class="math-input w-full h-12 text-lg text-sky-900" placeholder="... + ..." dir="ltr">
+                </div>
+                <div class="bg-sky-50 border-2 border-sky-200 p-4 rounded-xl text-center shadow-sm">
+                    <input type="text" id="exp-4" class="math-input w-full h-12 text-lg text-sky-900" placeholder="..." dir="ltr">
+                </div>
+                <div class="bg-sky-50 border-2 border-sky-200 p-4 rounded-xl text-center shadow-sm">
+                    <input type="text" id="exp-5" class="math-input w-full h-12 text-lg text-sky-900" placeholder="..." dir="ltr">
+                </div>
+                <div class="bg-sky-50 border-2 border-sky-200 p-4 rounded-xl text-center shadow-sm">
+                    <input type="text" id="exp-6" class="math-input w-full h-12 text-lg text-sky-900" placeholder="..." dir="ltr">
+                </div>
+            </div>
+
+            <div class="text-center">
+                <button onclick="checkExplore()" id="btn-explore" class="btn-playful bg-sky-500 hover:bg-sky-600 text-white font-black py-3 px-10 rounded-xl text-xl">
+                    تأكيد إبداعاتي 💡
+                </button>
+            </div>
+            <div id="explore-fb" class="hidden mt-6 bg-green-100 border-2 border-green-300 p-4 rounded-xl text-center font-bold text-green-800 text-lg">
+                ✅ رائع! تفكيك الأرقام بمرونة هو السر لفهم الضرب بالتجزئة!
+            </div>
+        </section>
+
+        <section id="learn" class="bg-white rounded-3xl shadow-xl border-4 border-indigo-400 p-6 md:p-8 opacity-50 pointer-events-none transition-all duration-500 relative">
+            
+            <div id="learn-lock" class="absolute inset-0 z-20 flex flex-col items-center justify-center bg-white/70 backdrop-blur-sm rounded-3xl">
+                <span class="text-6xl mb-4">🔒</span>
+                <p class="text-2xl font-bold text-gray-800 text-center px-4">أنهِ السباق الرائع أولاً لفتح مختبر التجزئة!</p>
+            </div>
+
+            <div class="flex items-center gap-3 mb-6 border-b-2 border-indigo-100 pb-4">
+                <span class="text-4xl">🔗</span>
+                <h2 class="text-2xl md:text-3xl font-black text-indigo-800">تعلّم: نواتج عملية الضرب بالتجزئة</h2>
+            </div>
+
+            <p class="text-lg font-bold text-gray-700 mb-8 text-center leading-relaxed">
+                حل مسألة <span class="bg-indigo-100 px-2 rounded font-mono font-black text-2xl text-indigo-900 mx-1" dir="ltr">4 × 731</span>.
+                <br>استخدم نموذج مساحة المستطيل أولاً، ثم انسخ نفس الأرقام إلى خوارزمية التجزئة!
+            </p>
+
+            <!-- الشبكة المقسمة للربط بين النموذجين -->
+            <div class="flex flex-col lg:flex-row gap-8 items-start justify-center w-full">
+                
+                <!-- الجانب الأيمن: نموذج مساحة المستطيل -->
+                <div class="flex-1 w-full bg-slate-50 border-4 border-slate-300 rounded-3xl p-6 shadow-inner relative overflow-hidden">
+                    <h3 class="text-xl font-black text-slate-700 text-center mb-6">نموذج مساحة المستطيل</h3>
+                    
+                    <div class="flex" dir="ltr">
+                        <!-- العامل الجانبي -->
+                        <div class="w-12 bg-slate-200 border-4 border-slate-400 flex items-center justify-center font-black text-3xl text-slate-700 rounded-l-xl z-10">
+                            4
+                        </div>
+                        
+                        <!-- المستطيل المقسم -->
+                        <div class="flex-1 flex flex-col">
+                            <!-- الرأس (التحليل) -->
+                            <div class="flex w-full text-center font-black text-2xl text-slate-700 mb-1">
+                                <div class="w-3/5">700</div>
+                                <div class="w-1/5">30</div>
+                                <div class="w-1/5">1</div>
+                            </div>
+                            
+                            <!-- المربعات (المساحات الجزئية) -->
+                            <div class="flex w-full h-32">
+                                <!-- المئات -->
+                                <div class="w-3/5 border-4 border-slate-400 border-l-0 area-box color-hundreds rounded-tr-xl">
+                                    <span class="text-sm font-bold opacity-60 mb-2">4 × 700</span>
+                                    <input type="number" id="area-h" class="math-input text-indigo-900 w-24 h-12" placeholder="؟">
+                                </div>
+                                <!-- العشرات -->
+                                <div class="w-1/5 border-4 border-slate-400 border-l-0 area-box color-tens">
+                                    <span class="text-sm font-bold opacity-60 mb-2">4 × 30</span>
+                                    <input type="number" id="area-t" class="math-input text-green-900 w-16 h-12" placeholder="؟">
+                                </div>
+                                <!-- الآحاد -->
+                                <div class="w-1/5 border-4 border-slate-400 area-box color-ones rounded-tl-xl">
+                                    <span class="text-sm font-bold opacity-60 mb-2">4 × 1</span>
+                                    <input type="number" id="area-o" class="math-input text-red-900 w-12 h-12" placeholder="؟">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="text-center mt-6">
+                        <button onclick="checkAreaModel()" id="btn-check-area" class="btn-playful bg-slate-600 hover:bg-slate-700 text-white font-black py-2 px-6 rounded-xl text-lg">
+                            تحقق من المساحات 🧮
+                        </button>
+                    </div>
+                </div>
+
+
+                <!-- الجانب الأيسر: خوارزمية التجزئة -->
+                <div class="flex-1 w-full bg-indigo-50 border-4 border-indigo-300 rounded-3xl p-6 shadow-inner relative overflow-hidden opacity-50 pointer-events-none transition-all duration-500" id="algorithm-box">
+                    
+                    <div id="algo-lock" class="absolute inset-0 z-20 flex flex-col items-center justify-center bg-indigo-50/80 backdrop-blur-sm">
+                        <span class="text-4xl mb-2">🔒</span>
+                        <p class="font-bold text-indigo-800">أكمل المستطيل أولاً لنسخ الأرقام!</p>
+                    </div>
+
+                    <h3 class="text-xl font-black text-indigo-800 text-center mb-6">خوارزمية الضرب بالتجزئة</h3>
+                    
+                    <div class="flex flex-col items-center font-mono text-3xl font-black text-gray-800 tracking-[0.5em]" dir="ltr">
+                        <div class="text-right w-32 pr-2">731</div>
+                        <div class="text-right w-32 border-b-4 border-gray-400 pb-2 mb-4 relative">
+                            <span class="absolute -left-6 top-0 text-indigo-600 tracking-normal">×</span>
+                            <span class="pr-2">4</span>
+                        </div>
+                        
+                        <!-- نواتج التجزئة (Inputs) -->
+                        <div class="flex flex-col gap-3 text-2xl tracking-normal w-full max-w-[200px]">
+                            
+                            <!-- ضرب الآحاد -->
+                            <div class="flex items-center justify-between gap-4">
+                                <span class="text-sm font-bold text-red-600 bg-red-100 px-2 rounded-md font-sans" dir="rtl">(ضرب الآحاد: 4 × 1)</span>
+                                <input type="number" id="algo-o" class="math-input text-red-900 w-24 h-12 border-red-300 bg-red-50 text-left" placeholder="؟">
+                            </div>
+                            
+                            <!-- ضرب العشرات -->
+                            <div class="flex items-center justify-between gap-4">
+                                <span class="text-sm font-bold text-green-700 bg-green-100 px-2 rounded-md font-sans" dir="rtl">(ضرب العشرات: 4 × 30)</span>
+                                <input type="number" id="algo-t" class="math-input text-green-900 w-24 h-12 border-green-300 bg-green-50 text-left" placeholder="؟">
+                            </div>
+
+                            <!-- ضرب المئات -->
+                            <div class="flex items-center justify-between gap-4 border-b-4 border-gray-400 pb-4 mb-2">
+                                <span class="text-sm font-bold text-indigo-700 bg-indigo-100 px-2 rounded-md font-sans" dir="rtl">(ضرب المئات: 4 × 700)</span>
+                                <input type="number" id="algo-h" class="math-input text-indigo-900 w-24 h-12 border-indigo-300 bg-indigo-50 text-left" placeholder="؟">
+                            </div>
+
+                            <!-- المجموع النهائي -->
+                            <div class="flex items-center justify-between gap-4 mt-2">
+                                <span class="text-xl font-black text-gray-800 font-sans" dir="rtl">المجموع الكلي:</span>
+                                <input type="number" id="algo-total" class="math-input text-gray-900 w-32 h-14 border-gray-400 bg-yellow-50 text-center" placeholder="الناتج">
+                            </div>
+
+                        </div>
+                    </div>
+
+                    <div class="text-center mt-8">
+                        <button onclick="checkAlgorithm()" id="btn-check-algo" class="btn-playful bg-indigo-600 hover:bg-indigo-700 text-white font-black py-2 px-8 rounded-xl text-lg">
+                            التحقق من الخوارزمية 🏆
+                        </button>
+                    </div>
+                </div>
+
+            </div>
+
+        </section>
+
+        <div id="finalVictory" class="hidden fixed inset-0 bg-black/80 z-50 flex items-center justify-center p-4 backdrop-blur-md">
+            <div class="bg-white rounded-3xl p-10 shadow-2xl border-8 border-indigo-500 text-center max-w-lg w-full transform transition-all duration-300 pop-in">
+                <div class="text-8xl mb-4 animate-bounce">🎓</div>
+                <h2 class="text-4xl font-black text-indigo-800 mb-4">رائع يا مهندس الرياضيات!</h2>
+                <p class="text-xl text-gray-700 font-bold mb-6 leading-relaxed">
+                    لقد أدركت السر! خوارزمية التجزئة العمودية هي مجرد <strong class="text-indigo-600 bg-indigo-50 px-2 rounded">نسخة رقمية</strong> من مساحة المستطيل. 
+                    في كلا الطريقتين نضرب الرقم في كل جزء من أجزاء العدد الآخر.
+                </p>
+                <div class="bg-indigo-100 text-indigo-900 font-black font-mono text-3xl py-4 rounded-xl mb-6 border-2 border-indigo-300" dir="ltr">
+                    2,924
+                </div>
+                <button onclick="location.reload()" class="btn-playful bg-indigo-600 hover:bg-indigo-700 text-white font-black py-4 px-10 rounded-2xl text-2xl w-full">
+                    تدريب جديد 🔄
+                </button>
+            </div>
+        </div>
+
+    </main>
+
+    <script>
+        function shakeInput(el) {
+            el.classList.add('shake', 'bg-red-50', 'border-red-400', 'text-red-700');
+            setTimeout(() => el.classList.remove('shake', 'bg-red-50', 'border-red-400', 'text-red-700'), 500);
+        }
+
+        // --- Phase 1: Explore (Brainstorming 136) ---
+        function checkExplore() {
+            let correctCount = 0;
+            const target = 136;
+            const btn = document.getElementById('btn-explore');
+
+            for (let i = 1; i <= 6; i++) {
+                const input = document.getElementById(`exp-${i}`);
+                const valStr = input.value.trim();
+                
+                if (valStr !== "") {
+                    // بسيط جداً لتقييم السلاسل التي تحتوي على '+'
+                    try {
+                        const sum = valStr.split('+').reduce((acc, curr) => acc + (parseInt(curr.trim()) || 0), 0);
+                        if (sum === target) {
+                            input.classList.add('input-correct');
+                            input.disabled = true;
+                            correctCount++;
+                        } else {
+                            shakeInput(input);
+                        }
+                    } catch (e) {
+                        shakeInput(input);
+                    }
+                } else {
+                    // Empty input is fine, we just need at least some correct
+                }
+            }
+
+            if (correctCount >= 2) { // Require at least 2 valid ways
+                btn.style.display = 'none';
+                document.getElementById('explore-fb').classList.remove('hidden');
+
+                // Unlock Learn Section
+                setTimeout(() => {
+                    document.getElementById('learn-lock').style.display = 'none';
+                    const learnSec = document.getElementById('learn');
+                    learnSec.classList.remove('opacity-50', 'pointer-events-none');
+                    learnSec.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    
+                    setTimeout(() => document.getElementById('area-h').focus(), 500);
+                }, 1500);
+            } else if (correctCount === 0) {
+                 alert("حاول كتابة معادلة واحدة صحيحة على الأقل، مثلاً: 100 + 36");
+            }
+        }
+
+        // --- Phase 2: Learn (Area Model) ---
+        const answers = {
+            h: 2800, // 4 * 700
+            t: 120,  // 4 * 30
+            o: 4,    // 4 * 1
+            total: 2924
+        };
+
+        function checkAreaModel() {
+            const h = document.getElementById('area-h');
+            const t = document.getElementById('area-t');
+            const o = document.getElementById('area-o');
+            const btn = document.getElementById('btn-check-area');
+
+            let allCorrect = true;
+
+            if (parseInt(h.value) === answers.h) { h.classList.add('input-correct', 'bg-indigo-100'); h.disabled = true; } else { shakeInput(h); allCorrect = false; }
+            if (parseInt(t.value) === answers.t) { t.classList.add('input-correct', 'bg-green-100'); t.disabled = true; } else { shakeInput(t); allCorrect = false; }
+            if (parseInt(o.value) === answers.o) { o.classList.add('input-correct', 'bg-red-100'); o.disabled = true; } else { shakeInput(o); allCorrect = false; }
+
+            if (allCorrect) {
+                btn.style.display = 'none';
+                
+                // Add success visual cue to the whole box
+                h.parentElement.classList.add('opacity-80');
+                t.parentElement.classList.add('opacity-80');
+                o.parentElement.classList.add('opacity-80');
+
+                // Unlock Algorithm Box
+                const algoBox = document.getElementById('algorithm-box');
+                document.getElementById('algo-lock').style.display = 'none';
+                algoBox.classList.remove('opacity-50', 'pointer-events-none');
+                algoBox.classList.replace('border-indigo-300', 'border-indigo-500');
+                algoBox.classList.add('pop-in');
+
+                // Scroll to algorithm
+                setTimeout(() => document.getElementById('algo-o').focus(), 500);
+            }
+        }
+
+        // --- Phase 3: Learn (Algorithm) ---
+        function checkAlgorithm() {
+            const o = document.getElementById('algo-o'); // 4
+            const t = document.getElementById('algo-t'); // 120
+            const h = document.getElementById('algo-h'); // 2800
+            const total = document.getElementById('algo-total'); // 2924
+            const btn = document.getElementById('btn-check-algo');
+
+            let allCorrect = true;
+
+            if (parseInt(o.value) === answers.o) { o.classList.add('input-correct'); o.disabled = true; } else { shakeInput(o); allCorrect = false; }
+            if (parseInt(t.value) === answers.t) { t.classList.add('input-correct'); t.disabled = true; } else { shakeInput(t); allCorrect = false; }
+            if (parseInt(h.value) === answers.h) { h.classList.add('input-correct'); h.disabled = true; } else { shakeInput(h); allCorrect = false; }
+            
+            if (parseInt(total.value) === answers.total) { 
+                total.classList.add('input-correct', 'bg-yellow-100'); 
+                total.disabled = true; 
+            } else { 
+                shakeInput(total); 
+                allCorrect = false; 
+            }
+
+            if (allCorrect) {
+                btn.style.display = 'none';
+                
+                // Show Victory Modal
+                setTimeout(() => {
+                    document.getElementById('finalVictory').classList.remove('hidden');
+                    confettiEffect();
+                }, 500);
+            }
+        }
+
+        // --- Celebration Effect ---
+        function confettiEffect() {
+            const colors = ['#8b5cf6', '#3b82f6', '#10b981', '#ef4444'];
+            for(let i=0; i<60; i++) {
+                const conf = document.createElement('div');
+                conf.className = 'absolute w-3 h-3 rounded-sm opacity-90 z-50 pointer-events-none';
+                
+                if(Math.random() > 0.5) conf.classList.add('rounded-full');
+                
+                conf.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                conf.style.left = Math.random() * 100 + 'vw';
+                conf.style.top = (window.scrollY - 20) + 'px';
+                
+                const duration = Math.random() * 3 + 2; 
+                conf.style.transition = `all ${duration}s cubic-bezier(0.25, 0.46, 0.45, 0.94)`;
+                
+                document.body.appendChild(conf);
+                
+                setTimeout(() => {
+                    conf.style.top = (window.scrollY + window.innerHeight + 100) + 'px';
+                    const rotation = Math.random() * 1080;
+                    const drift = Math.random() * 200 - 100;
+                    conf.style.transform = `rotate(${rotation}deg) translateX(${drift}px)`;
+                }, 50);
+                
+                setTimeout(() => { if (conf.parentNode) conf.parentNode.removeChild(conf); }, duration * 1000 + 100);
+            }
+        }
+    </script>
+</body>
+</html>

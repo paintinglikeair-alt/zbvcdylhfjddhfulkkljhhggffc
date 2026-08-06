@@ -1,0 +1,525 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>محطة الشحن الذكية - الوحدة السابعة</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700;900&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Tajawal', sans-serif;
+            background-color: #f8fafc; /* خلفية رمادية فاتحة */
+            background-image: 
+                linear-gradient(to right, #e2e8f0 1px, transparent 1px),
+                linear-gradient(to bottom, #e2e8f0 1px, transparent 1px);
+            background-size: 40px 40px;
+            overflow-x: hidden;
+        }
+
+        .btn-playful {
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 6px 0 rgba(0,0,0,0.2);
+            position: relative;
+        }
+        .btn-playful:active:not(:disabled) {
+            transform: translateY(6px);
+            box-shadow: 0 0 0 rgba(0,0,0,0);
+        }
+        .btn-playful:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none !important;
+            box-shadow: 0 6px 0 rgba(0,0,0,0.2) !important;
+            filter: grayscale(0.8);
+        }
+
+        /* تصميم الحاوية */
+        .shipping-container {
+            width: 60px;
+            height: 40px;
+            background: linear-gradient(135deg, #ef4444, #b91c1c); /* لون أحمر للحاويات */
+            border: 2px solid #7f1d1d;
+            border-radius: 4px;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 2px 2px 5px rgba(0,0,0,0.3), inset 0 2px 0 rgba(255,255,255,0.2);
+            font-weight: 900;
+            color: white;
+            font-size: 1rem;
+            text-shadow: 1px 1px 1px rgba(0,0,0,0.5);
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            /* الخطوط المميزة للحاويات */
+            background-image: repeating-linear-gradient(
+                90deg,
+                transparent,
+                transparent 5px,
+                rgba(0,0,0,0.1) 5px,
+                rgba(0,0,0,0.1) 10px
+            );
+        }
+        .shipping-container.blue { background: linear-gradient(135deg, #3b82f6, #1d4ed8); border-color: #1e3a8a; }
+        .shipping-container.yellow { background: linear-gradient(135deg, #eab308, #a16207); border-color: #713f12; }
+        
+        .container-slot {
+            width: 64px;
+            height: 44px;
+            border: 2px dashed #94a3b8;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: rgba(255,255,255,0.5);
+        }
+
+        /* سكة القطار */
+        .train-track {
+            height: 12px;
+            width: 100%;
+            background: repeating-linear-gradient(
+                90deg,
+                #475569,
+                #475569 10px,
+                #94a3b8 10px,
+                #94a3b8 20px
+            );
+            border-top: 2px solid #1e293b;
+            border-bottom: 2px solid #1e293b;
+            position: relative;
+            margin-top: 2px;
+        }
+
+        /* عربة القطار */
+        .train-car {
+            width: 220px;
+            height: 70px;
+            background-color: #f1f5f9;
+            border: 4px solid #334155;
+            border-bottom: none;
+            border-radius: 8px 8px 0 0;
+            position: relative;
+            display: flex;
+            flex-wrap: wrap;
+            align-content: flex-end;
+            justify-content: center;
+            gap: 4px;
+            padding: 4px;
+            box-shadow: inset 0 -10px 10px rgba(0,0,0,0.05);
+            transition: transform 2s ease-in-out;
+        }
+        .train-car::after {
+            content: '';
+            position: absolute;
+            bottom: -15px;
+            left: 10px;
+            width: 20px;
+            height: 20px;
+            background-color: #1e293b;
+            border-radius: 50%;
+            border: 3px solid #cbd5e1;
+        }
+        .train-car::before {
+            content: '';
+            position: absolute;
+            bottom: -15px;
+            right: 10px;
+            width: 20px;
+            height: 20px;
+            background-color: #1e293b;
+            border-radius: 50%;
+            border: 3px solid #cbd5e1;
+        }
+
+        /* حركات */
+        .pop-in { animation: popIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; }
+        @keyframes popIn {
+            0% { transform: scale(0.5) translateY(-20px); opacity: 0; }
+            100% { transform: scale(1) translateY(0); opacity: 1; }
+        }
+
+        .depart { animation: trainDepart 2s ease-in forwards; }
+        @keyframes trainDepart {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(120%); } /* يخرج من الشاشة يساراً (لأننا RTL) */
+        }
+
+        /* مدخلات الرياضيات */
+        .math-input {
+            width: 4.5rem;
+            text-align: center;
+            font-size: 1.5rem;
+            font-weight: 900;
+            border: 3px solid #cbd5e1;
+            border-radius: 0.75rem;
+            background-color: white;
+            transition: all 0.3s;
+            font-family: monospace;
+        }
+        .math-input:focus {
+            outline: none;
+            border-color: #6366f1;
+            box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.3);
+        }
+        .input-correct {
+            background-color: #dcfce7 !important;
+            border-color: #22c55e !important;
+            color: #166534 !important;
+        }
+        
+        .shake { animation: shake 0.5s cubic-bezier(.36,.07,.19,.97) both; }
+        @keyframes shake {
+            10%, 90% { transform: translate3d(-1px, 0, 0); }
+            20%, 80% { transform: translate3d(2px, 0, 0); }
+            30%, 50%, 70% { transform: translate3d(-4px, 0, 0); }
+            40%, 60% { transform: translate3d(4px, 0, 0); }
+        }
+
+    </style>
+</head>
+<body class="min-h-screen text-gray-800 flex flex-col items-center py-6 px-4 relative">
+
+    <header class="w-full max-w-5xl text-center mb-8 z-10">
+        <div class="bg-white rounded-3xl p-6 shadow-xl border-4 border-indigo-600 relative overflow-hidden">
+            <!-- خلفية زخرفية -->
+            <div class="absolute -top-10 -right-10 text-9xl opacity-10 rotate-12 pointer-events-none">🚂</div>
+            <div class="absolute -bottom-10 -left-10 text-9xl opacity-10 -rotate-12 pointer-events-none">📦</div>
+            
+            <span class="bg-indigo-700 text-white font-bold px-4 py-1 rounded-full text-sm absolute top-4 right-4">الوحدة السابعة</span>
+            
+            <h1 class="text-3xl md:text-5xl font-black text-indigo-900 mb-2 mt-4 flex items-center justify-center gap-3 relative z-10">
+                <span>🏗️</span> محطة الشحن الذكية <span>🚢</span>
+            </h1>
+            <h2 class="text-xl md:text-2xl font-bold text-indigo-700 mb-4 relative z-10">
+                عمليتا الضرب والقسمة: الحساب والعلاقات
+            </h2>
+            
+            <div class="bg-indigo-50 border-2 border-indigo-200 rounded-2xl p-4 inline-block text-right w-full max-w-3xl relative z-10 mt-2">
+                <p class="text-indigo-900 font-bold text-lg leading-relaxed">
+                    نشاهد في العالم كيفية تخزين ونقل البضائع في شكل <strong class="bg-indigo-200 px-2 rounded">مصفوفات</strong>. ماذا ستفعل إذا طُلب منك حساب عدد البضائع التي يتم نقلها في الحاويات الضخمة؟
+                </p>
+            </div>
+        </div>
+    </header>
+
+    <main class="w-full max-w-5xl z-10 flex flex-col gap-8">
+        
+        <!-- التحدي الأول: الضرب (تكوين المصفوفات) -->
+        <section id="multiplication-section" class="bg-white rounded-3xl shadow-xl border-4 border-blue-400 p-6 md:p-8">
+            <div class="flex items-center gap-3 mb-6 border-b-2 border-blue-100 pb-4">
+                <span class="text-4xl">✖️</span>
+                <h2 class="text-2xl md:text-3xl font-black text-blue-800">التحدي الأول: تحميل القطار (الضرب)</h2>
+            </div>
+            
+            <p class="text-lg font-bold text-gray-700 mb-6 text-center">
+                كيف يمكنك استخدام عملية <strong class="text-blue-600 bg-blue-50 px-2 rounded">الضرب</strong> لحساب الأعداد الكبيرة التي نشهدها في حاويات النقل؟
+            </p>
+
+            <div class="flex flex-col md:flex-row gap-8 items-center justify-center mb-8">
+                
+                <!-- لوحة التحكم -->
+                <div class="bg-blue-50 p-6 rounded-2xl border-2 border-blue-200 shadow-inner w-full md:w-1/3 text-center">
+                    <p class="font-bold text-gray-600 mb-4">الرافعة جاهزة لترتيب الحاويات في شكل مصفوفة:</p>
+                    
+                    <div class="flex justify-center items-center gap-4 text-2xl font-black font-mono text-blue-900 mb-6" dir="ltr">
+                        <span class="bg-white px-3 py-1 rounded border-2 border-blue-300">3</span>
+                        <span class="text-blue-500">×</span>
+                        <span class="bg-white px-3 py-1 rounded border-2 border-blue-300">5</span>
+                    </div>
+
+                    <button onclick="loadTrain()" id="btn-load" class="btn-playful bg-blue-600 hover:bg-blue-700 text-white font-black py-3 px-8 rounded-xl text-xl w-full flex items-center justify-center gap-2">
+                        <span>🏗️</span> تحميل الحاويات
+                    </button>
+                </div>
+
+                <!-- محطة القطار (المرئيات) -->
+                <div class="flex-1 w-full flex flex-col items-center">
+                    <div class="relative w-full max-w-md h-32 flex items-end justify-center mb-1">
+                        <!-- عربة القطار -->
+                        <div id="train-car-1" class="train-car z-10">
+                            <!-- الحاويات ستظهر هنا -->
+                        </div>
+                    </div>
+                    <!-- السكة -->
+                    <div class="train-track"></div>
+                </div>
+
+            </div>
+
+            <!-- سؤال الضرب -->
+            <div id="q1-box" class="hidden bg-gray-50 border-2 border-gray-200 rounded-2xl p-6 text-center">
+                <p class="text-xl font-black text-gray-800 mb-4">لقد حملنا <span class="text-blue-600">3</span> صفوف، في كل صف <span class="text-blue-600">5</span> حاويات. ما إجمالي عدد الحاويات؟</p>
+                <div class="flex items-center justify-center gap-4 text-3xl font-black font-mono" dir="ltr">
+                    <span>3</span>
+                    <span class="text-blue-500">×</span>
+                    <span>5</span>
+                    <span class="text-blue-500">=</span>
+                    <input type="number" id="ans-mult" class="math-input text-blue-900" placeholder="؟">
+                </div>
+                <div class="mt-6">
+                    <button onclick="checkMultiplication()" id="btn-check-mult" class="btn-playful bg-green-500 hover:bg-green-600 text-white font-black py-2 px-8 rounded-xl text-xl">
+                        تأكيد وإرسال القطار 🚂
+                    </button>
+                </div>
+                <p id="fb-mult" class="hidden mt-4 font-bold text-lg text-green-700"></p>
+            </div>
+        </section>
+
+        <!-- التحدي الثاني: القسمة (توزيع الحاويات) -->
+        <section id="division-section" class="bg-white rounded-3xl shadow-xl border-4 border-amber-400 p-6 md:p-8 opacity-50 pointer-events-none transition-all duration-500 relative">
+            
+            <div id="div-lock" class="absolute inset-0 z-20 flex flex-col items-center justify-center bg-white/70 backdrop-blur-sm rounded-3xl">
+                <span class="text-6xl mb-4">🔒</span>
+                <p class="text-2xl font-bold text-gray-800 text-center px-4">أرسل القطار الأول لفتح محطة التوزيع!</p>
+            </div>
+
+            <div class="flex items-center gap-3 mb-6 border-b-2 border-amber-100 pb-4">
+                <span class="text-4xl">➗</span>
+                <h2 class="text-2xl md:text-3xl font-black text-amber-800">التحدي الثاني: التوزيع العادل (القسمة)</h2>
+            </div>
+
+            <p class="text-lg font-bold text-gray-700 mb-6 text-center">
+                كيف يمكنك استخدام عملية <strong class="text-amber-600 bg-amber-50 px-2 rounded">القسمة</strong> لتوزيع الأعداد الكبيرة في حاويات مختلفة بشكل متساوي؟
+            </p>
+
+            <div class="bg-amber-50 p-6 rounded-2xl border-2 border-amber-200 shadow-inner mb-8 text-center">
+                <p class="text-xl font-bold text-amber-900 mb-4">
+                    وصلت سفينة تحمل <span class="font-black text-3xl mx-1 bg-white px-2 rounded">12</span> حاوية ضخمة. <br>
+                    نريد توزيعها بالتساوي على <span class="font-black text-3xl mx-1 bg-white px-2 rounded">3</span> شاحنات لنقلها.
+                </p>
+                <button onclick="distributeContainers()" id="btn-distribute" class="btn-playful bg-amber-500 hover:bg-amber-600 text-white font-black py-3 px-8 rounded-xl text-xl mt-2 flex items-center justify-center gap-2 mx-auto">
+                    <span>🤖</span> ابدأ التوزيع الآلي
+                </button>
+            </div>
+
+            <!-- عرض الشاحنات والتوزيع -->
+            <div class="flex flex-col md:flex-row justify-center gap-6 mb-8 min-h-[120px]" id="trucks-container">
+                <!-- الشاحنة 1 -->
+                <div class="flex-1 bg-white border-2 border-gray-300 rounded-xl p-4 flex flex-col items-center gap-2">
+                    <span class="text-4xl text-gray-400">🚛</span>
+                    <p class="font-bold text-sm text-gray-500 border-b border-gray-200 w-full text-center pb-1">شاحنة 1</p>
+                    <div class="flex flex-wrap justify-center gap-1 min-h-[40px] w-full" id="truck-slot-1"></div>
+                </div>
+                <!-- الشاحنة 2 -->
+                <div class="flex-1 bg-white border-2 border-gray-300 rounded-xl p-4 flex flex-col items-center gap-2">
+                    <span class="text-4xl text-gray-400">🚛</span>
+                    <p class="font-bold text-sm text-gray-500 border-b border-gray-200 w-full text-center pb-1">شاحنة 2</p>
+                    <div class="flex flex-wrap justify-center gap-1 min-h-[40px] w-full" id="truck-slot-2"></div>
+                </div>
+                <!-- الشاحنة 3 -->
+                <div class="flex-1 bg-white border-2 border-gray-300 rounded-xl p-4 flex flex-col items-center gap-2">
+                    <span class="text-4xl text-gray-400">🚛</span>
+                    <p class="font-bold text-sm text-gray-500 border-b border-gray-200 w-full text-center pb-1">شاحنة 3</p>
+                    <div class="flex flex-wrap justify-center gap-1 min-h-[40px] w-full" id="truck-slot-3"></div>
+                </div>
+            </div>
+
+            <!-- سؤال القسمة -->
+            <div id="q2-box" class="hidden bg-gray-50 border-2 border-gray-200 rounded-2xl p-6 text-center">
+                <p class="text-xl font-black text-gray-800 mb-4">كم حاوية أخذت كل شاحنة؟ (عملية القسمة)</p>
+                <div class="flex items-center justify-center gap-4 text-3xl font-black font-mono" dir="ltr">
+                    <span>12</span>
+                    <span class="text-amber-500">÷</span>
+                    <span>3</span>
+                    <span class="text-amber-500">=</span>
+                    <input type="number" id="ans-div" class="math-input text-amber-900" placeholder="؟">
+                </div>
+                <div class="mt-6">
+                    <button onclick="checkDivision()" id="btn-check-div" class="btn-playful bg-green-500 hover:bg-green-600 text-white font-black py-2 px-8 rounded-xl text-xl">
+                        تأكيد التوزيع ✅
+                    </button>
+                </div>
+                <p id="fb-div" class="hidden mt-4 font-bold text-lg text-green-700"></p>
+            </div>
+
+        </section>
+
+        <!-- رسالة الختام -->
+        <div id="finalVictory" class="hidden mt-4 bg-gradient-to-r from-indigo-100 to-blue-100 border-4 border-indigo-500 rounded-3xl p-8 text-center shadow-2xl relative overflow-hidden">
+            <div class="absolute -top-10 -right-10 text-9xl opacity-20 pointer-events-none rotate-12">🌟</div>
+            <div class="text-7xl mb-4 animate-bounce">🥇</div>
+            <h3 class="text-3xl font-black text-indigo-900 mb-4">أنت مدير عمليات ممتاز!</h3>
+            <div class="bg-white p-6 rounded-2xl border-2 border-indigo-200 inline-block text-right shadow-sm relative z-10">
+                <p class="text-xl font-bold text-gray-800 mb-3 border-b-2 border-indigo-100 pb-2">ملخص الوحدة السابعة:</p>
+                <ul class="text-lg text-indigo-800 font-bold space-y-2">
+                    <li class="flex items-center gap-2"><span>✅</span> <strong>الضرب:</strong> يُستخدم لجمع مجموعات متساوية بسرعة (مثل تحميل حاويات في مصفوفة).</li>
+                    <li class="flex items-center gap-2"><span>✅</span> <strong>القسمة:</strong> تُستخدم لتوزيع كمية كبيرة بالتساوي على مجموعات أصغر.</li>
+                </ul>
+            </div>
+            <div class="mt-8 relative z-10">
+                <button onclick="location.reload()" class="btn-playful bg-indigo-600 hover:bg-indigo-700 text-white font-black py-3 px-10 rounded-xl text-xl">
+                    بدء وردية عمل جديدة 🔄
+                </button>
+            </div>
+        </div>
+
+    </main>
+
+    <script>
+        function shakeElement(el) {
+            el.classList.add('shake', 'bg-red-50', 'border-red-400');
+            setTimeout(() => el.classList.remove('shake', 'bg-red-50', 'border-red-400'), 500);
+        }
+
+        // --- التحدي الأول: الضرب ---
+        function loadTrain() {
+            const btn = document.getElementById('btn-load');
+            const car = document.getElementById('train-car-1');
+            
+            btn.disabled = true;
+            btn.innerText = "جاري التحميل... ⏳";
+
+            // 3 rows x 5 cols = 15 containers
+            car.innerHTML = ''; // clear
+            let delay = 0;
+
+            for (let i = 0; i < 15; i++) {
+                setTimeout(() => {
+                    const cont = document.createElement('div');
+                    // Random color for variety
+                    const colors = ['', 'blue', 'yellow'];
+                    const colorClass = colors[Math.floor(Math.random() * colors.length)];
+                    cont.className = `shipping-container pop-in ${colorClass}`;
+                    
+                    car.appendChild(cont);
+                }, delay);
+                delay += 100; // 100ms between each container
+            }
+
+            // Show question box after animation
+            setTimeout(() => {
+                document.getElementById('q1-box').classList.remove('hidden');
+                btn.style.display = 'none';
+                document.getElementById('ans-mult').focus();
+            }, delay + 500);
+        }
+
+        function checkMultiplication() {
+            const input = document.getElementById('ans-mult');
+            const btn = document.getElementById('btn-check-mult');
+            const fb = document.getElementById('fb-mult');
+            const trainCar = document.getElementById('train-car-1');
+
+            if (parseInt(input.value) === 15) {
+                // Correct
+                input.classList.add('input-correct');
+                input.disabled = true;
+                btn.style.display = 'none';
+                
+                fb.innerText = "✅ أحسنت! 3 × 5 = 15 حاوية. القطار ينطلق الآن!";
+                fb.classList.remove('hidden');
+
+                // Animate train departure
+                trainCar.classList.add('depart');
+
+                // Unlock Division Section
+                setTimeout(() => {
+                    document.getElementById('div-lock').style.display = 'none';
+                    const divSec = document.getElementById('division-section');
+                    divSec.classList.remove('opacity-50', 'pointer-events-none');
+                    divSec.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }, 1500);
+
+            } else {
+                // Wrong
+                shakeElement(input);
+            }
+        }
+
+        // --- التحدي الثاني: القسمة ---
+        function distributeContainers() {
+            const btn = document.getElementById('btn-distribute');
+            const slots = [
+                document.getElementById('truck-slot-1'),
+                document.getElementById('truck-slot-2'),
+                document.getElementById('truck-slot-3')
+            ];
+            
+            btn.disabled = true;
+            btn.innerText = "جاري التوزيع... ⏳";
+
+            // 12 containers total, distributing 1 by 1
+            let total = 12;
+            let currentTruck = 0;
+            let delay = 0;
+
+            for (let i = 0; i < total; i++) {
+                setTimeout(() => {
+                    const cont = document.createElement('div');
+                    cont.className = `shipping-container pop-in blue w-[40px] h-[30px] text-xs`; // Smaller for trucks
+                    cont.style.width = '40px'; cont.style.height = '30px'; // override CSS
+                    
+                    slots[currentTruck].appendChild(cont);
+                    
+                    currentTruck++;
+                    if (currentTruck > 2) currentTruck = 0; // round robin
+                }, delay);
+                delay += 150;
+            }
+
+            // Show question box after animation
+            setTimeout(() => {
+                document.getElementById('q2-box').classList.remove('hidden');
+                btn.style.display = 'none';
+                document.getElementById('ans-div').focus();
+            }, delay + 500);
+        }
+
+        function checkDivision() {
+            const input = document.getElementById('ans-div');
+            const btn = document.getElementById('btn-check-div');
+            const fb = document.getElementById('fb-div');
+
+            if (parseInt(input.value) === 4) {
+                // Correct
+                input.classList.add('input-correct');
+                input.disabled = true;
+                btn.style.display = 'none';
+                
+                fb.innerText = "✅ توزيع عادل! 12 ÷ 3 = 4 حاويات لكل شاحنة.";
+                fb.classList.remove('hidden');
+
+                // Show Final Victory
+                setTimeout(() => {
+                    document.getElementById('finalVictory').classList.remove('hidden');
+                    document.getElementById('finalVictory').scrollIntoView({ behavior: 'smooth', block: 'end' });
+                    confettiEffect();
+                }, 1000);
+
+            } else {
+                // Wrong
+                shakeElement(input);
+            }
+        }
+
+        function confettiEffect() {
+            const colors = ['#3b82f6', '#ef4444', '#eab308', '#10b981'];
+            for(let i=0; i<60; i++) {
+                const conf = document.createElement('div');
+                conf.className = 'absolute w-3 h-3 rounded-sm opacity-90 z-50 pointer-events-none';
+                
+                if(Math.random() > 0.5) conf.classList.add('rounded-full');
+                
+                conf.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                conf.style.left = Math.random() * 100 + 'vw';
+                conf.style.top = (window.scrollY - 20) + 'px';
+                
+                const duration = Math.random() * 3 + 2; 
+                conf.style.transition = `all ${duration}s cubic-bezier(0.25, 0.46, 0.45, 0.94)`;
+                
+                document.body.appendChild(conf);
+                
+                setTimeout(() => {
+                    conf.style.top = (window.scrollY + window.innerHeight + 100) + 'px';
+                    const rotation = Math.random() * 1080;
+                    const drift = Math.random() * 200 - 100;
+                    conf.style.transform = `rotate(${rotation}deg) translateX(${drift}px)`;
+                }, 50);
+                
+                setTimeout(() => { if (conf.parentNode) conf.parentNode.removeChild(conf); }, duration * 1000 + 100);
+            }
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,496 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ترتيب العمليات والمسائل الكلامية</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700;900&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Tajawal', sans-serif;
+            background-color: #f8fafc;
+            background-image: radial-gradient(#cbd5e1 2px, transparent 2px);
+            background-size: 30px 30px;
+            overflow-x: hidden;
+        }
+
+        .btn-playful {
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 6px 0 rgba(0,0,0,0.2);
+        }
+        .btn-playful:active:not(:disabled) {
+            transform: translateY(6px);
+            box-shadow: 0 0 0 rgba(0,0,0,0);
+        }
+        .btn-playful:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none !important;
+            box-shadow: 0 6px 0 rgba(0,0,0,0.2) !important;
+        }
+
+        .math-input {
+            text-align: center;
+            font-size: 1.5rem;
+            font-weight: 900;
+            border: 3px solid #cbd5e1;
+            border-radius: 0.75rem;
+            background-color: white;
+            transition: all 0.3s;
+            font-family: monospace;
+        }
+        .math-input:focus {
+            outline: none;
+            border-color: #6366f1;
+            box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.3);
+        }
+        .input-correct {
+            background-color: #dcfce7 !important;
+            border-color: #22c55e !important;
+            color: #166534 !important;
+        }
+
+        .shake { animation: shake 0.5s cubic-bezier(.36,.07,.19,.97) both; }
+        @keyframes shake {
+            10%, 90% { transform: translate3d(-1px, 0, 0); }
+            20%, 80% { transform: translate3d(2px, 0, 0); }
+            30%, 50%, 70% { transform: translate3d(-4px, 0, 0); }
+            40%, 60% { transform: translate3d(4px, 0, 0); }
+        }
+
+        .pop-in { animation: popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; }
+        @keyframes popIn {
+            0% { transform: scale(0.5); opacity: 0; }
+            80% { transform: scale(1.05); opacity: 1; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        /* تنسيقات هرم العمليات */
+        .pyramid-level {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto;
+            font-weight: 900;
+            color: white;
+            border: 4px solid rgba(255,255,255,0.3);
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
+            transition: transform 0.3s;
+        }
+        .pyramid-level:hover { transform: scale(1.05); }
+        
+        .level-1 { width: 40%; background: linear-gradient(135deg, #ef4444, #b91c1c); border-radius: 12px 12px 0 0; padding: 1rem; z-index: 3; position: relative;}
+        .level-2 { width: 70%; background: linear-gradient(135deg, #3b82f6, #1d4ed8); border-radius: 8px 8px 0 0; padding: 1rem; z-index: 2; margin-top: -4px; position: relative;}
+        .level-3 { width: 100%; background: linear-gradient(135deg, #10b981, #047857); border-radius: 8px; padding: 1rem; z-index: 1; margin-top: -4px; position: relative;}
+
+        .brackets-glow {
+            animation: bracketsGlow 1.5s infinite alternate;
+        }
+        @keyframes bracketsGlow {
+            0% { text-shadow: 0 0 5px #fff, 0 0 10px #fca5a5; }
+            100% { text-shadow: 0 0 20px #fff, 0 0 30px #fef08a; }
+        }
+    </style>
+</head>
+<body class="min-h-screen text-gray-800 flex flex-col items-center py-6 px-4 relative">
+
+    <header class="w-full max-w-5xl text-center mb-8 z-10">
+        <div class="bg-white rounded-3xl p-6 shadow-xl border-4 border-indigo-600 relative overflow-hidden">
+            <span class="bg-indigo-700 text-white font-bold px-4 py-1 rounded-full text-sm absolute top-4 right-4">الدرس الثاني - الوحدة الثامنة</span>
+            
+            <h1 class="text-3xl md:text-5xl font-black text-indigo-900 mb-2 mt-4 flex items-center justify-center gap-3">
+                <span>📝</span> ترتيب العمليات والمسائل الكلامية <span>🔢</span>
+            </h1>
+            <p class="text-lg md:text-xl text-indigo-700 font-bold mb-4">
+                كيف نترجم القصص إلى معادلات رياضية دقيقة؟
+            </p>
+        </div>
+    </header>
+
+    <main class="w-full max-w-5xl z-10 flex flex-col gap-8">
+        
+        <!-- --- STREAMING_CHUNK:Review Section (Pyramid) --- -->
+        <section id="review-section" class="bg-white rounded-3xl shadow-xl border-4 border-rose-400 p-6 md:p-8">
+            <div class="flex items-center gap-3 mb-6 border-b-2 border-rose-100 pb-4">
+                <span class="text-4xl">⚠️</span>
+                <h2 class="text-2xl md:text-3xl font-black text-rose-800">مراجعة هامة: هرم القوة (ترتيب العمليات)</h2>
+            </div>
+            
+            <p class="text-lg font-bold text-gray-700 mb-6 text-center leading-relaxed">
+                قبل حل المسائل الكلامية المعقدة، يجب أن نتذكر من هو "الملك" في عالم الرياضيات! <br>
+                دائماً نبدأ من قمة الهرم وننزل لأسفل.
+            </p>
+
+            <div class="flex flex-col md:flex-row items-center gap-10 mb-8">
+                <!-- الهرم -->
+                <div class="w-full md:w-1/2 flex flex-col items-center">
+                    <div class="pyramid-level level-1 flex-col">
+                        <span class="text-sm opacity-90">أقوى شيء (نفذه أولاً)</span>
+                        <span class="text-4xl font-mono brackets-glow">( الأقواس )</span>
+                    </div>
+                    <div class="pyramid-level level-2 flex-col">
+                        <span class="text-sm opacity-90">المرتبة الثانية (من اليسار لليمين)</span>
+                        <div class="text-4xl font-mono flex gap-6"><span>×</span><span>÷</span></div>
+                    </div>
+                    <div class="pyramid-level level-3 flex-col">
+                        <span class="text-sm opacity-90">المرتبة الثالثة (من اليسار لليمين)</span>
+                        <div class="text-4xl font-mono flex gap-6"><span>+</span><span>-</span></div>
+                    </div>
+                </div>
+
+                <!-- مسألة الفخ -->
+                <div class="w-full md:w-1/2 bg-rose-50 border-2 border-rose-200 rounded-2xl p-6 text-center shadow-inner">
+                    <h3 class="font-black text-xl text-rose-900 mb-4">تحدي إثبات الفهم 🕵️‍♂️</h3>
+                    <p class="font-bold text-gray-700 mb-2">حل هذه المسألة لتثبت أنك تتذكر القاعدة:</p>
+                    <div class="text-3xl font-black font-mono text-gray-800 bg-white py-3 rounded-xl border border-gray-300 mb-4" dir="ltr">
+                        50 - <span class="text-rose-600">(</span> 10 + 5 <span class="text-rose-600">)</span>
+                    </div>
+                    <div class="flex flex-col gap-3" id="review-options">
+                        <!-- الخيار الخاطئ (طرح ثم جمع) -->
+                        <button onclick="checkReview(false, this)" class="btn-playful bg-white border-2 border-gray-300 hover:bg-rose-100 text-gray-800 font-bold py-3 rounded-xl text-lg font-mono">
+                            50 - 10 = 40 ⬅️ 40 + 5 = 45
+                        </button>
+                        <!-- الخيار الصحيح (أقواس أولاً) -->
+                        <button onclick="checkReview(true, this)" class="btn-playful bg-white border-2 border-gray-300 hover:bg-rose-100 text-gray-800 font-bold py-3 rounded-xl text-lg font-mono">
+                            (10 + 5) = 15 ⬅️ 50 - 15 = 35
+                        </button>
+                    </div>
+                    <p id="review-feedback" class="hidden mt-4 font-bold p-3 rounded-xl text-lg"></p>
+                </div>
+            </div>
+        </section>
+
+        <!-- --- STREAMING_CHUNK:Explore Section (Condensing) --- -->
+        <section id="explore-section" class="bg-white rounded-3xl shadow-xl border-4 border-sky-400 p-6 md:p-8 opacity-50 pointer-events-none transition-all duration-500 relative">
+            
+            <div id="explore-lock" class="absolute inset-0 z-20 flex flex-col items-center justify-center bg-white/70 backdrop-blur-sm rounded-3xl">
+                <span class="text-6xl mb-4">🔒</span>
+                <p class="text-2xl font-bold text-gray-800 text-center px-4">أثبت فهمك للأقواس أولاً لفتح هذا القسم!</p>
+            </div>
+
+            <div class="flex items-center gap-3 mb-6 border-b-2 border-sky-100 pb-4">
+                <span class="text-4xl">🗜️</span>
+                <h2 class="text-2xl md:text-3xl font-black text-sky-800">استكشف: ضغط العمليات الطويلة</h2>
+            </div>
+
+            <p class="text-lg font-bold text-gray-700 mb-6 text-center leading-relaxed">
+                التحدث عن الأعداد: أعد كتابة كل مسألة بشكل أكثر فعالية باستخدام <strong class="bg-sky-100 text-sky-900 px-2 rounded">الضرب</strong> و <strong class="bg-rose-100 text-rose-900 px-2 rounded font-mono">( الأقواس )</strong> إذا لزم الأمر!
+            </p>
+
+            <div class="flex flex-col gap-8">
+                
+                <!-- المسألة الأولى -->
+                <div class="bg-sky-50 border-2 border-sky-200 rounded-2xl p-6 text-center">
+                    <p class="text-sm font-bold text-gray-500 mb-2">المسألة 1 (الجمع المتكرر):</p>
+                    <div class="text-xl md:text-2xl font-black font-mono text-gray-800 mb-6 tracking-wider" dir="ltr">
+                        67 + 67 + 67 + 67 + 67 - 15
+                    </div>
+                    
+                    <p class="font-bold text-sky-900 mb-3">كيف يمكننا كتابتها بشكل أقصر؟ (استخدم الأقواس لحماية عملية الضرب)</p>
+                    <div class="flex flex-wrap items-center justify-center gap-3 text-2xl font-black font-mono" dir="ltr">
+                        <span class="text-rose-500">(</span>
+                        <input type="number" id="exp1-base" class="math-input text-sky-800 w-20 h-12" placeholder="الرقم">
+                        <span class="text-sky-500">×</span>
+                        <input type="number" id="exp1-times" class="math-input text-sky-800 w-16 h-12" placeholder="التكرار">
+                        <span class="text-rose-500">)</span>
+                        <span class="text-gray-600">-</span>
+                        <input type="number" id="exp1-sub" class="math-input text-gray-800 w-20 h-12" placeholder="الباقي">
+                    </div>
+                </div>
+
+                <!-- المسألة الثانية -->
+                <div class="bg-sky-50 border-2 border-sky-200 rounded-2xl p-6 text-center">
+                    <p class="text-sm font-bold text-gray-500 mb-2">المسألة 2 (الطرح المتكرر):</p>
+                    <div class="text-xl md:text-2xl font-black font-mono text-gray-800 mb-6 tracking-wider" dir="ltr">
+                        568 + 78 - 4 - 4 - 4 - 4 - 4 - 4 - 4
+                    </div>
+                    
+                    <p class="font-bold text-sky-900 mb-3">كيف نجمع الطرح المتكرر في عملية واحدة؟</p>
+                    <div class="flex flex-wrap items-center justify-center gap-3 text-2xl font-black font-mono" dir="ltr">
+                        <span>568</span> <span class="text-gray-500">+</span> <span>78</span> <span class="text-gray-500">-</span>
+                        <span class="text-rose-500">(</span>
+                        <input type="number" id="exp2-base" class="math-input text-sky-800 w-16 h-12" placeholder="الرقم">
+                        <span class="text-sky-500">×</span>
+                        <input type="number" id="exp2-times" class="math-input text-sky-800 w-16 h-12" placeholder="التكرار">
+                        <span class="text-rose-500">)</span>
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="text-center mt-8">
+                <button onclick="checkExplore()" id="btn-explore" class="btn-playful bg-sky-500 hover:bg-sky-600 text-white font-black py-3 px-10 rounded-xl text-xl shadow-md">
+                    تأكيد ضغط العمليات 🗜️
+                </button>
+            </div>
+            
+        </section>
+
+        <!-- --- STREAMING_CHUNK:Learn Section (Word Problems) --- -->
+        <section id="learn-section" class="bg-white rounded-3xl shadow-xl border-4 border-emerald-500 p-6 md:p-8 opacity-50 pointer-events-none transition-all duration-500 relative">
+            
+            <div id="learn-lock" class="absolute inset-0 z-20 flex flex-col items-center justify-center bg-white/70 backdrop-blur-sm rounded-3xl">
+                <span class="text-6xl mb-4">🔒</span>
+                <p class="text-2xl font-bold text-gray-800 text-center px-4">أكمل الضغط الرياضي لفتح بناء المعادلات!</p>
+            </div>
+
+            <div class="flex items-center gap-3 mb-6 border-b-2 border-emerald-100 pb-4">
+                <span class="text-4xl">🏗️</span>
+                <h2 class="text-2xl md:text-3xl font-black text-emerald-800">تعلّم: بناء المعادلات لحل القصص</h2>
+            </div>
+
+            <p class="text-lg font-bold text-gray-700 mb-8 text-center leading-relaxed">
+                استخدم الأعداد والرموز لتمثيل ما يحدث في كل مسألة. تذكر استخدام <span class="text-rose-500 font-black font-mono text-xl">( الأقواس )</span> للعملية التي يجب أن تحدث أولاً!
+            </p>
+
+            <div class="flex flex-col gap-10">
+                
+                <!-- المسألة الكلامية 1 -->
+                <div class="bg-emerald-50 border-2 border-emerald-200 rounded-3xl p-6 shadow-sm">
+                    <div class="flex items-start gap-4 mb-6">
+                        <span class="text-4xl mt-1">📮</span>
+                        <div>
+                            <p class="text-xl font-bold text-gray-800 leading-relaxed">
+                                1) يحب عبد الله جمع الطوابع. وقد حصل على <span class="bg-white px-2 rounded font-black text-emerald-700 font-mono" dir="ltr">241</span> طابعاً. احتفظ بعدد <span class="bg-white px-2 rounded font-black text-emerald-700 font-mono" dir="ltr">25</span> طابعاً، ويريد إعطاء الباقي إلى <span class="bg-white px-2 rounded font-black text-blue-600 font-mono" dir="ltr">6</span> من أصدقائه بالتساوي.
+                            </p>
+                            <p class="text-lg text-emerald-900 font-black mt-2">ما عدد الطوابع التي سيحصل عليها كل صديق؟</p>
+                        </div>
+                    </div>
+
+                    <!-- بناء المعادلة -->
+                    <div class="bg-white p-6 rounded-2xl border border-emerald-100 text-center">
+                        <p class="font-bold text-gray-500 mb-4 text-sm">يجب أن (نطرح ما احتفظ به) أولاً قبل أن (نقسم على الأصدقاء). استخدم الأقواس!</p>
+                        
+                        <div class="flex flex-wrap items-center justify-center gap-3 text-2xl font-black font-mono mb-6" dir="ltr">
+                            <span class="text-rose-500 text-3xl">(</span>
+                            <input type="number" id="wp1-tot" class="math-input text-gray-800 w-24 h-12" placeholder="الكلي">
+                            <span class="text-gray-400">-</span>
+                            <input type="number" id="wp1-kept" class="math-input text-gray-800 w-20 h-12" placeholder="احتفظ">
+                            <span class="text-rose-500 text-3xl">)</span>
+                            <span class="text-emerald-500 text-3xl">÷</span>
+                            <input type="number" id="wp1-div" class="math-input text-blue-700 w-16 h-12" placeholder="أصدقاء">
+                        </div>
+
+                        <div class="flex items-center justify-center gap-3 text-2xl font-black font-mono" dir="ltr">
+                            <span class="text-gray-500 text-lg font-sans font-bold" dir="rtl">الناتج = </span>
+                            <input type="number" id="wp1-ans" class="math-input text-emerald-900 border-emerald-400 bg-emerald-50 w-24 h-12" placeholder="الحل">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- المسألة الكلامية 2 -->
+                <div class="bg-emerald-50 border-2 border-emerald-200 rounded-3xl p-6 shadow-sm">
+                    <div class="flex items-start gap-4 mb-6">
+                        <span class="text-4xl mt-1">🚶‍♀️</span>
+                        <div>
+                            <p class="text-xl font-bold text-gray-800 leading-relaxed">
+                                2) مشت مها <span class="bg-white px-2 rounded font-black text-emerald-700 font-mono" dir="ltr">14</span> كيلومتراً كل يوم لمدة أسبوعين (أي <span class="bg-white px-2 rounded font-black text-emerald-700 font-mono" dir="ltr">14</span> يوماً). وفي الأسبوع التالي مشت مسافة <span class="bg-white px-2 rounded font-black text-blue-600 font-mono" dir="ltr">56</span> كيلومتراً.
+                            </p>
+                            <p class="text-lg text-emerald-900 font-black mt-2">كم كيلومتراً مشت خلال تلك الأسابيع الثلاثة؟</p>
+                        </div>
+                    </div>
+
+                    <!-- بناء المعادلة -->
+                    <div class="bg-white p-6 rounded-2xl border border-emerald-100 text-center">
+                        <p class="font-bold text-gray-500 mb-4 text-sm">احسب ما مشته في الأسبوعين (ضرب)، ثم اجمع عليه مسافة الأسبوع الثالث.</p>
+                        
+                        <div class="flex flex-wrap items-center justify-center gap-3 text-2xl font-black font-mono mb-6" dir="ltr">
+                            <span class="text-rose-500 text-3xl">(</span>
+                            <input type="number" id="wp2-km" class="math-input text-gray-800 w-20 h-12" placeholder="كم">
+                            <span class="text-emerald-500 text-3xl">×</span>
+                            <input type="number" id="wp2-days" class="math-input text-gray-800 w-20 h-12" placeholder="يوم">
+                            <span class="text-rose-500 text-3xl">)</span>
+                            <span class="text-gray-400 text-3xl">+</span>
+                            <input type="number" id="wp2-extra" class="math-input text-blue-700 w-20 h-12" placeholder="إضافي">
+                        </div>
+
+                        <div class="flex items-center justify-center gap-3 text-2xl font-black font-mono" dir="ltr">
+                            <span class="text-gray-500 text-lg font-sans font-bold" dir="rtl">الناتج = </span>
+                            <input type="number" id="wp2-ans" class="math-input text-emerald-900 border-emerald-400 bg-emerald-50 w-24 h-12" placeholder="الحل">
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="text-center mt-10">
+                <button onclick="checkWordProblems()" id="btn-final" class="btn-playful bg-emerald-600 hover:bg-emerald-700 text-white font-black py-4 px-12 rounded-2xl text-2xl shadow-lg">
+                    تأكيد المعادلات والحلول 🏆
+                </button>
+            </div>
+
+        </section>
+
+        <!-- رسالة الفوز النهائية -->
+        <div id="finalVictory" class="hidden fixed inset-0 bg-black/80 z-50 flex items-center justify-center p-4 backdrop-blur-md">
+            <div class="bg-white rounded-3xl p-10 shadow-2xl border-8 border-emerald-500 text-center max-w-lg w-full transform transition-all duration-300 pop-in">
+                <div class="text-8xl mb-4 animate-bounce">🎓</div>
+                <h2 class="text-4xl font-black text-emerald-800 mb-4">أنت بطل المعادلات!</h2>
+                <p class="text-xl text-gray-700 font-bold mb-6 leading-relaxed">
+                    لقد أتقنت ترتيب العمليات! أنت الآن قادر على تحويل أي قصة معقدة إلى معادلة رياضية دقيقة وحلها بسهولة بفضل استخدامك الذكي للأقواس.
+                </p>
+                <button onclick="location.reload()" class="btn-playful bg-emerald-600 hover:bg-emerald-700 text-white font-black py-4 px-10 rounded-2xl text-2xl w-full">
+                    تدريب جديد 🔄
+                </button>
+            </div>
+        </div>
+
+    </main>
+
+    <script>
+        function shakeInput(el) {
+            el.classList.add('shake', 'bg-red-50', 'border-red-400', 'text-red-700');
+            setTimeout(() => el.classList.remove('shake', 'bg-red-50', 'border-red-400', 'text-red-700'), 500);
+        }
+
+        function shakeButton(btn) {
+            btn.classList.add('shake', 'bg-red-100', 'border-red-400', 'text-red-800');
+            setTimeout(() => btn.classList.remove('shake', 'bg-red-100', 'border-red-400', 'text-red-800'), 500);
+        }
+
+        // --- Phase 1: Review (Order of Ops) ---
+        function checkReview(isCorrect, btn) {
+            const fb = document.getElementById('review-feedback');
+            const btns = document.getElementById('review-options').children;
+
+            if (isCorrect) {
+                btn.className = "btn-playful w-full bg-green-100 border-4 border-green-500 text-green-900 font-bold py-3 rounded-xl text-lg font-mono transition-colors";
+                for(let b of btns) { if(b !== btn) { b.style.opacity = '0.5'; b.disabled = true; } }
+                
+                fb.innerHTML = "✅ ممتاز! الأقواس تُنفذ أولاً، لذلك نطرح 15 من 50 وليس 10. لقد أثبتّ جدارتك!";
+                fb.className = "mt-4 font-bold p-4 rounded-xl text-lg bg-green-50 text-green-800 border-2 border-green-300 block pop-in";
+                
+                // Unlock Phase 2
+                setTimeout(() => {
+                    document.getElementById('explore-lock').style.display = 'none';
+                    const expSec = document.getElementById('explore-section');
+                    expSec.classList.remove('opacity-50', 'pointer-events-none');
+                    expSec.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    document.getElementById('exp1-base').focus();
+                }, 2000);
+
+            } else {
+                shakeButton(btn);
+            }
+        }
+
+        // --- Phase 2: Explore (Condensing) ---
+        function checkExplore() {
+            // Eq 1: 67 * 5 - 15
+            const e1Base = document.getElementById('exp1-base'); // 67
+            const e1Times = document.getElementById('exp1-times'); // 5
+            const e1Sub = document.getElementById('exp1-sub'); // 15
+
+            // Eq 2: 568 + 78 - (4 * 7)
+            const e2Base = document.getElementById('exp2-base'); // 4
+            const e2Times = document.getElementById('exp2-times'); // 7
+
+            let allCorrect = true;
+
+            const validate = (el, val) => {
+                if (parseInt(el.value) === val) {
+                    el.classList.add('input-correct');
+                    el.disabled = true;
+                } else {
+                    shakeInput(el);
+                    allCorrect = false;
+                }
+            };
+
+            validate(e1Base, 67);
+            validate(e1Times, 5);
+            validate(e1Sub, 15);
+
+            validate(e2Base, 4);
+            validate(e2Times, 7);
+
+            if (allCorrect) {
+                document.getElementById('btn-explore').style.display = 'none';
+                
+                // Unlock Phase 3
+                setTimeout(() => {
+                    document.getElementById('learn-lock').style.display = 'none';
+                    const learnSec = document.getElementById('learn-section');
+                    learnSec.classList.remove('opacity-50', 'pointer-events-none');
+                    learnSec.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    document.getElementById('wp1-tot').focus();
+                }, 1000);
+            }
+        }
+
+        // --- Phase 3: Learn (Word Problems) ---
+        function checkWordProblems() {
+            // WP 1: (241 - 25) / 6 = 216 / 6 = 36
+            const w1Tot = document.getElementById('wp1-tot'); // 241
+            const w1Kept = document.getElementById('wp1-kept'); // 25
+            const w1Div = document.getElementById('wp1-div'); // 6
+            const w1Ans = document.getElementById('wp1-ans'); // 36
+
+            // WP 2: (14 * 14) + 56 = 196 + 56 = 252
+            const w2Km = document.getElementById('wp2-km'); // 14
+            const w2Days = document.getElementById('wp2-days'); // 14
+            const w2Extra = document.getElementById('wp2-extra'); // 56
+            const w2Ans = document.getElementById('wp2-ans'); // 252
+
+            let allCorrect = true;
+
+            const validate = (el, val) => {
+                if (parseInt(el.value) === val) {
+                    el.classList.add('input-correct');
+                    el.disabled = true;
+                } else {
+                    shakeInput(el);
+                    allCorrect = false;
+                }
+            };
+
+            validate(w1Tot, 241);
+            validate(w1Kept, 25);
+            validate(w1Div, 6);
+            validate(w1Ans, 36);
+
+            validate(w2Km, 14);
+            validate(w2Days, 14);
+            validate(w2Extra, 56);
+            validate(w2Ans, 252);
+
+            if (allCorrect) {
+                document.getElementById('btn-final').style.display = 'none';
+                
+                setTimeout(() => {
+                    document.getElementById('finalVictory').classList.remove('hidden');
+                    confettiEffect();
+                }, 800);
+            }
+        }
+
+        // --- Celebration Effect ---
+        function confettiEffect() {
+            const colors = ['#10b981', '#3b82f6', '#f43f5e', '#8b5cf6'];
+            for(let i=0; i<60; i++) {
+                const conf = document.createElement('div');
+                conf.className = 'absolute w-3 h-3 rounded-full opacity-90 z-50 pointer-events-none';
+                if(Math.random() > 0.5) conf.classList.add('rounded-sm');
+                conf.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                conf.style.left = Math.random() * 100 + 'vw';
+                conf.style.top = (window.scrollY - 20) + 'px';
+                
+                const duration = Math.random() * 3 + 2; 
+                conf.style.transition = `all ${duration}s cubic-bezier(0.25, 0.46, 0.45, 0.94)`;
+                
+                document.body.appendChild(conf);
+                
+                setTimeout(() => {
+                    conf.style.top = (window.scrollY + window.innerHeight + 100) + 'px';
+                    const rotation = Math.random() * 1080;
+                    const drift = Math.random() * 200 - 100;
+                    conf.style.transform = `rotate(${rotation}deg) translateX(${drift}px)`;
+                }, 50);
+                
+                setTimeout(() => { if (conf.parentNode) conf.parentNode.removeChild(conf); }, duration * 1000 + 100);
+            }
+        }
+    </script>
+</body>
+</html>

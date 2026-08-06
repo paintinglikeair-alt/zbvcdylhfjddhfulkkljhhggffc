@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>حل معادلات للمقارنة باستخدام عملية الضرب</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700;900&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Tajawal', sans-serif;
+            background-color: #f5f3ff; /* بنفسجي فاتح (الوحدة الخامسة) */
+            background-image: radial-gradient(#ede9fe 2px, transparent 2px);
+            background-size: 30px 30px;
+            overflow-x: hidden;
+        }
+
+        .btn-playful {
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 6px 0 rgba(0,0,0,0.2);
+        }
+        .btn-playful:active:not(:disabled) {
+            transform: translateY(6px);
+            box-shadow: 0 0 0 rgba(0,0,0,0);
+        }
+        .btn-playful:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none !important;
+            box-shadow: 0 6px 0 rgba(0,0,0,0.2) !important;
+        }
+
+        .math-input {
+            width: 4.5rem;
+            text-align: center;
+            font-size: 1.5rem;
+            font-weight: 900;
+            border: 3px solid #cbd5e1;
+            border-radius: 0.75rem;
+            background-color: white;
+            transition: all 0.3s;
+            font-family: monospace;
+        }
+        .math-input:focus {
+            outline: none;
+            border-color: #8b5cf6;
+            box-shadow: 0 0 0 4px rgba(139, 92, 246, 0.3);
+        }
+        .input-correct {
+            background-color: #dcfce7 !important;
+            border-color: #22c55e !important;
+            color: #166534 !important;
+        }
+
+        .shake { animation: shake 0.5s cubic-bezier(.36,.07,.19,.97) both; }
+        @keyframes shake {
+            10%, 90% { transform: translate3d(-1px, 0, 0); }
+            20%, 80% { transform: translate3d(2px, 0, 0); }
+            30%, 50%, 70% { transform: translate3d(-4px, 0, 0); }
+            40%, 60% { transform: translate3d(4px, 0, 0); }
+        }
+
+        .vehicle-card {
+            background-color: #ffffff;
+            border: 2px solid #ddd6fe;
+            border-radius: 1rem;
+            padding: 1rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            transition: transform 0.2s;
+        }
+        .vehicle-card:hover {
+            transform: translateY(-5px);
+            border-color: #8b5cf6;
+        }
+    </style>
+</head>
+<body class="min-h-screen text-gray-800 flex flex-col items-center py-6 px-4 relative">
+
+    <header class="w-full max-w-4xl text-center mb-8 z-10">
+        <div class="bg-white rounded-3xl p-6 shadow-xl border-4 border-indigo-400 relative overflow-hidden">
+            <span class="bg-indigo-600 text-white font-bold px-4 py-1 rounded-full text-sm absolute top-4 right-4">الدرس الثالث - الوحدة 5</span>
+            
+            <h1 class="text-3xl md:text-5xl font-black text-indigo-900 mb-2 mt-4 flex items-center justify-center gap-3">
+                <span>🧮</span> حل معادلات المقارنة <span>✅</span>
+            </h1>
+            <p class="text-lg md:text-xl text-indigo-700 font-bold mb-4">
+                كيف يمكننا إيجاد العدد المجهول في معادلة الضرب؟
+            </p>
+        </div>
+    </header>
+
+    <main class="w-full max-w-4xl z-10 flex flex-col gap-8">
+
+        <section id="explore" class="bg-white rounded-3xl shadow-xl border-4 border-fuchsia-400 p-6 md:p-8">
+            <div class="flex items-center gap-3 mb-6 border-b-2 border-fuchsia-100 pb-4">
+                <span class="text-4xl">🤔</span>
+                <h2 class="text-2xl md:text-3xl font-black text-fuchsia-800">استكشف: لغز مصطفى</h2>
+            </div>
+            
+            <div class="bg-fuchsia-50 rounded-2xl p-6 border-2 border-fuchsia-200 mb-6 text-center">
+                <p class="text-xl font-bold text-gray-800 mb-4">
+                    مصطفى يحل المعادلة <span class="font-mono font-black text-fuchsia-700 bg-white border border-fuchsia-200 px-3 py-1 rounded-lg inline-block" dir="ltr">18 = a × 6</span>
+                </p>
+                <p class="text-lg text-gray-700 font-bold mb-6">
+                    يقول مصطفى أنه يمكن حل المسألة باستخدام <strong>القسمة</strong>: <br>
+                    <span class="font-mono font-black text-fuchsia-700 bg-white border border-fuchsia-200 px-3 py-1 rounded-lg mt-2 inline-block" dir="ltr">a = 18 ÷ 6</span>
+                </p>
+                <h3 class="text-2xl font-black text-fuchsia-900 mb-6">هل تتفق مع مصطفى أم لا؟</h3>
+                
+                <div class="flex justify-center gap-6" id="mustafa-buttons">
+                    <button onclick="checkMustafa(true, this)" class="btn-playful bg-white border-4 border-green-400 hover:bg-green-50 text-green-800 font-black py-3 px-8 rounded-xl text-xl transition-colors">
+                        نعم، أتفق ✅
+                    </button>
+                    <button onclick="checkMustafa(false, this)" class="btn-playful bg-white border-4 border-red-400 hover:bg-red-50 text-red-800 font-black py-3 px-8 rounded-xl text-xl transition-colors">
+                        لا أتفق ❌
+                    </button>
+                </div>
+            </div>
+            
+            <div id="mustafa-feedback" class="hidden bg-green-100 border-4 border-green-500 rounded-2xl p-6 text-center">
+                <p class="text-2xl font-black text-green-800 mb-2">أحسنت! مصطفى على حق.</p>
+                <p class="text-lg font-bold text-green-700 mb-6">
+                    الضرب والقسمة عمليتان عكسيتان. لإيجاد العامل المجهول المضروب، يمكننا دائماً قسمة الناتج (العدد الكبير) على العامل المعلوم.
+                </p>
+                <button onclick="unlockLearn()" class="btn-playful bg-fuchsia-600 hover:bg-fuchsia-700 text-white font-black py-3 px-10 rounded-xl text-xl">
+                    انتقل إلى التدريب 🚀
+                </button>
+            </div>
+        </section>
+
+        <section id="learn" class="bg-white rounded-3xl shadow-xl border-4 border-purple-500 p-6 md:p-8 opacity-50 pointer-events-none transition-all duration-500 relative">
+            
+            <!-- Lock Overlay -->
+            <div id="learn-lock" class="absolute inset-0 z-20 flex flex-col items-center justify-center bg-white/70 backdrop-blur-sm rounded-3xl">
+                <span class="text-6xl mb-4">🔒</span>
+                <p class="text-2xl font-bold text-gray-800 text-center px-4">حِل لغز مصطفى أولاً لفتح هذا القسم!</p>
+            </div>
+            
+            <div class="flex items-center gap-3 mb-6 border-b-2 border-purple-100 pb-4">
+                <span class="text-4xl">🚌</span>
+                <h2 class="text-2xl md:text-3xl font-black text-purple-800">تعلّم: ما عدد المقاعد؟</h2>
+            </div>
+            
+            <p class="text-lg font-bold text-gray-700 mb-6 text-center leading-relaxed">
+                استخدم المعلومات الموجودة في اللوحة لمقارنة أعداد المقاعد في وسائل النقل المختلفة. كون المعادلة الصحيحة، ثم حُلها!
+            </p>
+
+            <!-- Vehicles Grid (Information Source) -->
+            <div class="grid grid-cols-2 md:grid-cols-3 gap-4 mb-10">
+                <div class="vehicle-card"><span class="text-4xl mb-2">🚲</span><p class="font-bold text-purple-900">دراجة</p><p class="text-2xl font-black text-purple-600 font-mono">1</p></div>
+                <div class="vehicle-card"><span class="text-4xl mb-2">🛵</span><p class="font-bold text-purple-900">دراجة بخارية</p><p class="text-2xl font-black text-purple-600 font-mono">2</p></div>
+                <div class="vehicle-card"><span class="text-4xl mb-2">🚗</span><p class="font-bold text-purple-900">سيارة</p><p class="text-2xl font-black text-purple-600 font-mono">4</p></div>
+                <div class="vehicle-card"><span class="text-4xl mb-2">🚚</span><p class="font-bold text-purple-900">شاحنة</p><p class="text-2xl font-black text-purple-600 font-mono">6</p></div>
+                <div class="vehicle-card"><span class="text-4xl mb-2">🚌</span><p class="font-bold text-purple-900">أتوبيس</p><p class="text-2xl font-black text-purple-600 font-mono">36</p></div>
+                <div class="vehicle-card"><span class="text-4xl mb-2">🚇</span><p class="font-bold text-purple-900">عربة المترو</p><p class="text-2xl font-black text-purple-600 font-mono">48</p></div>
+            </div>
+
+            <div class="space-y-8">
+                
+                <!-- Question 1 -->
+                <div class="bg-gray-50 border-2 border-gray-200 rounded-2xl p-6">
+                    <p class="text-xl font-bold text-gray-800 mb-4">1) كم مرة يساوي عدد المقاعد في <strong class="text-purple-700">الشاحنة</strong> عدد المقاعد في <strong class="text-purple-700">الدراجة البخارية</strong>؟</p>
+                    
+                    <div class="flex flex-col md:flex-row gap-6 items-center justify-center">
+                        <!-- Equation Builder -->
+                        <div class="flex items-center gap-3 bg-white p-4 rounded-xl border border-gray-300 shadow-sm" dir="ltr">
+                            <span class="font-bold text-gray-500 mr-2 text-sm">المعادلة:</span>
+                            <input type="number" id="q1-total" class="math-input text-indigo-900" placeholder="؟">
+                            <span class="text-indigo-400 font-black text-2xl">=</span>
+                            <span class="text-fuchsia-600 font-black text-2xl font-mono">X</span>
+                            <span class="text-indigo-400 font-black text-2xl">×</span>
+                            <input type="number" id="q1-factor" class="math-input text-indigo-900" placeholder="؟">
+                        </div>
+                        
+                        <!-- Solution -->
+                        <div class="flex items-center gap-3 bg-white p-4 rounded-xl border border-gray-300 shadow-sm" dir="ltr">
+                            <span class="font-bold text-gray-500 mr-2 text-sm">الحل:</span>
+                            <span class="text-fuchsia-600 font-black text-2xl font-mono">X</span>
+                            <span class="text-indigo-400 font-black text-2xl">=</span>
+                            <input type="number" id="q1-ans" class="math-input text-green-700 border-green-300 bg-green-50" placeholder="؟">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Question 2 -->
+                <div class="bg-gray-50 border-2 border-gray-200 rounded-2xl p-6">
+                    <p class="text-xl font-bold text-gray-800 mb-4">2) كم مرة يساوي عدد المقاعد في <strong class="text-purple-700">الأتوبيس</strong> عدد المقاعد في <strong class="text-purple-700">السيارة</strong>؟</p>
+                    
+                    <div class="flex flex-col md:flex-row gap-6 items-center justify-center">
+                        <!-- Equation Builder -->
+                        <div class="flex items-center gap-3 bg-white p-4 rounded-xl border border-gray-300 shadow-sm" dir="ltr">
+                            <span class="font-bold text-gray-500 mr-2 text-sm">المعادلة:</span>
+                            <input type="number" id="q2-total" class="math-input text-indigo-900" placeholder="؟">
+                            <span class="text-indigo-400 font-black text-2xl">=</span>
+                            <span class="text-amber-500 font-black text-2xl font-mono">Y</span>
+                            <span class="text-indigo-400 font-black text-2xl">×</span>
+                            <input type="number" id="q2-factor" class="math-input text-indigo-900" placeholder="؟">
+                        </div>
+                        
+                        <!-- Solution -->
+                        <div class="flex items-center gap-3 bg-white p-4 rounded-xl border border-gray-300 shadow-sm" dir="ltr">
+                            <span class="font-bold text-gray-500 mr-2 text-sm">الحل:</span>
+                            <span class="text-amber-500 font-black text-2xl font-mono">Y</span>
+                            <span class="text-indigo-400 font-black text-2xl">=</span>
+                            <input type="number" id="q2-ans" class="math-input text-green-700 border-green-300 bg-green-50" placeholder="؟">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Question 3 -->
+                <div class="bg-gray-50 border-2 border-gray-200 rounded-2xl p-6">
+                    <p class="text-xl font-bold text-gray-800 mb-4">3) كم مرة يساوي عدد المقاعد في <strong class="text-purple-700">عربة المترو</strong> عدد المقاعد في <strong class="text-purple-700">الشاحنة</strong>؟</p>
+                    
+                    <div class="flex flex-col md:flex-row gap-6 items-center justify-center">
+                        <!-- Equation Builder -->
+                        <div class="flex items-center gap-3 bg-white p-4 rounded-xl border border-gray-300 shadow-sm" dir="ltr">
+                            <span class="font-bold text-gray-500 mr-2 text-sm">المعادلة:</span>
+                            <input type="number" id="q3-total" class="math-input text-indigo-900" placeholder="؟">
+                            <span class="text-indigo-400 font-black text-2xl">=</span>
+                            <span class="text-sky-500 font-black text-2xl font-mono">Z</span>
+                            <span class="text-indigo-400 font-black text-2xl">×</span>
+                            <input type="number" id="q3-factor" class="math-input text-indigo-900" placeholder="؟">
+                        </div>
+                        
+                        <!-- Solution -->
+                        <div class="flex items-center gap-3 bg-white p-4 rounded-xl border border-gray-300 shadow-sm" dir="ltr">
+                            <span class="font-bold text-gray-500 mr-2 text-sm">الحل:</span>
+                            <span class="text-sky-500 font-black text-2xl font-mono">Z</span>
+                            <span class="text-indigo-400 font-black text-2xl">=</span>
+                            <input type="number" id="q3-ans" class="math-input text-green-700 border-green-300 bg-green-50" placeholder="؟">
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+            
+            <div class="text-center mt-10">
+                <button onclick="checkAllEquations()" id="btn-check-all" class="btn-playful bg-purple-600 hover:bg-purple-700 text-white font-black py-4 px-12 rounded-2xl text-2xl w-full md:w-auto">
+                    التحقق من جميع الإجابات ✅
+                </button>
+            </div>
+            
+            <div id="final-feedback" class="hidden mt-8 text-center p-6 bg-green-100 border-4 border-green-500 rounded-2xl relative overflow-hidden">
+                <div class="text-7xl mb-4 animate-bounce">🏆</div>
+                <h3 class="text-3xl font-black text-green-800 mb-2">أنت بطل المعادلات!</h3>
+                <p class="text-xl font-bold text-green-700">لقد أتقنت تكوين وحل معادلات المقارنة باستخدام الضرب والقسمة ببراعة.</p>
+                <button onclick="location.reload()" class="mt-6 btn-playful bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-8 rounded-xl text-lg">
+                    إعادة التدريب 🔄
+                </button>
+            </div>
+
+        </section>
+
+    </main>
+
+    <script>
+        // --- Explore Section Logic ---
+        function checkMustafa(isCorrect, btn) {
+            const feedback = document.getElementById('mustafa-feedback');
+            const buttonsContainer = document.getElementById('mustafa-buttons');
+            const btns = buttonsContainer.children;
+
+            if (isCorrect) {
+                // Correct Choice
+                btn.classList.replace('border-green-400', 'border-green-600');
+                btn.classList.add('bg-green-100');
+                
+                // Disable other buttons
+                for(let b of btns) { 
+                    if(b !== btn) { 
+                        b.style.opacity = '0.5'; 
+                        b.disabled = true; 
+                    } 
+                }
+                
+                // Show feedback
+                feedback.classList.remove('hidden');
+                // Scroll down slightly
+                setTimeout(() => {
+                    feedback.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+                }, 100);
+
+            } else {
+                // Wrong Choice
+                btn.classList.add('shake', 'bg-red-50', 'text-red-900');
+                setTimeout(() => btn.classList.remove('shake', 'bg-red-50', 'text-red-900'), 500);
+            }
+        }
+
+        function unlockLearn() {
+            const learnSection = document.getElementById('learn');
+            const learnLock = document.getElementById('learn-lock');
+            
+            learnLock.style.display = 'none';
+            learnSection.classList.remove('opacity-50', 'pointer-events-none');
+            
+            // Scroll to the learn section
+            setTimeout(() => {
+                learnSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }, 100);
+        }
+
+        // --- Learn Section Logic ---
+        function shakeInput(el) {
+            el.classList.add('shake', 'bg-red-50', 'border-red-400');
+            setTimeout(() => {
+                el.classList.remove('shake', 'bg-red-50', 'border-red-400');
+            }, 500);
+        }
+
+        function checkAllEquations() {
+            // Get input elements
+            const q1Total = document.getElementById('q1-total');
+            const q1Factor = document.getElementById('q1-factor');
+            const q1Ans = document.getElementById('q1-ans');
+            
+            const q2Total = document.getElementById('q2-total');
+            const q2Factor = document.getElementById('q2-factor');
+            const q2Ans = document.getElementById('q2-ans');
+            
+            const q3Total = document.getElementById('q3-total');
+            const q3Factor = document.getElementById('q3-factor');
+            const q3Ans = document.getElementById('q3-ans');
+
+            // Helper function to validate a single question block
+            const validateRow = (totalEl, factorEl, ansEl, expectedTotal, expectedFactor, expectedAns) => {
+                let isRowCorrect = true;
+                
+                // Check Total (The larger number must be here)
+                if (parseInt(totalEl.value) === expectedTotal) {
+                    totalEl.classList.add('input-correct');
+                    totalEl.disabled = true;
+                } else {
+                    shakeInput(totalEl);
+                    isRowCorrect = false;
+                }
+
+                // Check Factor (The smaller known number)
+                if (parseInt(factorEl.value) === expectedFactor) {
+                    factorEl.classList.add('input-correct');
+                    factorEl.disabled = true;
+                } else {
+                    shakeInput(factorEl);
+                    isRowCorrect = false;
+                }
+
+                // Check Answer (The solved variable)
+                if (parseInt(ansEl.value) === expectedAns) {
+                    ansEl.classList.add('input-correct');
+                    ansEl.disabled = true;
+                } else {
+                    shakeInput(ansEl);
+                    isRowCorrect = false;
+                }
+                
+                return isRowCorrect;
+            };
+
+            // Values based on the vehicles table:
+            // Q1: Truck(6) vs Motorcycle(2). Eq: 6 = X * 2. Sol: 3
+            const q1Valid = validateRow(q1Total, q1Factor, q1Ans, 6, 2, 3);
+            
+            // Q2: Bus(36) vs Car(4). Eq: 36 = Y * 4. Sol: 9
+            const q2Valid = validateRow(q2Total, q2Factor, q2Ans, 36, 4, 9);
+            
+            // Q3: Metro(48) vs Truck(6). Eq: 48 = Z * 6. Sol: 8
+            const q3Valid = validateRow(q3Total, q3Factor, q3Ans, 48, 6, 8);
+
+            // If all are correct, show success
+            if (q1Valid && q2Valid && q3Valid) {
+                document.getElementById('btn-check-all').style.display = 'none';
+                document.getElementById('final-feedback').classList.remove('hidden');
+                confettiEffect();
+                
+                setTimeout(() => {
+                    document.getElementById('final-feedback').scrollIntoView({ behavior: 'smooth', block: 'end' });
+                }, 100);
+            }
+        }
+
+        // --- Celebration Effect ---
+        function confettiEffect() {
+            const colors = ['#8b5cf6', '#3b82f6', '#10b981', '#f59e0b', '#ec4899'];
+            for(let i=0; i<60; i++) {
+                const conf = document.createElement('div');
+                conf.className = 'absolute w-3 h-3 rounded-full opacity-90 z-50';
+                conf.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                conf.style.left = Math.random() * 100 + 'vw';
+                conf.style.top = -20 + 'px';
+                conf.style.transition = 'all 3s ease-in';
+                document.body.appendChild(conf);
+                
+                setTimeout(() => {
+                    conf.style.top = '100vh';
+                    conf.style.transform = `rotate(${Math.random() * 720}deg) translateX(${Math.random() * 150 - 75}px)`;
+                }, 50);
+            }
+        }
+    </script>
+</body>
+</html>

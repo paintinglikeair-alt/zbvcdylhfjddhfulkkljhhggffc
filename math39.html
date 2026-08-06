@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>مصفاة الأرقام - صيد الأعداد الأولية</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700;900&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Tajawal', sans-serif;
+            background-color: #f5f3ff; /* خلفية بنفسجي فاتح جداً تطابق الوحدة السادسة */
+            background-image: radial-gradient(#ede9fe 2px, transparent 2px);
+            background-size: 30px 30px;
+            overflow-x: hidden;
+        }
+
+        .btn-playful {
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 6px 0 rgba(0,0,0,0.2);
+            position: relative;
+        }
+        .btn-playful:active:not(:disabled) {
+            transform: translateY(6px);
+            box-shadow: 0 0 0 rgba(0,0,0,0);
+        }
+        .btn-playful:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none !important;
+            box-shadow: 0 6px 0 rgba(0,0,0,0.2) !important;
+            filter: grayscale(0.8);
+        }
+
+        .hundreds-grid {
+            display: grid;
+            grid-template-columns: repeat(10, 1fr);
+            gap: 4px;
+            background: #cbd5e1; /* لون إطار الشبكة */
+            border: 4px solid #64748b;
+            padding: 4px;
+            border-radius: 12px;
+            margin: 0 auto;
+            width: fit-content;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        }
+
+        .grid-cell {
+            width: 32px;
+            height: 32px;
+            background-color: #ffffff;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.1rem;
+            font-weight: 800;
+            font-family: monospace;
+            cursor: pointer; /* تم تغيير المؤشر ليناسب النقر */
+            transition: all 0.5s ease;
+            user-select: none;
+            position: relative;
+            color: #334155;
+            box-shadow: 0 2px 2px rgba(0,0,0,0.05);
+        }
+        
+        @media (min-width: 768px) {
+            .grid-cell { width: 45px; height: 45px; font-size: 1.3rem; border-radius: 8px;}
+        }
+
+        /* حالة وضع دائرة (عدد أولي) */
+        .circled {
+            background-color: #fef08a !important; /* خلفية صفراء */
+            color: #854d0e !important;
+            border: 3px solid #eab308 !important;
+            transform: scale(1.1);
+            z-index: 10;
+            box-shadow: 0 4px 6px rgba(234, 179, 8, 0.3);
+        }
+
+        /* حالة الشطب (عدد متعدد العوامل) */
+        .crossed {
+            color: #94a3b8 !important;
+            background-color: #f1f5f9 !important;
+            border: 1px solid #e2e8f0;
+        }
+        .crossed::before {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 3px;
+            background-color: #ef4444; /* خط أحمر للشطب */
+            transform: rotate(45deg);
+            opacity: 0.7;
+        }
+        .crossed::after {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 3px;
+            background-color: #ef4444; /* خط أحمر للشطب */
+            transform: rotate(-45deg);
+            opacity: 0.7;
+        }
+
+        /* استثناء الرقم 1 */
+        .exception {
+            background-color: #f87171 !important; /* أحمر */
+            color: white !important;
+            border: 2px solid #b91c1c !important;
+        }
+
+        .pop-in { animation: popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; }
+        @keyframes popIn {
+            0% { transform: scale(0.3); opacity: 0; }
+            50% { transform: scale(1.2); opacity: 1; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        .highlight-step {
+            animation: pulse-border 1.5s infinite;
+        }
+        @keyframes pulse-border {
+            0% { box-shadow: 0 0 0 0 rgba(139, 92, 246, 0.7); }
+            70% { box-shadow: 0 0 0 10px rgba(139, 92, 246, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(139, 92, 246, 0); }
+        }
+
+        /* تنسيق فقرة فكر */
+        .think-box {
+            background: linear-gradient(135deg, #ffffff, #f8fafc);
+            border-right: 6px solid #3b82f6;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col items-center py-6 px-4 relative">
+
+    <header class="w-full max-w-6xl text-center mb-8 z-10">
+        <div class="bg-white rounded-3xl p-6 shadow-2xl border-4 border-purple-500 relative overflow-hidden">
+            <div class="absolute -top-4 -left-4 text-7xl opacity-10">🔢</div>
+            <span class="bg-purple-600 text-white font-bold px-4 py-1 rounded-full text-sm absolute top-4 right-4">الدرس الثاني - الوحدة 6</span>
+            
+            <h1 class="text-3xl md:text-5xl font-black text-purple-900 mb-2 mt-4 flex items-center justify-center gap-3">
+                <span>🪄</span> مصفاة الأعداد الأولية <span>✨</span>
+            </h1>
+            <p class="text-lg md:text-xl text-purple-700 font-bold mb-4">
+                سنقوم الآن باستخدام طريقة سحرية القدماء لاستخراج الأعداد الأولية الأقل من 100!
+            </p>
+        </div>
+    </header>
+
+    <main class="w-full max-w-6xl z-10 flex flex-col lg:flex-row gap-8">
+        
+        <!-- القسم الأيمن: أزرار التحكم بالخطوات -->
+        <section class="w-full lg:w-1/3 flex flex-col gap-6">
+            
+            <div class="bg-white rounded-3xl p-6 shadow-xl border-4 border-slate-300 relative">
+                <h2 class="text-2xl font-black text-slate-800 mb-6 mt-2 text-center flex justify-center items-center gap-2">
+                    <span>🛠️</span> خطوات التصفية:
+                </h2>
+                
+                <div class="flex flex-col gap-4">
+                    <!-- الخطوة 1 -->
+                    <button onclick="executeStep(1)" id="btn-step-1" class="btn-playful highlight-step bg-purple-50 hover:bg-purple-100 border-2 border-purple-400 text-purple-900 font-bold py-3 px-4 rounded-xl text-lg text-right flex flex-col gap-1 transition-all">
+                        <span class="font-black text-xl">1) العامل (2)</span>
+                        <span class="text-sm">ضع دائرة حول 2، واشطب جميع مضاعفاته (القفز بـ 2).</span>
+                    </button>
+                    
+                    <!-- الخطوة 2 -->
+                    <button onclick="executeStep(2)" id="btn-step-2" class="btn-playful bg-blue-50 hover:bg-blue-100 border-2 border-blue-400 text-blue-900 font-bold py-3 px-4 rounded-xl text-lg text-right flex flex-col gap-1 transition-all opacity-50" disabled>
+                        <span class="font-black text-xl">2) العامل (3)</span>
+                        <span class="text-sm">ضع دائرة حول 3، واشطب جميع مضاعفاته.</span>
+                    </button>
+                    
+                    <!-- الخطوة 3 -->
+                    <button onclick="executeStep(3)" id="btn-step-3" class="btn-playful bg-green-50 hover:bg-green-100 border-2 border-green-400 text-green-900 font-bold py-3 px-4 rounded-xl text-lg text-right flex flex-col gap-1 transition-all opacity-50" disabled>
+                        <span class="font-black text-xl">3) العامل (5)</span>
+                        <span class="text-sm">ضع دائرة حول 5، واشطب جميع مضاعفاته.</span>
+                    </button>
+
+                    <!-- الخطوة 4 -->
+                    <button onclick="executeStep(4)" id="btn-step-4" class="btn-playful bg-amber-50 hover:bg-amber-100 border-2 border-amber-400 text-amber-900 font-bold py-3 px-4 rounded-xl text-lg text-right flex flex-col gap-1 transition-all opacity-50" disabled>
+                        <span class="font-black text-xl">4) العامل (7)</span>
+                        <span class="text-sm">ضع دائرة حول 7، واشطب جميع مضاعفاته.</span>
+                    </button>
+
+                    <!-- الخطوة 5 -->
+                    <button onclick="executeStep(5)" id="btn-step-5" class="btn-playful bg-rose-50 hover:bg-rose-100 border-2 border-rose-400 text-rose-900 font-bold py-3 px-4 rounded-xl text-lg text-right flex flex-col gap-1 transition-all opacity-50" disabled>
+                        <span class="font-black text-xl">5) حالة خاصة والنتيجة</span>
+                        <span class="text-sm">ضع دائرة حول الباقي، باستثناء الرقم 1!</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- معلومات إضافية تظهر مع الخطوات -->
+            <div id="info-panel" class="hidden bg-indigo-50 rounded-2xl p-4 border-2 border-indigo-200 text-indigo-900 font-bold text-center pop-in">
+                <!-- Info injected via JS -->
+            </div>
+
+        </section>
+
+        <!-- القسم الأيسر: لوحة المائة -->
+        <section class="w-full lg:w-2/3 bg-white rounded-3xl shadow-2xl border-4 border-slate-200 p-6 flex flex-col items-center justify-center relative">
+            <div id="grid-container" class="hundreds-grid" dir="ltr">
+                <!-- Cells injected via JS (Bottom to Top as in book) -->
+            </div>
+            
+            <div class="mt-6 flex justify-center gap-6 w-full text-sm font-bold text-gray-600 border-t-2 border-gray-100 pt-4">
+                <div class="flex items-center gap-2"><div class="w-4 h-4 rounded-full bg-yellow-200 border-2 border-yellow-500"></div> عدد أولي (عاملان فقط)</div>
+                <div class="flex items-center gap-2"><div class="w-4 h-4 rounded bg-gray-100 border border-gray-300 relative"><div class="absolute inset-0 border-t-2 border-red-500 transform rotate-45 scale-75"></div></div> متعدد العوامل</div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- قسم "فكر" المخفي يظهر في النهاية -->
+    <section id="think-section" class="w-full max-w-6xl mt-8 hidden pop-in">
+        <div class="bg-white rounded-3xl p-8 shadow-xl border-4 border-blue-400 relative">
+            <h2 class="text-3xl font-black text-blue-800 mb-6 flex items-center gap-3">
+                <span class="text-4xl">🤔</span> فقرة فكّر: ترتيب المقاعد
+            </h2>
+            
+            <div class="think-box p-6 rounded-2xl shadow-sm mb-6">
+                <p class="text-xl font-bold text-gray-800 leading-relaxed">
+                    سيتم ترتيب المقاعد بالقارب الجديد على شكل <strong>مستطيل</strong>. <br>
+                    هل من الأفضل أن يحتوي القارب على <span class="text-2xl font-black text-blue-600 bg-blue-100 px-2 rounded font-mono" dir="ltr">48</span> مقعداً أم على <span class="text-2xl font-black text-rose-600 bg-rose-100 px-2 rounded font-mono" dir="ltr">53</span> مقعداً؟
+                </p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <!-- تحليل 48 -->
+                <div class="bg-blue-50 border-2 border-blue-200 p-6 rounded-2xl text-center">
+                    <h3 class="text-2xl font-black text-blue-900 mb-4 font-mono" dir="ltr">48</h3>
+                    <p class="font-bold text-gray-700 mb-4">هل هو أولي أم متعدد العوامل؟ (انظر للوحة إذا احتجت)</p>
+                    <div class="flex justify-center gap-2 mb-4">
+                        <button onclick="checkThink(48, false, this)" class="btn-playful bg-white border-2 border-blue-300 text-blue-800 font-bold py-2 px-4 rounded-xl hover:bg-blue-100">أولي</button>
+                        <button onclick="checkThink(48, true, this)" class="btn-playful bg-white border-2 border-blue-300 text-blue-800 font-bold py-2 px-4 rounded-xl hover:bg-blue-100">متعدد العوامل</button>
+                    </div>
+                    <p id="fb-48" class="hidden font-bold text-green-700 bg-green-100 p-2 rounded-lg"></p>
+                </div>
+
+                <!-- تحليل 53 -->
+                <div class="bg-rose-50 border-2 border-rose-200 p-6 rounded-2xl text-center">
+                    <h3 class="text-2xl font-black text-rose-900 mb-4 font-mono" dir="ltr">53</h3>
+                    <p class="font-bold text-gray-700 mb-4">هل هو أولي أم متعدد العوامل؟</p>
+                    <div class="flex justify-center gap-2 mb-4">
+                        <button onclick="checkThink(53, true, this)" class="btn-playful bg-white border-2 border-rose-300 text-rose-800 font-bold py-2 px-4 rounded-xl hover:bg-rose-100">أولي</button>
+                        <button onclick="checkThink(53, false, this)" class="btn-playful bg-white border-2 border-rose-300 text-rose-800 font-bold py-2 px-4 rounded-xl hover:bg-rose-100">متعدد العوامل</button>
+                    </div>
+                    <p id="fb-53" class="hidden font-bold text-green-700 bg-green-100 p-2 rounded-lg"></p>
+                </div>
+            </div>
+
+            <!-- النتيجة النهائية للتفكير -->
+            <div id="think-conclusion" class="hidden mt-8 text-center bg-green-50 border-4 border-green-400 p-6 rounded-2xl">
+                <h3 class="text-2xl font-black text-green-800 mb-4">الاستنتاج العبقري! 💡</h3>
+                <p class="text-lg font-bold text-gray-800 leading-relaxed">
+                    بما أننا نريد ترتيب المقاعد في شكل <strong>مستطيل</strong> (أي صفوف وأعمدة متعددة)، فيجب أن نختار الرقم <span class="font-black text-blue-700 text-2xl font-mono">48</span> لأنه عدد <strong>متعدد العوامل</strong> ويمكن ترتيبه بطرق كثيرة (مثل 6×8 أو 4×12).<br>
+                    أما <span class="font-black text-rose-700 text-xl font-mono">53</span> فهو عدد <strong>أولي</strong>، ولا يمكن ترتيبه في مستطيل إلا في صف واحد طويل جداً (1×53)!
+                </p>
+                <div class="mt-6">
+                    <button onclick="location.reload()" class="btn-playful bg-green-600 hover:bg-green-700 text-white font-black py-3 px-8 rounded-xl text-xl">
+                        إعادة اللعب والتجربة 🔄
+                    </button>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+    <script>
+        let currentStep = 1;
+
+        // تهيئة اللوحة (من أسفل لأعلى)
+        function initGrid() {
+            const container = document.getElementById('grid-container');
+            container.innerHTML = '';
+            
+            for (let row = 9; row >= 0; row--) {
+                for (let col = 1; col <= 10; col++) {
+                    const num = (row * 10) + col;
+                    const cell = document.createElement('div');
+                    cell.className = 'grid-cell';
+                    cell.innerText = num;
+                    cell.id = `cell-${num}`;
+                    // إضافة وظيفة النقر للشطب اليدوي
+                    cell.onclick = () => toggleCross(cell);
+                    container.appendChild(cell);
+                }
+            }
+        }
+
+        // دالة الشطب اليدوي
+        function toggleCross(cell) {
+            // لا تسمح بتغيير الخلية إذا كانت محاطة بدائرة أو هي استثناء (الرقم 1 في النهاية)
+            if (!cell.classList.contains('circled') && !cell.classList.contains('exception')) {
+                cell.classList.toggle('crossed');
+            }
+        }
+
+        // دالة تنفيذ الخطوات السحرية
+        function executeStep(stepNum) {
+            if(stepNum !== currentStep) return;
+
+            // إيقاف الزر الحالي
+            const currentBtn = document.getElementById(`btn-step-${stepNum}`);
+            currentBtn.classList.remove('highlight-step');
+            currentBtn.classList.add('bg-slate-100', 'border-slate-300', 'opacity-70');
+            currentBtn.querySelector('span').innerText += " ✅";
+            currentBtn.disabled = true;
+
+            const infoPanel = document.getElementById('info-panel');
+            infoPanel.classList.remove('hidden');
+
+            let delayMultiplier = 0;
+            const animationSpeed = 30; // ms
+
+            if (stepNum === 1) { // العامل 2
+                document.getElementById('cell-2').classList.add('circled');
+                infoPanel.innerHTML = "شطبنا الأعداد الزوجية. تذكر: <span class='text-red-600'>2 هو العدد الأولي الزوجي الوحيد!</span>";
+                
+                for (let i = 4; i <= 100; i += 2) {
+                    delayMultiplier++;
+                    setTimeout(() => document.getElementById(`cell-${i}`).classList.add('crossed'), delayMultiplier * animationSpeed);
+                }
+            } 
+            else if (stepNum === 2) { // العامل 3
+                document.getElementById('cell-3').classList.add('circled');
+                infoPanel.innerHTML = "شطبنا مضاعفات الـ 3 (مثل 6، 9، 12...). بعضها كان مشطوباً بالفعل لأنه زوجي!";
+                
+                for (let i = 6; i <= 100; i += 3) {
+                    const cell = document.getElementById(`cell-${i}`);
+                    if (!cell.classList.contains('crossed')) {
+                        delayMultiplier++;
+                        setTimeout(() => cell.classList.add('crossed'), delayMultiplier * animationSpeed);
+                    }
+                }
+            }
+            else if (stepNum === 3) { // العامل 5
+                document.getElementById('cell-5').classList.add('circled');
+                infoPanel.innerHTML = "شطبنا مضاعفات الـ 5 (التي تنتهي بـ 0 أو 5). معظمها كان مشطوباً بالفعل!";
+                
+                for (let i = 10; i <= 100; i += 5) {
+                    const cell = document.getElementById(`cell-${i}`);
+                    if (!cell.classList.contains('crossed')) {
+                        delayMultiplier++;
+                        setTimeout(() => cell.classList.add('crossed'), delayMultiplier * animationSpeed);
+                    }
+                }
+            }
+            else if (stepNum === 4) { // العامل 7
+                document.getElementById('cell-7').classList.add('circled');
+                infoPanel.innerHTML = "شطبنا مضاعفات الـ 7. تبقى القليل جداً الآن!";
+                
+                for (let i = 14; i <= 100; i += 7) {
+                    const cell = document.getElementById(`cell-${i}`);
+                    if (!cell.classList.contains('crossed')) {
+                        delayMultiplier++;
+                        setTimeout(() => cell.classList.add('crossed'), delayMultiplier * animationSpeed);
+                    }
+                }
+            }
+            else if (stepNum === 5) { // النتيجة
+                document.getElementById('cell-1').classList.add('exception');
+                infoPanel.innerHTML = "<span class='text-xl text-purple-700'>الرقم 1 ليس أولياً ولا متعدد العوامل!</span> <br>لأن له عاملاً واحداً فقط (نفسه). الأعداد المتبقية في دوائر هي الأعداد الأولية!";
+                
+                // تحديد باقي الأرقام غير المشطوبة كأولية
+                for (let i = 2; i <= 100; i++) {
+                    const cell = document.getElementById(`cell-${i}`);
+                    if (!cell.classList.contains('crossed') && !cell.classList.contains('circled') && !cell.classList.contains('exception')) {
+                        delayMultiplier++;
+                        setTimeout(() => cell.classList.add('circled', 'pop-in'), delayMultiplier * animationSpeed);
+                    }
+                }
+
+                // إظهار قسم فكر في النهاية
+                setTimeout(() => {
+                    const thinkSec = document.getElementById('think-section');
+                    thinkSec.classList.remove('hidden');
+                    thinkSec.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    confettiEffect();
+                }, (delayMultiplier * animationSpeed) + 1000);
+            }
+
+            // تفعيل الزر التالي بعد انتهاء الحركة
+            if (stepNum < 5) {
+                const totalDelay = (delayMultiplier * animationSpeed) + 300;
+                setTimeout(() => {
+                    currentStep++;
+                    const nextBtn = document.getElementById(`btn-step-${currentStep}`);
+                    nextBtn.classList.remove('opacity-50');
+                    nextBtn.classList.add('highlight-step');
+                    nextBtn.disabled = false;
+                }, totalDelay);
+            }
+        }
+
+        // منطق قسم "فكر"
+        let think48Done = false;
+        let think53Done = false;
+
+        function checkThink(num, isCorrect, btn) {
+            const parent = btn.parentElement;
+            const feedback = document.getElementById(`fb-${num}`);
+            const allBtns = parent.querySelectorAll('button');
+
+            if (isCorrect) {
+                btn.classList.replace('bg-white', 'bg-green-500');
+                btn.classList.replace('text-blue-800', 'text-white');
+                btn.classList.replace('text-rose-800', 'text-white');
+                
+                allBtns.forEach(b => { if(b !== btn) b.disabled = true; });
+
+                if (num === 48) {
+                    feedback.innerText = "صحيح! (48) عدد متعدد العوامل، لأنه يقبل القسمة على أرقام كثيرة.";
+                    think48Done = true;
+                } else {
+                    feedback.innerText = "صحيح! (53) عدد أولي، لأن له عاملان فقط (1 و 53).";
+                    think53Done = true;
+                }
+                
+                feedback.classList.remove('hidden');
+
+                if (think48Done && think53Done) {
+                    document.getElementById('think-conclusion').classList.remove('hidden');
+                    document.getElementById('think-conclusion').scrollIntoView({ behavior: 'smooth', block: 'end' });
+                }
+
+            } else {
+                btn.classList.add('shake', 'bg-red-100', 'border-red-400');
+                setTimeout(() => btn.classList.remove('shake', 'bg-red-100', 'border-red-400'), 500);
+            }
+        }
+
+        function confettiEffect() {
+            const colors = ['#a855f7', '#3b82f6', '#10b981', '#fef08a'];
+            for(let i=0; i<60; i++) {
+                const conf = document.createElement('div');
+                conf.className = 'absolute w-3 h-3 rounded-full opacity-90 z-50 pointer-events-none';
+                conf.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                conf.style.left = Math.random() * 100 + 'vw';
+                conf.style.top = (window.scrollY - 20) + 'px';
+                conf.style.transition = 'all 3s ease-in';
+                document.body.appendChild(conf);
+                
+                setTimeout(() => {
+                    conf.style.top = (window.scrollY + window.innerHeight) + 'px';
+                    conf.style.transform = `rotate(${Math.random() * 720}deg) translateX(${Math.random() * 150 - 75}px)`;
+                }, 50);
+            }
+        }
+
+        // تشغيل التهيئة
+        window.onload = () => {
+            initGrid();
+        };
+    </script>
+</body>
+</html>

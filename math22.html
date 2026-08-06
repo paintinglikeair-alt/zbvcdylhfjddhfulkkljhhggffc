@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>تطبيقات القياس - تحدي الذكاء</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700;900&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Tajawal', sans-serif;
+            background-color: #f8fafc; /* رمادي فاتح مريح */
+            background-image: radial-gradient(#cbd5e1 2px, transparent 2px);
+            background-size: 30px 30px;
+            overflow-x: hidden;
+        }
+
+        .btn-playful {
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 6px 0 rgba(0,0,0,0.2);
+        }
+        .btn-playful:active:not(:disabled) {
+            transform: translateY(6px);
+            box-shadow: 0 0 0 rgba(0,0,0,0);
+        }
+        .btn-playful:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none !important;
+            box-shadow: 0 6px 0 rgba(0,0,0,0.2) !important;
+        }
+
+        .math-input {
+            text-align: center;
+            font-size: 1.5rem;
+            font-weight: 900;
+            border: 3px solid #cbd5e1;
+            border-radius: 0.75rem;
+            background-color: white;
+            transition: all 0.3s;
+            font-family: monospace;
+            padding: 0.5rem;
+        }
+        .math-input:focus {
+            outline: none;
+            border-color: #6366f1;
+            box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.3);
+        }
+        .input-correct {
+            background-color: #dcfce7 !important;
+            border-color: #22c55e !important;
+            color: #166534 !important;
+        }
+
+        .shake { animation: shake 0.5s cubic-bezier(.36,.07,.19,.97) both; }
+        @keyframes shake {
+            10%, 90% { transform: translate3d(-1px, 0, 0); }
+            20%, 80% { transform: translate3d(2px, 0, 0); }
+            30%, 50%, 70% { transform: translate3d(-4px, 0, 0); }
+            40%, 60% { transform: translate3d(4px, 0, 0); }
+        }
+
+        .fade-in { animation: fadeIn 0.5s ease-out forwards; }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .step-container {
+            transition: all 0.4s ease;
+        }
+    </style>
+</head>
+<body class="min-h-screen text-gray-800 flex flex-col items-center py-6 px-4 relative">
+
+    <header class="w-full max-w-4xl text-center mb-8 z-10">
+        <div class="bg-white rounded-3xl p-6 shadow-xl border-4 border-indigo-500 relative overflow-hidden">
+            <span class="bg-indigo-600 text-white font-bold px-4 py-1 rounded-full text-sm absolute top-4 right-4">الدرس السادس</span>
+            
+            <h1 class="text-3xl md:text-5xl font-black text-indigo-900 mb-2 mt-4 flex items-center justify-center gap-3">
+                <span>🧠</span> تطبيقات القياس الذكية <span>📏</span>
+            </h1>
+            <p class="text-lg md:text-xl text-indigo-700 font-bold mb-4">
+                تفكيك المسائل المعقدة إلى خطوات بسيطة هو سر العبقرية!
+            </p>
+        </div>
+    </header>
+
+    <main class="w-full max-w-4xl z-10 flex flex-col gap-8">
+        
+        <section id="mission1" class="bg-white rounded-3xl shadow-xl border-4 border-amber-500 p-6 md:p-8">
+            <div class="flex items-center gap-3 mb-6 border-b-2 border-amber-100 pb-4">
+                <span class="text-4xl">🐜</span>
+                <h2 class="text-2xl md:text-3xl font-black text-amber-800">التحدي الأول: مخزون طعام النمل</h2>
+            </div>
+
+            <div class="bg-amber-50 rounded-2xl p-6 border-2 border-amber-200 mb-8 text-lg font-bold text-gray-800 leading-relaxed">
+                في المستعمرة (أ)، يجمع النمل <span class="text-2xl font-black text-amber-700 mx-1 bg-amber-100 px-2 rounded" dir="ltr">950</span> جراماً من الطعام. 
+                <br>إذا كان النمل يستهلك <span class="text-2xl font-black text-rose-600 mx-1 bg-rose-100 px-2 rounded" dir="ltr">25</span> جراماً يوم الإثنين، 
+                و <span class="text-2xl font-black text-rose-600 mx-1 bg-rose-100 px-2 rounded" dir="ltr">37</span> جراماً يوم الثلاثاء..
+                <br><br>
+                <span class="text-xl text-indigo-900">كم جراماً من الطعام يتبقى لديهم؟</span>
+            </div>
+
+            <!-- M1 Step 1 -->
+            <div class="step-container bg-white border-2 border-gray-200 rounded-2xl p-6 mb-4">
+                <h3 class="font-bold text-gray-500 mb-3">الخطوة 1: احسب إجمالي ما تم استهلاكه في اليومين (جمع)</h3>
+                <div class="flex flex-wrap items-center gap-4 text-2xl font-black font-mono text-gray-800" dir="ltr">
+                    <span>25</span> <span class="text-amber-500">+</span> <span>37</span> <span class="text-amber-500">=</span>
+                    <input type="number" id="m1-step1-ans" class="math-input w-28 text-amber-900" placeholder="؟">
+                    <button onclick="checkM1Step1()" id="btn-m1-s1" class="btn-playful bg-amber-500 hover:bg-amber-600 text-white text-lg font-black py-2 px-6 rounded-xl font-sans">تحقق</button>
+                </div>
+            </div>
+
+            <!-- M1 Step 2 (Hidden initially) -->
+            <div id="m1-step2-box" class="step-container bg-white border-2 border-gray-200 rounded-2xl p-6 opacity-40 pointer-events-none">
+                <h3 class="font-bold text-gray-500 mb-3">الخطوة 2: اطرح ما استهلكوه من الإجمالي لمعرفة الباقي</h3>
+                <div class="flex flex-wrap items-center gap-4 text-2xl font-black font-mono text-gray-800" dir="ltr">
+                    <span>950</span> <span class="text-amber-500">-</span> 
+                    <span id="m1-consumed-display" class="w-16 text-center border-b-2 border-dashed border-gray-400 text-gray-400">؟</span> 
+                    <span class="text-amber-500">=</span>
+                    <input type="number" id="m1-step2-ans" class="math-input w-28 text-amber-900" placeholder="الباقي" disabled>
+                    <button onclick="checkM1Step2()" id="btn-m1-s2" class="btn-playful bg-amber-500 hover:bg-amber-600 text-white text-lg font-black py-2 px-6 rounded-xl font-sans hidden">النتيجة النهائية</button>
+                </div>
+            </div>
+
+            <div id="m1-feedback" class="hidden mt-6 text-center font-bold text-xl p-4 bg-green-100 text-green-800 border-2 border-green-400 rounded-xl">
+                <!-- Feedback injected here -->
+            </div>
+        </section>
+
+        <section id="mission2" class="bg-white rounded-3xl shadow-xl border-4 border-emerald-500 p-6 md:p-8 opacity-50 pointer-events-none transition-opacity duration-500 relative">
+            
+            <div id="m2-lock" class="absolute inset-0 z-20 flex flex-col items-center justify-center bg-white/70 backdrop-blur-sm rounded-3xl">
+                <span class="text-6xl mb-4">🔒</span>
+                <p class="text-2xl font-bold text-gray-800 text-center px-4">أنهِ مهمة النمل لفتح تحدي السوق!</p>
+            </div>
+
+            <div class="flex items-center gap-3 mb-6 border-b-2 border-emerald-100 pb-4">
+                <span class="text-4xl">🛒</span>
+                <h2 class="text-2xl md:text-3xl font-black text-emerald-800">التحدي الثاني: تسوق آية (البطاطس والبصل)</h2>
+            </div>
+
+            <div class="bg-emerald-50 rounded-2xl p-6 border-2 border-emerald-200 mb-8 text-lg font-bold text-gray-800 leading-relaxed">
+                اشترت آية بطاطس كتلتها <span class="bg-white px-2 rounded border border-emerald-300">كيلوجرامين و 920 جراماً</span>.
+                <br>واشترت بصلاً كتلته <span class="text-rose-600 underline">أقل</span> من كتلة البطاطس بمقدار <span class="bg-white px-2 rounded border border-emerald-300 font-mono font-black" dir="ltr">1075</span> جراماً.
+                <br><br>
+                <span class="text-xl text-emerald-900 font-black">ما كتلة البطاطس والبصل معاً؟</span>
+            </div>
+
+            <!-- M2 Step 1: Conversion -->
+            <div class="step-container bg-white border-2 border-gray-200 rounded-2xl p-6 mb-4">
+                <h3 class="font-bold text-gray-500 mb-3">الخطوة 1: توحيد الوحدات (حَوّل وزن البطاطس إلى جرامات)</h3>
+                <div class="flex flex-wrap items-center gap-3 text-xl font-bold text-gray-800">
+                    <span>2 كجم و 920 جم = </span>
+                    <div class="flex items-center gap-2" dir="ltr">
+                        <input type="number" id="m2-s1-ans" class="math-input w-32 text-emerald-900" placeholder="بالجرام">
+                        <span class="text-gray-500">جم</span>
+                    </div>
+                    <button onclick="checkM2Step1()" id="btn-m2-s1" class="btn-playful bg-emerald-500 hover:bg-emerald-600 text-white text-lg font-black py-2 px-6 rounded-xl mr-auto">تأكيد</button>
+                </div>
+            </div>
+
+            <!-- M2 Step 2: Subtraction -->
+            <div id="m2-step2-box" class="step-container bg-white border-2 border-gray-200 rounded-2xl p-6 mb-4 opacity-40 pointer-events-none">
+                <h3 class="font-bold text-gray-500 mb-3">الخطوة 2: إيجاد وزن البصل (البصل أقل من البطاطس بـ 1075)</h3>
+                <div class="flex flex-wrap items-center gap-3 text-2xl font-black font-mono text-gray-800" dir="ltr">
+                    <span id="m2-potato-display" class="text-gray-400 border-b-2 border-dashed border-gray-400">؟</span>
+                    <span class="text-emerald-500">-</span>
+                    <span>1075</span>
+                    <span class="text-emerald-500">=</span>
+                    <div class="flex items-center gap-2">
+                        <input type="number" id="m2-s2-ans" class="math-input w-32 text-emerald-900" placeholder="وزن البصل" disabled>
+                    </div>
+                    <button onclick="checkM2Step2()" id="btn-m2-s2" class="btn-playful bg-emerald-500 hover:bg-emerald-600 text-white text-lg font-black py-2 px-6 rounded-xl font-sans hidden ml-auto">حساب</button>
+                </div>
+            </div>
+
+            <!-- M2 Step 3: Addition (Total) -->
+            <div id="m2-step3-box" class="step-container bg-white border-2 border-gray-200 rounded-2xl p-6 opacity-40 pointer-events-none">
+                <h3 class="font-bold text-gray-500 mb-3">الخطوة 3: إيجاد الوزن الكلي (البطاطس + البصل)</h3>
+                <div class="flex flex-wrap items-center gap-3 text-2xl font-black font-mono text-gray-800" dir="ltr">
+                    <div class="flex flex-col items-center">
+                        <span id="m2-potato-display-2" class="text-gray-400 text-xl border-b-2 border-dashed border-gray-400">بطاطس</span>
+                    </div>
+                    <span class="text-emerald-500">+</span>
+                    <div class="flex flex-col items-center">
+                        <span id="m2-onion-display" class="text-gray-400 text-xl border-b-2 border-dashed border-gray-400">بصل</span>
+                    </div>
+                    <span class="text-emerald-500">=</span>
+                    <input type="number" id="m2-s3-ans" class="math-input w-36 text-indigo-900 border-indigo-400 bg-indigo-50" placeholder="المجموع" disabled>
+                    <button onclick="checkM2Step3()" id="btn-m2-s3" class="btn-playful bg-indigo-600 hover:bg-indigo-700 text-white text-lg font-black py-2 px-6 rounded-xl font-sans hidden ml-auto">الجواب النهائي 🏆</button>
+                </div>
+            </div>
+
+        </section>
+
+        <div id="finalVictory" class="hidden fixed inset-0 bg-black/80 z-50 flex items-center justify-center p-4 backdrop-blur-md">
+            <div class="bg-white rounded-3xl p-10 shadow-2xl border-8 border-indigo-500 text-center max-w-lg w-full transform transition-all duration-300 fade-in">
+                <div class="text-8xl mb-4">🌟</div>
+                <h2 class="text-4xl font-black text-indigo-800 mb-4">أنت عبقري الرياضيات!</h2>
+                <p class="text-xl text-gray-700 font-bold mb-6 leading-relaxed">
+                    لقد قمت بحل مسألة من 3 خطوات بنجاح مذهل!<br>
+                    (توحيد وحدات ⬅️ طرح ⬅️ جمع).
+                    هذا يدل على تفكيرك المنطقي المنظم.
+                </p>
+                <div class="bg-indigo-50 p-4 rounded-xl mb-6 font-mono font-black text-xl text-indigo-900" dir="ltr">
+                    Total = 4765 g
+                </div>
+                <button onclick="location.reload()" class="btn-playful bg-indigo-600 hover:bg-indigo-700 text-white font-black py-4 px-10 rounded-2xl text-2xl w-full">
+                    العب مجدداً 🔄
+                </button>
+            </div>
+        </div>
+
+    </main>
+
+    <script>
+        // --- Helper Functions ---
+        function shakeInput(inputEl) {
+            inputEl.classList.add('shake', 'bg-red-50', 'border-red-400', 'text-red-700');
+            setTimeout(() => {
+                inputEl.classList.remove('shake', 'bg-red-50', 'border-red-400', 'text-red-700');
+                inputEl.value = ''; // clear wrong answer
+            }, 500);
+        }
+
+        // --- Mission 1 Logic ---
+        const m1_s1_correct = 62; // 25 + 37
+        const m1_s2_correct = 888; // 950 - 62
+
+        function checkM1Step1() {
+            const input = document.getElementById('m1-step1-ans');
+            const btn = document.getElementById('btn-m1-s1');
+            
+            if (parseInt(input.value) === m1_s1_correct) {
+                input.classList.add('input-correct');
+                input.disabled = true;
+                btn.style.display = 'none';
+
+                // Unlock step 2
+                const s2Box = document.getElementById('m1-step2-box');
+                const consumedDisplay = document.getElementById('m1-consumed-display');
+                const s2Input = document.getElementById('m1-step2-ans');
+                const s2Btn = document.getElementById('btn-m1-s2');
+
+                s2Box.classList.remove('opacity-40', 'pointer-events-none');
+                s2Box.classList.replace('border-gray-200', 'border-amber-400');
+                
+                consumedDisplay.innerText = m1_s1_correct;
+                consumedDisplay.className = "text-amber-700 mx-2";
+                
+                s2Input.disabled = false;
+                s2Btn.classList.remove('hidden');
+                
+                setTimeout(() => s2Input.focus(), 100);
+
+            } else {
+                shakeInput(input);
+            }
+        }
+
+        function checkM1Step2() {
+            const input = document.getElementById('m1-step2-ans');
+            const btn = document.getElementById('btn-m1-s2');
+            const fb = document.getElementById('m1-feedback');
+            
+            if (parseInt(input.value) === m1_s2_correct) {
+                input.classList.add('input-correct');
+                input.disabled = true;
+                btn.style.display = 'none';
+
+                fb.innerHTML = "✅ أحسنت! المتبقي من الطعام هو 888 جراماً. لقد حللت مسألة ذات خطوتين بامتياز.";
+                fb.classList.remove('hidden');
+
+                // Unlock Mission 2
+                setTimeout(() => {
+                    document.getElementById('m2-lock').style.display = 'none';
+                    document.getElementById('mission2').classList.remove('opacity-50', 'pointer-events-none');
+                    document.getElementById('mission2').scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    
+                    setTimeout(() => document.getElementById('m2-s1-ans').focus(), 500);
+                }, 1500);
+
+            } else {
+                shakeInput(input);
+            }
+        }
+
+        // --- Mission 2 Logic ---
+        const m2_s1_correct = 2920; // 2 kg + 920 g
+        const m2_s2_correct = 1845; // 2920 - 1075
+        const m2_s3_correct = 4765; // 2920 + 1845
+
+        function checkM2Step1() {
+            const input = document.getElementById('m2-s1-ans');
+            const btn = document.getElementById('btn-m2-s1');
+            
+            if (parseInt(input.value) === m2_s1_correct) {
+                input.classList.add('input-correct');
+                input.disabled = true;
+                btn.style.display = 'none';
+
+                // Unlock Step 2
+                const s2Box = document.getElementById('m2-step2-box');
+                const potatoDisp = document.getElementById('m2-potato-display');
+                const s2Input = document.getElementById('m2-s2-ans');
+                const s2Btn = document.getElementById('btn-m2-s2');
+
+                s2Box.classList.remove('opacity-40', 'pointer-events-none');
+                s2Box.classList.replace('border-gray-200', 'border-emerald-400');
+                
+                potatoDisp.innerText = m2_s1_correct;
+                potatoDisp.className = "text-emerald-800";
+                
+                s2Input.disabled = false;
+                s2Btn.classList.remove('hidden');
+                
+                setTimeout(() => s2Input.focus(), 100);
+
+            } else {
+                shakeInput(input);
+            }
+        }
+
+        function checkM2Step2() {
+            const input = document.getElementById('m2-s2-ans');
+            const btn = document.getElementById('btn-m2-s2');
+            
+            if (parseInt(input.value) === m2_s2_correct) {
+                input.classList.add('input-correct');
+                input.disabled = true;
+                btn.style.display = 'none';
+
+                // Unlock Step 3
+                const s3Box = document.getElementById('m2-step3-box');
+                const potatoDisp2 = document.getElementById('m2-potato-display-2');
+                const onionDisp = document.getElementById('m2-onion-display');
+                const s3Input = document.getElementById('m2-s3-ans');
+                const s3Btn = document.getElementById('btn-m2-s3');
+
+                s3Box.classList.remove('opacity-40', 'pointer-events-none');
+                s3Box.classList.replace('border-gray-200', 'border-indigo-400');
+                
+                potatoDisp2.innerText = m2_s1_correct;
+                potatoDisp2.className = "text-emerald-800 font-black text-2xl";
+                
+                onionDisp.innerText = m2_s2_correct;
+                onionDisp.className = "text-emerald-800 font-black text-2xl";
+                
+                s3Input.disabled = false;
+                s3Btn.classList.remove('hidden');
+                
+                setTimeout(() => s3Input.focus(), 100);
+
+            } else {
+                shakeInput(input);
+            }
+        }
+
+        function checkM2Step3() {
+            const input = document.getElementById('m2-s3-ans');
+            
+            if (parseInt(input.value) === m2_s3_correct) {
+                input.classList.add('input-correct');
+                input.disabled = true;
+                
+                // Show Final Victory
+                document.getElementById('finalVictory').classList.remove('hidden');
+                confettiEffect();
+
+            } else {
+                shakeInput(input);
+            }
+        }
+
+        // --- Celebration Effect ---
+        function confettiEffect() {
+            const colors = ['#10b981', '#4f46e5', '#f59e0b', '#ec4899'];
+            for(let i=0; i<60; i++) {
+                const conf = document.createElement('div');
+                conf.className = 'absolute w-3 h-3 rounded-full opacity-90 z-50';
+                conf.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                conf.style.left = Math.random() * 100 + 'vw';
+                conf.style.top = -20 + 'px';
+                conf.style.transition = 'all 3s ease-in';
+                document.body.appendChild(conf);
+                
+                setTimeout(() => {
+                    conf.style.top = '100vh';
+                    conf.style.transform = `rotate(${Math.random() * 720}deg) translateX(${Math.random() * 150 - 75}px)`;
+                }, 50);
+            }
+        }
+    </script>
+</body>
+</html>

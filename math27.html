@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>محقق الأبعاد - البعد المجهول</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700;900&display=swap" rel="stylesheet">
+    
+    <style>
+        body {
+            font-family: 'Tajawal', sans-serif;
+            background-color: #f0fdfa; /* Teal light */
+            background-image: radial-gradient(#ccfbf1 2px, transparent 2px);
+            background-size: 30px 30px;
+            overflow-x: hidden;
+        }
+
+        .btn-playful {
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 6px 0 rgba(0,0,0,0.2);
+        }
+        .btn-playful:active:not(:disabled) {
+            transform: translateY(6px);
+            box-shadow: 0 0 0 rgba(0,0,0,0);
+        }
+        .btn-playful:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none !important;
+            box-shadow: 0 6px 0 rgba(0,0,0,0.2) !important;
+        }
+
+        .math-input {
+            width: 4.5rem;
+            text-align: center;
+            font-size: 1.5rem;
+            font-weight: 900;
+            border: 3px solid #cbd5e1;
+            border-radius: 0.75rem;
+            background-color: white;
+            transition: all 0.3s;
+            font-family: monospace;
+        }
+        .math-input:focus {
+            outline: none;
+            border-color: #0d9488;
+            box-shadow: 0 0 0 4px rgba(13, 148, 136, 0.3);
+        }
+        .input-correct {
+            background-color: #dcfce7 !important;
+            border-color: #22c55e !important;
+            color: #166534 !important;
+        }
+
+        .shake { animation: shake 0.5s cubic-bezier(.36,.07,.19,.97) both; }
+        @keyframes shake {
+            10%, 90% { transform: translate3d(-1px, 0, 0); }
+            20%, 80% { transform: translate3d(2px, 0, 0); }
+            30%, 50%, 70% { transform: translate3d(-4px, 0, 0); }
+            40%, 60% { transform: translate3d(4px, 0, 0); }
+        }
+
+        .rect-visual {
+            background-color: #93c5fd;
+            border: 4px solid #3b82f6;
+            border-radius: 8px;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .detective-glass {
+            animation: float 3s ease-in-out infinite;
+        }
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+    </style>
+</head>
+<body class="min-h-screen text-gray-800 flex flex-col items-center py-6 px-4 relative">
+
+    <header class="w-full max-w-4xl text-center mb-8 z-10">
+        <div class="bg-white rounded-3xl p-6 shadow-xl border-4 border-teal-500 relative overflow-hidden">
+            <span class="bg-teal-600 text-white font-bold px-4 py-1 rounded-full text-sm absolute top-4 right-4">الدرس الثالث</span>
+            
+            <h1 class="text-3xl md:text-5xl font-black text-teal-900 mb-2 mt-4 flex items-center justify-center gap-3">
+                <span class="detective-glass">🕵️‍♂️</span> محقق الأبعاد المجهولة <span>📐</span>
+            </h1>
+            <p class="text-lg md:text-xl text-teal-700 font-bold mb-2">
+                التفكير العكسي: كيف نجد الرقم المفقود إذا عرفنا النتيجة؟
+            </p>
+        </div>
+    </header>
+
+    <main class="w-full max-w-4xl z-10 flex flex-col gap-8">
+        
+        <section id="mission1" class="bg-white rounded-3xl shadow-xl border-4 border-rose-400 p-6 md:p-8">
+            <div class="flex items-center gap-3 mb-6 border-b-2 border-rose-100 pb-4">
+                <span class="text-4xl">🚨</span>
+                <h2 class="text-2xl md:text-3xl font-black text-rose-800">استكشف: فخ الكلمات</h2>
+            </div>
+
+            <div class="bg-rose-50 rounded-2xl p-6 border-2 border-rose-200 mb-8">
+                <p class="text-lg font-bold text-gray-800 leading-relaxed mb-4">
+                    وضع أمير حبلاً حول الجزء الخارجي من تل نمل على شكل مستطيل. <br>
+                    عرض المستطيل <span class="bg-white px-2 rounded font-black text-rose-700">8</span> أمتار وطوله <span class="bg-white px-2 rounded font-black text-rose-700">12</span> متراً.
+                </p>
+                <p class="text-xl font-black text-rose-900 mb-6 bg-rose-100 inline-block px-4 py-2 rounded-xl">
+                    ما <span class="underline">مساحة</span> الأرض المحاطة بالحبل؟
+                </p>
+
+                <div class="bg-white border-2 border-red-300 rounded-xl p-4 shadow-sm">
+                    <p class="text-red-700 font-bold mb-2">إجابة التلميذ (خاطئة ❌):</p>
+                    <div class="font-mono text-xl font-black text-gray-700" dir="ltr">
+                        12 + 8 + 12 + 8 = 40
+                    </div>
+                </div>
+            </div>
+
+            <!-- خيارات تحليل الخطأ -->
+            <div class="bg-gray-50 p-6 rounded-2xl border-2 border-gray-200 mb-6">
+                <h3 class="text-xl font-black text-gray-800 mb-4 text-center">بصفتك المحقق، ما هو الخطأ الذي وقع فيه التلميذ؟</h3>
+                <div class="flex flex-col gap-3" id="mcqContainer">
+                    <button onclick="checkErrorRule(false, this)" class="text-right p-4 rounded-xl border-2 border-gray-300 hover:bg-gray-100 font-bold text-lg transition-colors">
+                        نسي أن يضرب الناتج النهائي في 2.
+                    </button>
+                    <button onclick="checkErrorRule(true, this)" class="text-right p-4 rounded-xl border-2 border-gray-300 hover:bg-rose-50 hover:border-rose-400 font-bold text-lg transition-colors">
+                        التلميذ قام بحساب "المحيط" (جمع الأضلاع) بينما السؤال طلب "المساحة"!
+                    </button>
+                </div>
+            </div>
+
+            <!-- تصحيح الخطأ (يظهر بعد اختيار الإجابة الصحيحة) -->
+            <div id="correctionArea" class="hidden bg-green-50 p-6 rounded-2xl border-4 border-green-300 text-center">
+                <h3 class="text-xl font-black text-green-800 mb-4">ممتاز! الآن قم أنت بحساب المساحة الصحيحة:</h3>
+                <p class="text-gray-600 font-bold mb-4">تذكر: المساحة = الطول × العرض</p>
+                <div class="flex items-center justify-center gap-4 text-2xl font-black font-mono" dir="ltr">
+                    <span>12</span>
+                    <span class="text-green-600">×</span>
+                    <span>8</span>
+                    <span class="text-green-600">=</span>
+                    <input type="number" id="m1-correct-area" class="math-input text-green-900" placeholder="؟">
+                </div>
+                <button onclick="checkArea()" id="btn-m1" class="mt-6 btn-playful bg-green-500 hover:bg-green-600 text-white font-black py-2 px-8 rounded-xl text-xl">
+                    تأكيد المساحة ✅
+                </button>
+                <p id="m1-feedback" class="hidden mt-4 font-bold text-lg text-green-700"></p>
+            </div>
+        </section>
+
+        <section id="mission2" class="bg-white rounded-3xl shadow-xl border-4 border-blue-500 p-6 md:p-8 opacity-50 pointer-events-none transition-opacity duration-500 relative">
+            
+            <div id="m2-lock" class="absolute inset-0 z-20 flex flex-col items-center justify-center bg-white/70 backdrop-blur-sm rounded-3xl">
+                <span class="text-6xl mb-4">🔒</span>
+                <p class="text-2xl font-bold text-gray-800 text-center px-4">صحح خطأ التلميذ أولاً لفتح لغز البعد المجهول!</p>
+            </div>
+
+            <div class="flex items-center gap-3 mb-6 border-b-2 border-blue-100 pb-4">
+                <span class="text-4xl">🧩</span>
+                <h2 class="text-2xl md:text-3xl font-black text-blue-800">تعلّم: إيجاد البعد المجهول (X)</h2>
+            </div>
+
+            <p class="text-lg font-bold text-gray-700 mb-6 text-center leading-relaxed">
+                مستطيل محيطه الكلي <span class="font-black text-blue-700 bg-blue-100 px-2 rounded">26</span> وحدة، وعرضه <span class="font-black text-blue-700 bg-blue-100 px-2 rounded">5</span> وحدات.<br>
+                ما هو طوله المجهول (<span class="font-mono font-black text-purple-600">X</span>)؟
+            </p>
+
+            <!-- الشكل التوضيحي -->
+            <div class="flex justify-center mb-8 mt-8">
+                <div class="rect-visual w-64 h-32">
+                    <span class="absolute -top-8 text-xl font-black font-mono text-purple-600">X</span>
+                    <span class="absolute -right-8 text-xl font-black font-mono text-gray-700">5</span>
+                    <span class="text-blue-900 font-bold">المحيط = 26</span>
+                </div>
+            </div>
+
+            <!-- الاستراتيجية السحرية (نصف المحيط) -->
+            <div class="bg-blue-50 rounded-2xl p-6 border-2 border-blue-200">
+                <h3 class="text-xl font-black text-blue-900 mb-4 text-center">الاستراتيجية السحرية (خطوتين فقط!)</h3>
+                
+                <div class="flex flex-col gap-6 max-w-lg mx-auto">
+                    <!-- الخطوة 1 -->
+                    <div class="bg-white border-2 border-gray-200 p-4 rounded-xl">
+                        <p class="font-bold text-gray-700 mb-3">
+                            <span class="bg-blue-500 text-white rounded-full w-6 h-6 inline-flex items-center justify-center ml-2">1</span>
+                            بما أن المحيط هو لـ 4 أضلاع، لنجد <span class="text-blue-600 font-black">نصف المحيط</span> (والذي يمثل الطول + العرض فقط):
+                        </p>
+                        <div class="flex items-center justify-center gap-3 text-2xl font-black font-mono" dir="ltr">
+                            <span>26</span>
+                            <span class="text-blue-400">÷</span>
+                            <span>2</span>
+                            <span class="text-blue-400">=</span>
+                            <input type="number" id="m2-step1" class="math-input text-blue-800" placeholder="؟">
+                        </div>
+                    </div>
+
+                    <!-- الخطوة 2 -->
+                    <div class="bg-white border-2 border-gray-200 p-4 rounded-xl opacity-50 pointer-events-none transition-all" id="m2-step2-box">
+                        <p class="font-bold text-gray-700 mb-3">
+                            <span class="bg-purple-500 text-white rounded-full w-6 h-6 inline-flex items-center justify-center ml-2">2</span>
+                            نصف المحيط هو (الطول + العرض). نحن نعرف العرض (5).<br> اطرح العرض من نصف المحيط لنجد <span class="font-mono text-purple-600 font-black">X</span>:
+                        </p>
+                        <div class="flex items-center justify-center gap-3 text-2xl font-black font-mono" dir="ltr">
+                            <span id="half-perimeter-val" class="text-gray-400 border-b-2 border-dashed border-gray-400">؟</span>
+                            <span class="text-purple-400">-</span>
+                            <span>5</span>
+                            <span class="text-purple-400">=</span>
+                            <input type="number" id="m2-step2" class="math-input text-purple-800" placeholder="X">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="text-center mt-6">
+                    <button onclick="checkDimensionSteps()" id="btn-m2" class="btn-playful bg-blue-600 hover:bg-blue-700 text-white font-black py-3 px-10 rounded-xl text-xl">
+                        تأكيد الخطوات 🔍
+                    </button>
+                </div>
+            </div>
+
+        </section>
+
+        <div id="finalVictory" class="hidden fixed inset-0 bg-black/80 z-50 flex items-center justify-center p-4 backdrop-blur-md">
+            <div class="bg-white rounded-3xl p-10 shadow-2xl border-8 border-teal-500 text-center max-w-lg w-full transform transition-all duration-300">
+                <div class="text-8xl mb-4 animate-bounce">🎓</div>
+                <h2 class="text-4xl font-black text-teal-800 mb-4">أنت مهندس بارع!</h2>
+                <p class="text-xl text-gray-700 font-bold mb-6 leading-relaxed">
+                    لقد فرقت بين المساحة والمحيط بنجاح، واكتشفت استراتيجية "نصف المحيط" الذكية لإيجاد البعد المجهول.
+                </p>
+                <button onclick="location.reload()" class="btn-playful bg-teal-600 hover:bg-teal-700 text-white font-black py-4 px-10 rounded-2xl text-2xl w-full">
+                    تحدي جديد 🔄
+                </button>
+            </div>
+        </div>
+
+    </main>
+
+    <script>
+        // --- Mission 1 Logic ---
+        function checkErrorRule(isCorrect, btn) {
+            const btns = document.getElementById('mcqContainer').children;
+            
+            if (isCorrect) {
+                // Correct Choice
+                btn.className = "text-right p-4 rounded-xl border-4 border-green-500 bg-green-100 font-bold text-lg text-green-900 transition-colors";
+                for(let b of btns) { if(b !== btn) { b.style.opacity = '0.5'; b.disabled = true; } }
+                
+                // Show correction area
+                const correctionArea = document.getElementById('correctionArea');
+                correctionArea.classList.remove('hidden');
+                setTimeout(() => document.getElementById('m1-correct-area').focus(), 100);
+
+            } else {
+                // Wrong Choice
+                btn.classList.add('shake', 'border-red-400', 'bg-red-50', 'text-red-700');
+                setTimeout(() => btn.classList.remove('shake', 'border-red-400', 'bg-red-50', 'text-red-700'), 500);
+            }
+        }
+
+        function checkArea() {
+            const input = document.getElementById('m1-correct-area');
+            const btn = document.getElementById('btn-m1');
+            const feedback = document.getElementById('m1-feedback');
+
+            // 12 * 8 = 96
+            if (parseInt(input.value) === 96) {
+                input.classList.add('input-correct');
+                input.disabled = true;
+                btn.style.display = 'none';
+
+                feedback.innerHTML = "✅ إجابة صحيحة! المساحة هي 96 متراً مربعاً.";
+                feedback.classList.remove('hidden');
+
+                // Unlock Mission 2
+                setTimeout(() => {
+                    document.getElementById('m2-lock').style.display = 'none';
+                    document.getElementById('mission2').classList.remove('opacity-50', 'pointer-events-none');
+                    document.getElementById('mission2').scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }, 1500);
+
+            } else {
+                input.classList.add('shake', 'bg-red-50', 'border-red-400', 'text-red-700');
+                setTimeout(() => input.classList.remove('shake', 'bg-red-50', 'border-red-400', 'text-red-700'), 500);
+            }
+        }
+
+        // --- Mission 2 Logic (Step by Step) ---
+        let step1Passed = false;
+
+        function checkDimensionSteps() {
+            const step1Input = document.getElementById('m2-step1');
+            const step2Box = document.getElementById('m2-step2-box');
+            const halfPerimeterVal = document.getElementById('half-perimeter-val');
+            const step2Input = document.getElementById('m2-step2');
+            const btn = document.getElementById('btn-m2');
+
+            // Check Step 1 (26 / 2 = 13)
+            if (!step1Passed) {
+                if (parseInt(step1Input.value) === 13) {
+                    step1Input.classList.add('input-correct');
+                    step1Input.disabled = true;
+                    step1Passed = true;
+
+                    // Unlock Step 2
+                    step2Box.classList.remove('opacity-50', 'pointer-events-none');
+                    step2Box.classList.replace('border-gray-200', 'border-purple-300');
+                    
+                    halfPerimeterVal.innerText = "13";
+                    halfPerimeterVal.className = "text-blue-700 mx-1";
+                    
+                    btn.innerText = "تأكيد قيمة X 🏆";
+                    btn.classList.replace('bg-blue-600', 'bg-purple-600');
+                    btn.classList.replace('hover:bg-blue-700', 'hover:bg-purple-700');
+                    
+                    setTimeout(() => step2Input.focus(), 100);
+                } else {
+                    step1Input.classList.add('shake', 'bg-red-50', 'border-red-400', 'text-red-700');
+                    setTimeout(() => step1Input.classList.remove('shake', 'bg-red-50', 'border-red-400', 'text-red-700'), 500);
+                }
+            } 
+            // Check Step 2 (13 - 5 = 8)
+            else {
+                if (parseInt(step2Input.value) === 8) {
+                    step2Input.classList.add('input-correct');
+                    step2Input.disabled = true;
+                    
+                    // Final Win
+                    document.getElementById('finalVictory').classList.remove('hidden');
+                    confettiEffect();
+                } else {
+                    step2Input.classList.add('shake', 'bg-red-50', 'border-red-400', 'text-red-700');
+                    setTimeout(() => step2Input.classList.remove('shake', 'bg-red-50', 'border-red-400', 'text-red-700'), 500);
+                }
+            }
+        }
+
+        // --- Celebration Effect ---
+        function confettiEffect() {
+            const colors = ['#0d9488', '#3b82f6', '#8b5cf6', '#f59e0b'];
+            for(let i=0; i<60; i++) {
+                const conf = document.createElement('div');
+                conf.className = 'absolute w-3 h-3 rounded-sm opacity-90 z-50'; // Squares for Area
+                conf.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                conf.style.left = Math.random() * 100 + 'vw';
+                conf.style.top = -20 + 'px';
+                conf.style.transition = 'all 3s ease-in';
+                document.body.appendChild(conf);
+                
+                setTimeout(() => {
+                    conf.style.top = '100vh';
+                    conf.style.transform = `rotate(${Math.random() * 720}deg) translateX(${Math.random() * 150 - 75}px)`;
+                }, 50);
+            }
+        }
+    </script>
+</body>
+</html>

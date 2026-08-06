@@ -1,0 +1,395 @@
+ <!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>تغيير القيم المكانية - مستعمرة النمل</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700;900&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Tajawal', sans-serif;
+            background-color: #f0fdfa;
+            background-image: radial-gradient(#bae6fd 2px, transparent 2px);
+            background-size: 30px 30px;
+            overflow-x: hidden;
+        }
+
+        .btn-playful {
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 6px 0 rgb(37 99 235);
+        }
+        .btn-playful:active {
+            transform: translateY(6px);
+            box-shadow: 0 0 0 rgb(37 99 235);
+        }
+
+        .btn-jump {
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 6px 0 rgb(13 148 136);
+        }
+        .btn-jump:active {
+            transform: translateY(6px);
+            box-shadow: 0 0 0 rgb(13 148 136);
+        }
+
+        .animate-bounce-sm {
+            animation: bounce-sm 2s infinite;
+        }
+        @keyframes bounce-sm {
+            0%, 100% { transform: translateY(-5%); }
+            50% { transform: translateY(0); }
+        }
+
+        /* حركات النمل المزخرف */
+        @keyframes walkRight {
+            0% { transform: translate(-50px, 0) scaleX(-1) rotate(-5deg); }
+            50% { transform: translate(50vw, -10px) scaleX(-1) rotate(5deg); }
+            100% { transform: translate(110vw, 0) scaleX(-1) rotate(-5deg); }
+        }
+        @keyframes walkLeft {
+            0% { transform: translate(110vw, 0) rotate(5deg); }
+            50% { transform: translate(50vw, 15px) rotate(-5deg); }
+            100% { transform: translate(-50px, 0) rotate(5deg); }
+        }
+
+        .walking-ant-1 { animation: walkRight 20s linear infinite; }
+        .walking-ant-2 { animation: walkLeft 24s linear infinite 3s; }
+
+        /* تأثير الحركة والقفز للخانة التالية */
+        .slot-active {
+            box-shadow: 0 0 15px rgba(13, 148 136, 0.8);
+            transform: scale(1.05);
+        }
+
+        .ant-hill-shape {
+            border-radius: 40% 40% 1.5rem 1.5rem !important;
+            position: relative;
+        }
+
+        .highlight-gold {
+            background: linear-gradient(120deg, #fef08a 0%, #fde047 100%);
+        }
+    </style>
+</head>
+<body class="min-h-screen text-gray-800 flex flex-col items-center py-6 px-4 relative">
+
+    <!-- خلفية النمل المبهجة -->
+    <div class="fixed top-12 -left-10 text-4xl walking-ant-1 z-0 pointer-events-none opacity-50">🐜</div>
+    <div class="fixed bottom-20 -right-10 text-5xl walking-ant-2 z-0 pointer-events-none opacity-40">🐜</div>
+
+    <!-- الترويسة الرئيسية -->
+    <header class="w-full max-w-5xl text-center mb-6 z-10">
+        <div class="bg-white rounded-3xl p-6 shadow-xl border-4 border-teal-400 relative overflow-hidden">
+            <span class="bg-teal-500 text-white font-bold px-4 py-1 rounded-full text-sm absolute top-4 right-4">الدرس الثاني</span>
+            <h1 class="text-3xl md:text-5xl font-black text-teal-800 mb-2 mt-4 flex items-center justify-center gap-3">
+                <span>🐜</span> رحلة تغيير القِيَم المكانية <span>🚀</span>
+            </h1>
+            <p class="text-lg md:text-xl text-gray-600 font-bold">
+                شاهد كيف يتضاعف الرقم <span class="text-teal-600 font-black">10 أضعاف</span> كلما تحرك خطوة واحدة باتجاه اليسار!
+            </p>
+        </div>
+    </header>
+
+    <!-- القسم الرئيسي: جدول القيم المكانية التفاعلي -->
+    <main class="w-full max-w-5xl z-10 flex flex-col gap-6">
+
+        <!-- لوحة التحكم واختيار الرقم -->
+        <div class="bg-white rounded-3xl p-6 shadow-lg border-4 border-blue-300 text-center flex flex-col md:flex-row items-center justify-between gap-4">
+            <div class="flex items-center gap-3">
+                <span class="text-2xl font-black text-blue-800">1️⃣ اختر رقماً للبدء:</span>
+                <select id="digitSelect" onchange="resetDigitPosition()" class="text-2xl font-black bg-blue-50 border-3 border-blue-400 rounded-2xl px-4 py-2 text-blue-900 focus:outline-none focus:ring-4 focus:ring-blue-200 cursor-pointer">
+                    <option value="1">1</option>
+                    <option value="2">2</option>
+                    <option value="3" selected>3</option>
+                    <option value="4">4</option>
+                    <option value="5">5</option>
+                    <option value="6">6</option>
+                    <option value="7">7</option>
+                    <option value="8">8</option>
+                    <option value="9">9</option>
+                </select>
+            </div>
+
+            <!-- أزرار التحكم -->
+            <div class="flex flex-wrap items-center justify-center gap-3">
+                <button onclick="shiftLeft()" class="btn-jump bg-teal-600 hover:bg-teal-700 text-white font-black py-3 px-6 rounded-2xl text-xl flex items-center gap-2">
+                    <span>⬅️</span> قفز إلى اليسار (× 10) 🐜
+                </button>
+                <button onclick="resetDigitPosition()" class="bg-gray-200 hover:bg-gray-300 text-gray-700 font-bold py-3 px-5 rounded-2xl text-lg transition-colors">
+                    إعادة للآحاد 🔄
+                </button>
+            </div>
+        </div>
+
+        <!-- جدول الخانات (الخيارات الأربعة: المليارات، الملايين، الألوف، الوحدات) -->
+        <div class="bg-white rounded-3xl p-4 shadow-xl border-4 border-teal-200 overflow-x-auto">
+            
+            <div class="min-w-[700px]" dir="ltr">
+                <!-- أسماء العائلات / الفترات -->
+                <div class="grid grid-cols-10 gap-2 mb-2 text-center font-black text-lg md:text-xl">
+                    <div class="col-span-1 bg-purple-200 text-purple-900 py-2 rounded-t-2xl">المليارات</div>
+                    <div class="col-span-3 bg-blue-200 text-blue-900 py-2 rounded-t-2xl">الملايين</div>
+                    <div class="col-span-3 bg-green-200 text-green-900 py-2 rounded-t-2xl">الألوف</div>
+                    <div class="col-span-3 bg-orange-200 text-orange-900 py-2 rounded-t-2xl">الوحدات</div>
+                </div>
+
+                <!-- أسماء الخانات الفرعية -->
+                <div class="grid grid-cols-10 gap-1 text-center font-bold text-xs md:text-sm bg-gray-100 py-2 rounded-lg mb-3 text-gray-700">
+                    <div>آحاد</div>
+                    <div>مئات</div><div>عشرات</div><div>آحاد</div>
+                    <div>مئات</div><div>عشرات</div><div>آحاد</div>
+                    <div>مئات</div><div>عشرات</div><div>آحاد</div>
+                </div>
+
+                <!-- شبكة أرقام الجدول (10 خانات) -->
+                <div id="gridSlots" class="grid grid-cols-10 gap-1 text-center font-mono">
+                    <!-- سيتم إدراجه تلقائياً بواسطة JavaScript -->
+                </div>
+            </div>
+
+        </div>
+
+        <!-- بطاقة شرح القيمة المتغيرة وشريط تسجيل القيمة (مطابق لصفحة الكتاب) -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            
+            <!-- سجل قيم الرقم السحرية -->
+            <div class="bg-amber-50 rounded-3xl p-6 shadow-md border-4 border-amber-300 relative">
+                <div class="absolute -top-4 right-6 bg-amber-400 text-amber-950 font-black px-4 py-1 rounded-full text-sm">
+                    📝 سجل القيمة المكانية
+                </div>
+                <h3 class="text-xl font-bold text-gray-800 mb-4 mt-2">
+                    متابعة القيمة للرقم <span id="currentChosenDigit" class="text-2xl font-black text-amber-700">3</span>:
+                </h3>
+
+                <ul class="space-y-3 font-mono text-lg md:text-xl text-gray-800">
+                    <li id="log-0" class="p-2 rounded-xl transition-all">
+                        • في <strong class="text-orange-700">الآحاد</strong>: <span id="val-0" class="font-bold">3</span>
+                    </li>
+                    <li id="log-1" class="p-2 rounded-xl transition-all">
+                        • في <strong class="text-orange-700">العشرات</strong>: <span id="val-1" class="font-bold">0</span>
+                    </li>
+                    <li id="log-2" class="p-2 rounded-xl transition-all">
+                        • في <strong class="text-orange-700">المئات</strong>: <span id="val-2" class="font-bold">0</span>
+                    </li>
+                    <li id="log-3" class="p-2 rounded-xl transition-all">
+                        • في <strong class="text-green-700">آحاد الألوف</strong>: <span id="val-3" class="font-bold">0</span>
+                    </li>
+                    <li id="log-4" class="p-2 rounded-xl transition-all">
+                        • في <strong class="text-green-700">عشرات الألوف</strong>: <span id="val-4" class="font-bold">0</span>
+                    </li>
+                </ul>
+            </div>
+
+            <!-- تفسير النمط للطفل (قاعدة الضرب في 10) -->
+            <div class="bg-teal-50 rounded-3xl p-6 shadow-md border-4 border-teal-300 flex flex-col justify-between">
+                <div>
+                    <div class="flex items-center gap-2 mb-3">
+                        <span class="text-3xl">🔍</span>
+                        <h3 class="text-2xl font-black text-teal-800">ماذا تلاحظ؟ (النمط)</h3>
+                    </div>
+                    <p class="text-lg text-gray-700 leading-relaxed mb-4">
+                        عندما يتحرك الرقم خانة واحدة باتجاه اليسار، تتضاعف قيمته <strong class="text-teal-700 text-xl font-black bg-teal-200 px-2 py-0.5 rounded-md">10 أضعاف</strong> (أو نضربه في 10).
+                    </p>
+                    <div id="equationBox" class="bg-white p-4 rounded-2xl border-2 border-teal-200 text-center shadow-inner">
+                        <p class="text-gray-500 font-bold mb-1 text-sm">المعادلة الحالية:</p>
+                        <p id="equationText" class="text-2xl md:text-3xl font-black text-teal-700 font-mono" dir="ltr">
+                            3 × 1 = 3
+                        </p>
+                    </div>
+                </div>
+
+                <div class="mt-4 bg-yellow-100 p-3 rounded-2xl border border-yellow-300 flex items-center gap-3">
+                    <span class="text-3xl">🐜</span>
+                    <p class="text-sm font-bold text-yellow-900">
+                        "النملة الذكية تتذكر دائماً: كل قفزة لليسار تزيد صفراً يميناً!"
+                    </p>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- قسم استكشف: أعمدة العشرات -->
+        <section class="bg-white rounded-3xl p-6 shadow-lg border-4 border-purple-300 mt-2">
+            <h3 class="text-2xl font-black text-purple-800 mb-3 flex items-center gap-2">
+                <span>🧪</span> استكشف: الضرب في 10 بقطع العشرات
+            </h3>
+            <p class="text-gray-700 text-lg mb-4">
+                اضغط لتجربة كم يمثل عدد أعمدة العشرات (كل عمود = 10 units):
+            </p>
+
+            <div class="flex flex-wrap items-center gap-4 justify-center md:justify-start">
+                <div class="flex items-center gap-2">
+                    <span class="font-bold">عدد أعمدة العشرات:</span>
+                    <button onclick="changeBlocks(-1)" class="w-10 h-10 bg-purple-200 hover:bg-purple-300 rounded-xl font-bold text-xl text-purple-900">-</button>
+                    <span id="blockCount" class="text-2xl font-black text-purple-900 font-mono w-8 text-center">4</span>
+                    <button onclick="changeBlocks(1)" class="w-10 h-10 bg-purple-200 hover:bg-purple-300 rounded-xl font-bold text-xl text-purple-900">+</button>
+                </div>
+
+                <div class="bg-purple-50 px-6 py-2 rounded-2xl border border-purple-200 text-xl font-black text-purple-800 font-mono" dir="ltr">
+                    <span id="blockCalc">4 × 10 = 40</span>
+                </div>
+            </div>
+
+            <!-- تمثيل بصري لأعمدة العشرات -->
+            <div id="blocksVisual" class="flex flex-wrap gap-3 mt-6 p-4 bg-purple-50/50 rounded-2xl border-2 border-dashed border-purple-200 min-h-[90px] items-center justify-center md:justify-start">
+                <!-- الأشرطة التفاعلية تُنشأ بـ JS -->
+            </div>
+        </section>
+
+    </main>
+
+    <script>
+        // الخانات المتاحة بالترتيب من اليمين (الآحاد = index 9) إلى اليسار (المليارات = index 0)
+        // dir="ltr" grid order: 0=Billions.. 9=Units
+        let currentSlot = 9; // البدء من الآحاد
+        let blockCount = 4;
+
+        const slotNamesAr = [
+            "آحاد المليارات", "مئات الملايين", "عشرات الملايين", "آحاد الملايين",
+            "مئات الألوف", "عشرات الألوف", "آحاد الألوف",
+            "المئات", "العشرات", "الآحاد"
+        ];
+
+        // تهيئة الصفحة
+        window.onload = function() {
+            renderGrid();
+            updateDisplay();
+            renderBlocks();
+        };
+
+        // بناء خانات الشبكة الـ 10
+        function renderGrid() {
+            const container = document.getElementById('gridSlots');
+            container.innerHTML = '';
+
+            for (let i = 0; i < 10; i++) {
+                const slot = document.createElement('div');
+                slot.id = `slot-${i}`;
+                slot.className = "bg-gray-50 border-2 border-gray-200 rounded-2xl py-4 flex flex-col items-center justify-center min-h-[80px] transition-all duration-300";
+                
+                const digitSpan = document.createElement('span');
+                digitSpan.id = `slot-digit-${i}`;
+                digitSpan.className = "text-2xl md:text-3xl font-black text-gray-300 font-mono";
+                digitSpan.innerText = "0";
+
+                slot.appendChild(digitSpan);
+                container.appendChild(slot);
+            }
+        }
+
+        // قفز الرقم خطوة لليسار (تضاعف بـ 10 أضعاف)
+        function shiftLeft() {
+            if (currentSlot > 0) {
+                currentSlot--;
+                updateDisplay();
+            } else {
+                alert("وصلت لأعلى خانة في المستعمرة! 🎉");
+            }
+        }
+
+        // إرجاع الرقم للآحاد
+        function resetDigitPosition() {
+            currentSlot = 9;
+            updateDisplay();
+        }
+
+        // تحديث العرض بالكامل
+        function updateDisplay() {
+            const chosenDigit = parseInt(document.getElementById('digitSelect').value);
+            document.getElementById('currentChosenDigit').innerText = chosenDigit;
+
+            // إعادة تعيين كافّة الخانات في الجدول
+            for (let i = 0; i < 10; i++) {
+                const slotEl = document.getElementById(`slot-${i}`);
+                const digitEl = document.getElementById(`slot-digit-${i}`);
+                
+                slotEl.classList.remove('slot-active', 'bg-teal-100', 'border-teal-400');
+                slotEl.classList.add('bg-gray-50', 'border-gray-200');
+                
+                if (i > currentSlot) {
+                    // الخانات اليمين تصبح أصفاراً
+                    digitEl.innerText = "0";
+                    digitEl.className = "text-2xl md:text-3xl font-black text-gray-500 font-mono";
+                } else if (i === currentSlot) {
+                    // الخانة الحالية للرقم المختار
+                    digitEl.innerText = chosenDigit;
+                    digitEl.className = "text-3xl md:text-4xl font-black text-teal-700 font-mono scale-110";
+                    slotEl.classList.add('slot-active', 'bg-teal-100', 'border-teal-400');
+                    slotEl.classList.remove('bg-gray-50', 'border-gray-200');
+                } else {
+                    // الخانات اليسار فارغة
+                    digitEl.innerText = "";
+                    digitEl.className = "text-2xl md:text-3xl font-black text-gray-300 font-mono";
+                }
+            }
+
+            // تحديث قيم السجل (من الآحاد إلى عشرات الألوف)
+            const placeMultipliers = [1, 10, 100, 1000, 10000];
+            const stepsFromUnits = 9 - currentSlot; // كم خطوة ابتعدنا عن الآحاد
+
+            for (let i = 0; i < 5; i++) {
+                const logItem = document.getElementById(`log-${i}`);
+                const valSpan = document.getElementById(`val-${i}`);
+
+                if (i <= stepsFromUnits) {
+                    const value = chosenDigit * placeMultipliers[i];
+                    valSpan.innerText = value.toLocaleString('en-US');
+                    
+                    if (i === stepsFromUnits) {
+                        logItem.className = "p-2 rounded-xl bg-amber-200 border-2 border-amber-400 font-bold transform scale-102 transition-all";
+                    } else {
+                        logItem.className = "p-2 rounded-xl bg-white/60 opacity-80";
+                    }
+                } else {
+                    valSpan.innerText = "—";
+                    logItem.className = "p-2 rounded-xl opacity-40";
+                }
+            }
+
+            // تحديث نص المعادلة الشارحة للنمط (الضرب في 10)
+            const eqText = document.getElementById('equationText');
+            
+            if (stepsFromUnits === 0) {
+                // في الآحاد
+                eqText.innerText = `${chosenDigit} (آحاد)`;
+            } else {
+                // القيمة السابقة مضروبة في 10 تساوي القيمة الحالية
+                const previousValue = chosenDigit * Math.pow(10, stepsFromUnits - 1);
+                const currentValue = chosenDigit * Math.pow(10, stepsFromUnits);
+                eqText.innerText = `${previousValue.toLocaleString('en-US')} × 10 = ${currentValue.toLocaleString('en-US')}`;
+            }
+        }
+
+        // تغيير عدد أعمدة العشرات في استكشف
+        function changeBlocks(delta) {
+            blockCount += delta;
+            if (blockCount < 1) blockCount = 1;
+            if (blockCount > 10) blockCount = 10;
+            
+            document.getElementById('blockCount').innerText = blockCount;
+            document.getElementById('blockCalc').innerText = `${blockCount} × 10 = ${blockCount * 10}`;
+            renderBlocks();
+        }
+
+        // رسم أعمدة العشرات بصرياً
+        function renderBlocks() {
+            const visual = document.getElementById('blocksVisual');
+            visual.innerHTML = '';
+
+            for (let b = 0; b < blockCount; b++) {
+                const blockBar = document.createElement('div');
+                blockBar.className = "flex flex-col bg-purple-400 border-2 border-purple-600 rounded-lg p-0.5 shadow-sm hover:scale-105 transition-transform";
+                blockBar.title = "عمود عشرة 1";
+
+                for (let cell = 0; cell < 10; cell++) {
+                    const c = document.createElement('div');
+                    c.className = "w-4 h-3 border-b border-purple-300 last:border-b-0 bg-purple-300/60";
+                    blockBar.appendChild(c);
+                }
+                visual.appendChild(blockBar);
+            }
+        }
+    </script>
+</body>
+</html>

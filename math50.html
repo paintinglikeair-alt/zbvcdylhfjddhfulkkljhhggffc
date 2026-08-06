@@ -1,0 +1,612 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>مختبر القسمة والباقي</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700;900&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Tajawal', sans-serif;
+            background-color: #f8fafc; /* خلفية رمادية فاتحة جداً */
+            background-image: radial-gradient(#cbd5e1 2px, transparent 2px);
+            background-size: 30px 30px;
+            overflow-x: hidden;
+        }
+
+        /* أزرار تفاعلية */
+        .btn-playful {
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 6px 0 rgba(0,0,0,0.2);
+        }
+        .btn-playful:active:not(:disabled) {
+            transform: translateY(6px);
+            box-shadow: 0 0 0 rgba(0,0,0,0);
+        }
+        .btn-playful:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none !important;
+            box-shadow: 0 6px 0 rgba(0,0,0,0.2) !important;
+        }
+
+        /* حقول الإدخال */
+        .math-input {
+            width: 5rem;
+            text-align: center;
+            font-size: 1.5rem;
+            font-weight: 900;
+            border: 3px solid #cbd5e1;
+            border-radius: 0.75rem;
+            background-color: white;
+            transition: all 0.3s;
+            font-family: monospace;
+        }
+        .math-input:focus {
+            outline: none;
+            border-color: #6366f1;
+            box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.3);
+        }
+        .input-correct {
+            background-color: #dcfce7 !important;
+            border-color: #22c55e !important;
+            color: #166534 !important;
+        }
+
+        .shake { animation: shake 0.5s cubic-bezier(.36,.07,.19,.97) both; }
+        @keyframes shake {
+            10%, 90% { transform: translate3d(-1px, 0, 0); }
+            20%, 80% { transform: translate3d(2px, 0, 0); }
+            30%, 50%, 70% { transform: translate3d(-4px, 0, 0); }
+            40%, 60% { transform: translate3d(4px, 0, 0); }
+        }
+
+        /* تنسيقات الفطائر والأطباق */
+        .pie-container {
+            position: relative;
+            min-height: 120px;
+            display: flex;
+            flex-wrap: wrap;
+            align-content: flex-start;
+            gap: 8px;
+            padding: 10px;
+        }
+        
+        .pie {
+            width: 40px;
+            height: 40px;
+            background-color: #fcd34d; /* لون الفطيرة */
+            border: 3px solid #d97706;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            transition: all 0.5s cubic-bezier(0.34, 1.56, 0.64, 1); /* حركة القفز */
+            position: relative;
+        }
+        .pie::after {
+            content: '';
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            border-top: 2px solid #b45309;
+            border-radius: 50%;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+
+        .plate {
+            background-color: white;
+            border: 4px solid #cbd5e1;
+            border-radius: 50%;
+            width: 100px;
+            height: 100px;
+            display: flex;
+            flex-wrap: wrap;
+            align-content: center;
+            justify-content: center;
+            gap: 4px;
+            padding: 8px;
+            box-shadow: inset 0 -4px 10px rgba(0,0,0,0.05), 0 4px 6px rgba(0,0,0,0.1);
+        }
+        
+        /* Dropdown Vocabulary */
+        .vocab-select {
+            appearance: none;
+            background-color: #f1f5f9;
+            border: 3px dashed #94a3b8;
+            border-radius: 0.75rem;
+            padding: 0.5rem 2rem 0.5rem 1rem;
+            font-weight: 900;
+            color: #475569;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-align: center;
+        }
+        .vocab-select:focus {
+            outline: none;
+            border-color: #8b5cf6;
+            border-style: solid;
+        }
+        .vocab-select.correct {
+            background-color: #dcfce7 !important;
+            border-color: #22c55e !important;
+            border-style: solid;
+            color: #166534 !important;
+        }
+
+    </style>
+</head>
+<body class="min-h-screen text-gray-800 flex flex-col items-center py-6 px-4 relative">
+
+    <header class="w-full max-w-5xl text-center mb-8 z-10">
+        <div class="bg-white rounded-3xl p-6 shadow-xl border-4 border-indigo-500 relative overflow-hidden">
+            <span class="bg-indigo-600 text-white font-bold px-4 py-1 rounded-full text-sm absolute top-4 right-4">الدرس السادس - الوحدة 7</span>
+            
+            <h1 class="text-3xl md:text-5xl font-black text-indigo-900 mb-2 mt-4 flex items-center justify-center gap-3">
+                <span>🍰</span> استكشاف باقي القسمة <span>➗</span>
+            </h1>
+            <p class="text-lg md:text-xl text-indigo-700 font-bold mb-4">
+                ماذا يحدث عندما لا تتوزع الأشياء بالتساوي؟
+            </p>
+        </div>
+    </header>
+
+    <main class="w-full max-w-5xl z-10 flex flex-col gap-8">
+        
+        <!-- القسم الأول: استكشف (علاقة الضرب والقسمة) -->
+        <section id="phase1" class="bg-white rounded-3xl shadow-xl border-4 border-sky-400 p-6 md:p-8">
+            <div class="flex items-center gap-3 mb-6 border-b-2 border-sky-100 pb-4">
+                <span class="text-4xl">⚽</span>
+                <h2 class="text-2xl md:text-3xl font-black text-sky-800">استكشف: فرق كرة القدم</h2>
+            </div>
+            
+            <p class="text-lg font-bold text-gray-700 mb-6 text-center leading-relaxed">
+                اقرأ المسائل الثلاث التالية ولاحظ الأرقام المشتركة. عائلة العمليات ترتبط ببعضها!
+            </p>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                <!-- مسألة 1 (ضرب) -->
+                <div class="bg-sky-50 border-2 border-sky-200 rounded-2xl p-6 text-center shadow-sm">
+                    <p class="font-bold text-sky-900 mb-4 h-16">1) يوجد 8 فرق، وكل فريق يضم 9 لاعبين. ما عدد التلاميذ الكلي؟</p>
+                    <div class="flex items-center justify-center gap-2 font-mono text-2xl font-black" dir="ltr">
+                        <span>8</span>
+                        <span class="text-sky-500">×</span>
+                        <span>9</span>
+                        <span class="text-sky-500">=</span>
+                        <input type="number" id="p1-q1" class="math-input text-sky-900 w-20 h-12" placeholder="؟">
+                    </div>
+                </div>
+
+                <!-- مسألة 2 (قسمة 1) -->
+                <div class="bg-sky-50 border-2 border-sky-200 rounded-2xl p-6 text-center shadow-sm">
+                    <p class="font-bold text-sky-900 mb-4 h-16">2) يوجد 72 تلميذاً، سيتم تقسيمهم لفرق يضم كل فريق 9 تلاميذ. ما عدد الفرق؟</p>
+                    <div class="flex items-center justify-center gap-2 font-mono text-2xl font-black" dir="ltr">
+                        <span>72</span>
+                        <span class="text-sky-500">÷</span>
+                        <span>9</span>
+                        <span class="text-sky-500">=</span>
+                        <input type="number" id="p1-q2" class="math-input text-sky-900 w-20 h-12" placeholder="؟">
+                    </div>
+                </div>
+
+                <!-- مسألة 3 (قسمة 2) -->
+                <div class="bg-sky-50 border-2 border-sky-200 rounded-2xl p-6 text-center shadow-sm">
+                    <p class="font-bold text-sky-900 mb-4 h-16">3) يوجد 72 تلميذاً، سيتم تقسيمهم إلى 8 فرق. ما عدد التلاميذ في كل فريق؟</p>
+                    <div class="flex items-center justify-center gap-2 font-mono text-2xl font-black" dir="ltr">
+                        <span>72</span>
+                        <span class="text-sky-500">÷</span>
+                        <span>8</span>
+                        <span class="text-sky-500">=</span>
+                        <input type="number" id="p1-q3" class="math-input text-sky-900 w-20 h-12" placeholder="؟">
+                    </div>
+                </div>
+            </div>
+
+            <div class="text-center">
+                <button onclick="checkPhase1()" id="btn-p1" class="btn-playful bg-sky-500 hover:bg-sky-600 text-white font-black py-3 px-10 rounded-xl text-xl">
+                    تأكيد الإجابات ✅
+                </button>
+            </div>
+            
+            <!-- رسالة التشابه -->
+            <div id="p1-feedback" class="hidden mt-6 bg-green-100 border-2 border-green-300 rounded-2xl p-4 text-center">
+                <p class="text-xl font-black text-green-800 mb-2">ممتاز! ماذا تلاحظ؟ 🤔</p>
+                <p class="font-bold text-green-700">الأرقام الثلاثة (72، 8، 9) تشكل <strong>عائلة عمليات</strong>. القسمة هي عملية عكسية للضرب. وهذه الحالات تسمى "قسمة بدون باقٍ".</p>
+                <button onclick="unlockPhase2()" class="mt-4 btn-playful bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-8 rounded-xl text-lg">
+                    انتقل لدرس الفطائر ➡️
+                </button>
+            </div>
+        </section>
+
+        <!-- القسم الثاني: تعلّم (فطائر سليم والباقي) -->
+        <section id="phase2" class="bg-white rounded-3xl shadow-xl border-4 border-amber-400 p-6 md:p-8 opacity-50 pointer-events-none transition-all duration-500 relative">
+            
+            <div id="p2-lock" class="absolute inset-0 z-20 flex flex-col items-center justify-center bg-white/70 backdrop-blur-sm rounded-3xl">
+                <span class="text-6xl mb-4">🔒</span>
+                <p class="text-2xl font-bold text-gray-800 text-center px-4">أنهِ مهمة كرة القدم أولاً!</p>
+            </div>
+
+            <div class="flex items-center gap-3 mb-6 border-b-2 border-amber-100 pb-4">
+                <span class="text-4xl">🥧</span>
+                <h2 class="text-2xl md:text-3xl font-black text-amber-800">تعلّم: ما الباقي؟ (فطائر سليم)</h2>
+            </div>
+
+            <p class="text-xl font-bold text-gray-800 mb-6 text-center leading-relaxed bg-amber-50 p-4 rounded-xl border border-amber-200">
+                أحضر سليم <span class="font-black text-amber-700 bg-white px-2 rounded mx-1">15</span> فطيرة ليعطيها لأربعة (<span class="font-black text-amber-700 bg-white px-2 rounded mx-1">4</span>) من أصدقائه. <br>
+                كيف يمكن أن يقسم سليم الفطائر <span class="underline decoration-amber-500 decoration-4">بالتساوي</span>؟
+            </p>
+
+            <!-- التوزيع البصري التفاعلي -->
+            <div class="flex flex-col items-center mb-10 bg-gray-50 p-6 rounded-3xl border-2 border-gray-200 shadow-inner">
+                
+                <!-- الصينية الرئيسية (المقسوم) -->
+                <p class="font-bold text-gray-600 mb-2">الفطائر الكلية (15):</p>
+                <div class="bg-white border-4 border-amber-300 rounded-2xl w-full max-w-lg mb-8 pie-container justify-center" id="main-tray">
+                    <!-- سيتم إضافة 15 فطيرة هنا عبر JS -->
+                </div>
+
+                <!-- التوزيع -->
+                <button onclick="distributePies()" id="btn-distribute" class="btn-playful bg-amber-500 hover:bg-amber-600 text-white font-black py-3 px-8 rounded-xl text-xl mb-8 flex items-center gap-2">
+                    <span>🤖</span> ابدأ التوزيع العادل
+                </button>
+
+                <!-- أطباق الأصدقاء (المقسوم عليه) -->
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-6 w-full max-w-2xl justify-items-center">
+                    <div class="flex flex-col items-center">
+                        <div class="plate" id="plate-1"></div>
+                        <p class="font-bold text-gray-500 mt-2">صديق 1</p>
+                    </div>
+                    <div class="flex flex-col items-center">
+                        <div class="plate" id="plate-2"></div>
+                        <p class="font-bold text-gray-500 mt-2">صديق 2</p>
+                    </div>
+                    <div class="flex flex-col items-center">
+                        <div class="plate" id="plate-3"></div>
+                        <p class="font-bold text-gray-500 mt-2">صديق 3</p>
+                    </div>
+                    <div class="flex flex-col items-center">
+                        <div class="plate" id="plate-4"></div>
+                        <p class="font-bold text-gray-500 mt-2">صديق 4</p>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- إدخال المعادلة -->
+            <div class="bg-amber-50 p-6 rounded-2xl border-2 border-amber-200 text-center" id="p2-equation-box">
+                <p class="text-xl font-black text-amber-900 mb-4">اكتب المعادلة الرياضية بناءً على الرسم:</p>
+                
+                <div class="flex flex-wrap items-center justify-center gap-4 text-2xl font-black font-mono" dir="ltr">
+                    <span>15</span>
+                    <span class="text-amber-500">÷</span>
+                    <span>4</span>
+                    <span class="text-amber-500">=</span>
+                    
+                    <div class="flex items-center gap-2" dir="rtl">
+                        <input type="number" id="p2-quotient" class="math-input text-amber-900 w-20" placeholder="الناتج">
+                        <span class="font-sans text-gray-600 font-bold mx-2">والباقي</span>
+                        <input type="number" id="p2-remainder" class="math-input text-red-700 w-20 border-red-300 bg-red-50" placeholder="الباقي">
+                    </div>
+                </div>
+
+                <div class="mt-6">
+                    <button onclick="checkPhase2()" id="btn-p2" class="btn-playful bg-amber-600 hover:bg-amber-700 text-white font-black py-2 px-8 rounded-xl text-xl hidden mx-auto">
+                        تأكيد المعادلة ✏️
+                    </button>
+                    <p id="p2-feedback" class="hidden mt-4 font-bold text-lg text-green-700"></p>
+                </div>
+            </div>
+
+        </section>
+
+        <!-- القسم الثالث: مصطلحات القسمة -->
+        <section id="phase3" class="bg-white rounded-3xl shadow-xl border-4 border-emerald-400 p-6 md:p-8 opacity-50 pointer-events-none transition-all duration-500 relative">
+            
+            <div id="p3-lock" class="absolute inset-0 z-20 flex flex-col items-center justify-center bg-white/70 backdrop-blur-sm rounded-3xl">
+                <span class="text-6xl mb-4">🔒</span>
+                <p class="text-2xl font-bold text-gray-800 text-center px-4">أكمل توزيع الفطائر لفتح المصطلحات!</p>
+            </div>
+
+            <div class="flex items-center gap-3 mb-6 border-b-2 border-emerald-100 pb-4">
+                <span class="text-4xl">📚</span>
+                <h2 class="text-2xl md:text-3xl font-black text-emerald-800">تطبيق: مسميات عائلة القسمة</h2>
+            </div>
+
+            <p class="text-lg font-bold text-gray-700 mb-8 text-center">
+                في المعادلة السابقة: <span class="bg-gray-100 px-2 rounded font-mono font-black text-xl" dir="ltr">15 ÷ 4 = 3 (R 3)</span><br>
+                اختر المسمى الرياضي الصحيح لكل رقم!
+            </p>
+
+            <div class="flex flex-col gap-4 max-w-lg mx-auto">
+                <!-- 15 -->
+                <div class="bg-emerald-50 border-2 border-emerald-200 p-4 rounded-xl flex items-center justify-between gap-4">
+                    <div class="flex items-center gap-3">
+                        <span class="text-3xl font-black font-mono text-emerald-700">15</span>
+                        <span class="text-sm font-bold text-gray-500">(العدد الكلي للفطائر)</span>
+                    </div>
+                    <select id="vocab-15" class="vocab-select">
+                        <option value="-" selected disabled>اختر...</option>
+                        <option value="dividend">المقسوم</option>
+                        <option value="divisor">المقسوم عليه</option>
+                        <option value="quotient">خارج القسمة</option>
+                        <option value="remainder">الباقي</option>
+                    </select>
+                </div>
+
+                <!-- 4 -->
+                <div class="bg-emerald-50 border-2 border-emerald-200 p-4 rounded-xl flex items-center justify-between gap-4">
+                    <div class="flex items-center gap-3">
+                        <span class="text-3xl font-black font-mono text-emerald-700">4</span>
+                        <span class="text-sm font-bold text-gray-500">(عدد الأصدقاء)</span>
+                    </div>
+                    <select id="vocab-4" class="vocab-select">
+                        <option value="-" selected disabled>اختر...</option>
+                        <option value="dividend">المقسوم</option>
+                        <option value="divisor">المقسوم عليه</option>
+                        <option value="quotient">خارج القسمة</option>
+                        <option value="remainder">الباقي</option>
+                    </select>
+                </div>
+
+                <!-- 3 (Quotient) -->
+                <div class="bg-emerald-50 border-2 border-emerald-200 p-4 rounded-xl flex items-center justify-between gap-4">
+                    <div class="flex items-center gap-3">
+                        <span class="text-3xl font-black font-mono text-emerald-700">3</span>
+                        <span class="text-sm font-bold text-gray-500">(نصيب كل صديق)</span>
+                    </div>
+                    <select id="vocab-3q" class="vocab-select">
+                        <option value="-" selected disabled>اختر...</option>
+                        <option value="dividend">المقسوم</option>
+                        <option value="divisor">المقسوم عليه</option>
+                        <option value="quotient">خارج القسمة</option>
+                        <option value="remainder">الباقي</option>
+                    </select>
+                </div>
+
+                <!-- 3 (Remainder) -->
+                <div class="bg-emerald-50 border-2 border-emerald-200 p-4 rounded-xl flex items-center justify-between gap-4">
+                    <div class="flex items-center gap-3">
+                        <span class="text-3xl font-black font-mono text-red-600">3</span>
+                        <span class="text-sm font-bold text-gray-500">(ما تبقى في الصينية)</span>
+                    </div>
+                    <select id="vocab-3r" class="vocab-select">
+                        <option value="-" selected disabled>اختر...</option>
+                        <option value="dividend">المقسوم</option>
+                        <option value="divisor">المقسوم عليه</option>
+                        <option value="quotient">خارج القسمة</option>
+                        <option value="remainder">الباقي</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="text-center mt-8">
+                <button onclick="checkVocabulary()" id="btn-p3" class="btn-playful bg-emerald-600 hover:bg-emerald-700 text-white font-black py-3 px-10 rounded-xl text-xl">
+                    تأكيد المصطلحات 🎓
+                </button>
+            </div>
+
+        </section>
+
+        <!-- رسالة الفوز النهائية -->
+        <div id="finalVictory" class="hidden fixed inset-0 bg-black/80 z-50 flex items-center justify-center p-4 backdrop-blur-md">
+            <div class="bg-white rounded-3xl p-10 shadow-2xl border-8 border-indigo-500 text-center max-w-lg w-full transform transition-all duration-300 pop-in">
+                <div class="text-8xl mb-4 animate-bounce">🏆</div>
+                <h2 class="text-4xl font-black text-indigo-800 mb-4">أنت خبير القسمة!</h2>
+                
+                <div class="bg-indigo-50 p-4 rounded-xl text-right mb-6 border-2 border-indigo-200 shadow-sm">
+                    <p class="text-lg font-bold text-indigo-900 mb-2">القاعدة السحرية للباقي 💡:</p>
+                    <p class="text-gray-700 font-bold leading-relaxed">
+                        يجب أن يكون <span class="text-red-600">"الباقي"</span> دائماً <strong class="underline decoration-2">أصغر من</strong> <span class="text-blue-600">"المقسوم عليه"</span>.<br>
+                        لو تبقى لدينا 4 فطائر أو أكثر، لكنا استطعنا توزيع جولة أخرى على الأصدقاء الأربعة!
+                    </p>
+                </div>
+                
+                <button onclick="location.reload()" class="btn-playful bg-indigo-600 hover:bg-indigo-700 text-white font-black py-4 px-10 rounded-2xl text-2xl w-full">
+                    تدريب جديد 🔄
+                </button>
+            </div>
+        </div>
+
+    </main>
+
+    <script>
+        function shakeInput(el) {
+            el.classList.add('shake', 'bg-red-50', 'border-red-400', 'text-red-700');
+            setTimeout(() => el.classList.remove('shake', 'bg-red-50', 'border-red-400', 'text-red-700'), 500);
+        }
+
+        // --- Phase 1: Football Teams ---
+        function checkPhase1() {
+            const q1 = document.getElementById('p1-q1');
+            const q2 = document.getElementById('p1-q2');
+            const q3 = document.getElementById('p1-q3');
+            const btn = document.getElementById('btn-p1');
+            
+            let isCorrect = true;
+
+            if (parseInt(q1.value) === 72) { q1.classList.add('input-correct'); q1.disabled = true; } else { shakeInput(q1); isCorrect = false; }
+            if (parseInt(q2.value) === 8) { q2.classList.add('input-correct'); q2.disabled = true; } else { shakeInput(q2); isCorrect = false; }
+            if (parseInt(q3.value) === 9) { q3.classList.add('input-correct'); q3.disabled = true; } else { shakeInput(q3); isCorrect = false; }
+
+            if (isCorrect) {
+                btn.style.display = 'none';
+                document.getElementById('p1-feedback').classList.remove('hidden');
+            }
+        }
+
+        function unlockPhase2() {
+            document.getElementById('p1-feedback').style.display = 'none';
+            document.getElementById('p2-lock').style.display = 'none';
+            const p2 = document.getElementById('phase2');
+            p2.classList.remove('opacity-50', 'pointer-events-none');
+            p2.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            
+            initPies(); // رسم الفطائر
+        }
+
+        // --- Phase 2: Saleem's Pies ---
+        const totalPies = 15;
+        const friends = 4;
+        let isDistributing = false;
+
+        function initPies() {
+            const tray = document.getElementById('main-tray');
+            tray.innerHTML = '';
+            for (let i = 0; i < totalPies; i++) {
+                const pie = document.createElement('div');
+                pie.className = 'pie';
+                pie.id = `pie-${i}`;
+                tray.appendChild(pie);
+            }
+        }
+
+        function distributePies() {
+            if (isDistributing) return;
+            isDistributing = true;
+
+            const btn = document.getElementById('btn-distribute');
+            btn.disabled = true;
+            btn.innerText = "جاري التوزيع... ⏳";
+
+            const plates = [
+                document.getElementById('plate-1'),
+                document.getElementById('plate-2'),
+                document.getElementById('plate-3'),
+                document.getElementById('plate-4')
+            ];
+
+            let pieIndex = 0;
+            let currentPlate = 0;
+
+            // Interval to move pies one by one
+            const dealInterval = setInterval(() => {
+                // Can we deal a full round? (Check if remaining pies >= friends)
+                if (totalPies - pieIndex >= friends) {
+                    
+                    const pie = document.getElementById(`pie-${pieIndex}`);
+                    
+                    // Simple logic to move DOM element to the plate
+                    // We remove it from tray and append to plate, the CSS handles layout
+                    pie.style.transform = 'scale(0)'; // Shrink
+                    setTimeout(() => {
+                        plates[currentPlate].appendChild(pie);
+                        pie.style.transform = 'scale(1)'; // Grow back in plate
+                        pie.style.width = '30px'; // Make slightly smaller in plate
+                        pie.style.height = '30px';
+                    }, 200);
+
+                    currentPlate = (currentPlate + 1) % friends;
+                    pieIndex++;
+
+                } else {
+                    // Distribution complete, remainder left in tray
+                    clearInterval(dealInterval);
+                    
+                    setTimeout(() => {
+                        btn.style.display = 'none';
+                        // Highlight remainder in tray
+                        const remainingPies = document.getElementById('main-tray').querySelectorAll('.pie');
+                        remainingPies.forEach(p => {
+                            p.style.backgroundColor = '#fca5a5'; // Red-ish
+                            p.style.borderColor = '#ef4444';
+                            p.classList.add('shake');
+                        });
+                        
+                        // Show Equation Button
+                        document.getElementById('btn-p2').classList.remove('hidden');
+                        document.getElementById('p2-quotient').focus();
+                    }, 500);
+                }
+            }, 300); // Speed of dealing
+        }
+
+        function checkPhase2() {
+            const q = document.getElementById('p2-quotient');
+            const r = document.getElementById('p2-remainder');
+            const btn = document.getElementById('btn-p2');
+            
+            let isCorrect = true;
+
+            if (parseInt(q.value) === 3) { q.classList.add('input-correct'); q.disabled = true; } else { shakeInput(q); isCorrect = false; }
+            if (parseInt(r.value) === 3) { r.classList.replace('bg-red-50', 'bg-green-100'); r.classList.replace('border-red-300', 'border-green-500'); r.classList.replace('text-red-700', 'text-green-800'); r.disabled = true; } else { shakeInput(r); isCorrect = false; }
+
+            if (isCorrect) {
+                btn.style.display = 'none';
+                
+                // Unlock Phase 3
+                setTimeout(() => {
+                    document.getElementById('p3-lock').style.display = 'none';
+                    const p3 = document.getElementById('phase3');
+                    p3.classList.remove('opacity-50', 'pointer-events-none');
+                    p3.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }, 1000);
+            }
+        }
+
+        // --- Phase 3: Vocabulary ---
+        function checkVocabulary() {
+            const v15 = document.getElementById('vocab-15');
+            const v4 = document.getElementById('vocab-4');
+            const v3q = document.getElementById('vocab-3q');
+            const v3r = document.getElementById('vocab-3r');
+            const btn = document.getElementById('btn-p3');
+
+            let allCorrect = true;
+
+            const checkDropdown = (el, correctVal) => {
+                if (el.value === correctVal) {
+                    el.classList.add('correct');
+                    el.disabled = true;
+                } else {
+                    shakeInput(el);
+                    allCorrect = false;
+                }
+            };
+
+            checkDropdown(v15, 'dividend');
+            checkDropdown(v4, 'divisor');
+            checkDropdown(v3q, 'quotient');
+            checkDropdown(v3r, 'remainder');
+
+            if (allCorrect) {
+                btn.style.display = 'none';
+                
+                // Final Victory
+                setTimeout(() => {
+                    document.getElementById('finalVictory').classList.remove('hidden');
+                    confettiEffect();
+                }, 500);
+            }
+        }
+
+        // --- Celebration Effect ---
+        function confettiEffect() {
+            const colors = ['#6366f1', '#10b981', '#f59e0b', '#ef4444'];
+            for(let i=0; i<60; i++) {
+                const conf = document.createElement('div');
+                conf.className = 'absolute w-3 h-3 rounded-full opacity-90 z-50 pointer-events-none';
+                conf.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                conf.style.left = Math.random() * 100 + 'vw';
+                conf.style.top = (window.scrollY - 20) + 'px';
+                
+                const duration = Math.random() * 3 + 2; 
+                conf.style.transition = `all ${duration}s cubic-bezier(0.25, 0.46, 0.45, 0.94)`;
+                
+                document.body.appendChild(conf);
+                
+                setTimeout(() => {
+                    conf.style.top = (window.scrollY + window.innerHeight + 100) + 'px';
+                    const drift = Math.random() * 200 - 100;
+                    conf.style.transform = `translateX(${drift}px) rotate(${Math.random() * 720}deg)`;
+                }, 50);
+                
+                setTimeout(() => { if (conf.parentNode) conf.parentNode.removeChild(conf); }, duration * 1000 + 100);
+            }
+        }
+    </script>
+</body>
+</html>

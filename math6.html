@@ -1,0 +1,461 @@
+ <!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>قواعد التقريب - شجرة النمل</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700;900&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Tajawal', sans-serif;
+            background-color: #f0fdfa; /* لون خلفية سماوي فاتح مريح */
+            background-image: radial-gradient(#bae6fd 2px, transparent 2px);
+            background-size: 30px 30px;
+            overflow-x: hidden;
+        }
+
+        .btn-playful {
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 6px 0 rgba(0,0,0,0.2);
+        }
+        .btn-playful:active:not(:disabled) {
+            transform: translateY(6px);
+            box-shadow: 0 0 0 rgba(0,0,0,0);
+        }
+        .btn-playful:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none !important;
+            box-shadow: 0 6px 0 rgba(0,0,0,0.2) !important;
+        }
+
+        /* Number Line Styling */
+        .number-line-container {
+            position: relative;
+            width: 8px;
+            background: linear-gradient(to bottom, #7e22ce, #9333ea, #a855f7); /* درجات البنفسجي الموجودة بالكتاب */
+            border-radius: 4px;
+            margin: 0 auto;
+        }
+
+        .tick-mark {
+            position: absolute;
+            width: 30px;
+            height: 4px;
+            background-color: #7e22ce;
+            left: -11px;
+            border-radius: 2px;
+        }
+        .tick-top { top: 0; }
+        .tick-mid { top: 50%; transform: translateY(-50%); background-color: #f59e0b; width: 40px; left: -16px; }
+        .tick-bottom { bottom: 0; }
+
+        /* Clickable areas on the line */
+        .click-area {
+            position: absolute;
+            width: 120px;
+            left: -56px;
+            cursor: pointer;
+            border-radius: 1rem;
+            transition: background-color 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            z-index: 10;
+        }
+        .click-area:hover {
+            background-color: rgba(167, 139, 250, 0.2);
+            opacity: 1;
+        }
+        .area-top { top: 10%; bottom: 50%; }
+        .area-bottom { top: 50%; bottom: 10%; }
+
+        /* Ant Character */
+        .ant-character {
+            position: absolute;
+            left: -60px;
+            transition: all 0.8s cubic-bezier(0.34, 1.56, 0.64, 1); /* Bouncy movement */
+            z-index: 20;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .shake { animation: shake 0.5s cubic-bezier(.36,.07,.19,.97) both; }
+        @keyframes shake {
+            10%, 90% { transform: translate3d(-1px, 0, 0); }
+            20%, 80% { transform: translate3d(2px, 0, 0); }
+            30%, 50%, 70% { transform: translate3d(-4px, 0, 0); }
+            40%, 60% { transform: translate3d(4px, 0, 0); }
+        }
+
+        .glow-green { box-shadow: 0 0 15px 5px rgba(34, 197, 94, 0.5); }
+
+        /* Background Ants */
+        @keyframes crawlRight {
+            0% { transform: translate(-50px, 0) scaleX(-1) rotate(-5deg); }
+            50% { transform: translate(50vw, -15px) scaleX(-1) rotate(5deg); }
+            100% { transform: translate(110vw, 0) scaleX(-1) rotate(-5deg); }
+        }
+        .bg-ant-1 { animation: crawlRight 22s linear infinite; }
+    </style>
+</head>
+<body class="min-h-screen text-gray-800 flex flex-col items-center py-6 px-4 relative">
+
+    <!-- نملة الخلفية -->
+    <div class="fixed top-20 -left-10 text-3xl bg-ant-1 z-0 pointer-events-none opacity-40">🐜</div>
+
+    <header class="w-full max-w-4xl text-center mb-8 z-10">
+        <div class="bg-white rounded-3xl p-6 shadow-xl border-4 border-purple-400 relative overflow-hidden">
+            <span class="bg-purple-500 text-white font-bold px-4 py-1 rounded-full text-sm absolute top-4 right-4">الدرس الثامن</span>
+            <h1 class="text-3xl md:text-5xl font-black text-purple-900 mb-2 mt-4 flex items-center justify-center gap-3">
+                <span>🌳</span> شجرة التقريب <span>🐜</span>
+            </h1>
+            <p class="text-lg md:text-xl text-gray-600 font-bold mb-4">
+                قاعدة النملة: "إذا وصلت للنصف أو تعديته.. أكمل للقمة! وإذا تعبت قبل النصف.. انزلق للأسفل!"
+            </p>
+        </div>
+    </header>
+
+    <main class="w-full max-w-4xl z-10 grid grid-cols-1 md:grid-cols-2 gap-8">
+        
+        <!-- Game Board (Number Line) -->
+        <div class="bg-white rounded-3xl shadow-lg border-4 border-purple-200 p-8 flex justify-center min-h-[500px] relative">
+            
+            <!-- Target Number Display (Top Right) -->
+            <div class="absolute top-4 right-4 bg-yellow-100 border-2 border-yellow-400 rounded-2xl p-3 shadow-md z-20">
+                <p class="text-sm font-bold text-yellow-800 mb-1">الرقم المستهدف:</p>
+                <div class="text-2xl font-black font-mono text-gray-900" id="targetNumberDisplay" dir="ltr">6,700</div>
+            </div>
+
+            <!-- Vertical Number Line -->
+            <div class="number-line-container h-[400px] mt-8" id="numberLine">
+                
+                <!-- Ticks -->
+                <div class="tick-mark tick-top"></div>
+                <div class="tick-mark tick-mid"></div>
+                <div class="tick-mark tick-bottom"></div>
+
+                <!-- Labels -->
+                <div class="absolute top-0 right-10 -mt-3 text-xl font-black font-mono text-purple-800" id="topLabel" dir="ltr">7,000</div>
+                
+                <!-- Midpoint Label/Box -->
+                <div class="absolute top-1/2 right-12 -mt-4" id="midLabelContainer">
+                    <div id="midLabelBox" class="bg-amber-100 border-2 border-amber-500 rounded-xl px-4 py-1 text-xl font-black font-mono text-amber-700 shadow-sm transition-all" dir="ltr">
+                        ؟
+                    </div>
+                </div>
+
+                <div class="absolute bottom-0 right-10 -mb-3 text-xl font-black font-mono text-purple-800" id="bottomLabel" dir="ltr">6,000</div>
+
+                <!-- Interactive Drop Zones (Hidden initially) -->
+                <div class="click-area area-top" id="areaTop" onclick="placeAnt('top')">
+                    <span class="text-sm font-bold text-purple-600 bg-white/80 px-2 py-1 rounded-lg pointer-events-none">اضغط لوضعه هنا</span>
+                </div>
+                <div class="click-area area-bottom" id="areaBottom" onclick="placeAnt('bottom')">
+                    <span class="text-sm font-bold text-purple-600 bg-white/80 px-2 py-1 rounded-lg pointer-events-none">اضغط لوضعه هنا</span>
+                </div>
+
+                <!-- The Ant -->
+                <div class="ant-character hidden" id="theAnt" style="bottom: 0%;">
+                    <span class="text-4xl transform -scale-x-100">🐜</span>
+                    <div class="bg-green-100 border-2 border-green-500 rounded-xl px-2 py-1 text-lg font-black font-mono text-green-800 shadow-md" id="antNumber" dir="ltr">
+                        6,700
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- Controls & Questions -->
+        <div class="flex flex-col gap-4">
+            
+            <div class="bg-blue-50 rounded-3xl p-6 shadow-md border-4 border-blue-200">
+                <div class="flex justify-between items-center border-b-2 border-blue-200 pb-3 mb-4">
+                    <h2 class="text-2xl font-black text-blue-800">خطوات الحل</h2>
+                    <span class="bg-blue-200 text-blue-900 font-bold px-3 py-1 rounded-full text-sm">المسألة <span id="levelCounter">1</span>/4</span>
+                </div>
+
+                <!-- Step 1: Find Midpoint -->
+                <div id="step1" class="mb-6 transition-opacity duration-300">
+                    <p class="text-lg font-bold text-gray-700 mb-3 flex items-center gap-2">
+                        <span class="bg-blue-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-sm">1</span>
+                        ما هي نقطة المنتصف بين <span id="s1_bottom" class="font-mono font-black" dir="ltr">6,000</span> و <span id="s1_top" class="font-mono font-black" dir="ltr">7,000</span>؟
+                    </p>
+                    <div class="grid grid-cols-2 gap-3" id="midpointOptions">
+                        <!-- Buttons injected via JS -->
+                    </div>
+                </div>
+
+                <!-- Step 2: Place the Ant -->
+                <div id="step2" class="mb-6 hidden opacity-0 transition-opacity duration-300">
+                    <p class="text-lg font-bold text-gray-700 mb-3 flex items-center gap-2">
+                        <span class="bg-blue-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-sm">2</span>
+                        أين يقع الرقم <span id="s2_target" class="font-mono font-black text-green-700" dir="ltr">6,700</span>؟
+                    </p>
+                    <p class="text-sm font-bold text-gray-500 bg-white p-3 rounded-xl border border-gray-200">
+                        👉 اضغط على الجزء العلوي أو السفلي من خط الأعداد (على الشجرة) لوضع النملة في مكانها الصحيح.
+                    </p>
+                </div>
+
+                <!-- Step 3: Rounding Decision -->
+                <div id="step3" class="hidden opacity-0 transition-opacity duration-300">
+                    <p class="text-lg font-bold text-gray-700 mb-3 flex items-center gap-2">
+                        <span class="bg-blue-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-sm">3</span>
+                        بما أنه يقع في النصف <span id="s3_halfText" class="font-black text-purple-700">---</span>، إذن إلى أين سنقربه؟
+                    </p>
+                    <div class="flex gap-4">
+                        <button id="btnRoundTop" onclick="checkRounding('top')" class="btn-playful flex-1 bg-purple-500 hover:bg-purple-600 text-white font-black py-3 rounded-xl text-xl font-mono" dir="ltr">
+                            7,000
+                        </button>
+                        <button id="btnRoundBottom" onclick="checkRounding('bottom')" class="btn-playful flex-1 bg-purple-500 hover:bg-purple-600 text-white font-black py-3 rounded-xl text-xl font-mono" dir="ltr">
+                            6,000
+                        </button>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Feedback Message -->
+            <div id="feedbackMsg" class="hidden rounded-2xl p-4 text-center text-xl font-black transition-all">
+                <!-- Message -->
+            </div>
+
+            <button id="nextLevelBtn" onclick="nextLevel()" class="hidden btn-playful bg-green-500 hover:bg-green-600 text-white font-black py-4 px-6 rounded-2xl text-2xl shadow-lg mt-2 flex items-center justify-center gap-2">
+                مسألة جديدة 🚀
+            </button>
+
+        </div>
+    </main>
+
+    <script>
+        // Data exactly from the book's examples
+        const levels = [
+            { target: 6700, bottom: 6000, top: 7000, mid: 6500, midOptions: [6500, 6050, 6100, 6700], placement: 'top', roundsTo: 7000 },
+            { target: 9340, bottom: 9000, top: 10000, mid: 9500, midOptions: [9100, 9500, 9900, 9340], placement: 'bottom', roundsTo: 9000 },
+            { target: 16401, bottom: 16000, top: 17000, mid: 16500, midOptions: [16100, 16900, 16500, 16400], placement: 'bottom', roundsTo: 16000 },
+            { target: 19654, bottom: 19000, top: 20000, mid: 19500, midOptions: [19100, 19500, 19900, 19650], placement: 'top', roundsTo: 20000 }
+        ];
+
+        let currentLevel = 0;
+        let antPlaced = false;
+
+        window.onload = () => loadLevel(currentLevel);
+
+        function loadLevel(index) {
+            const data = levels[index];
+            antPlaced = false;
+            
+            // Reset UI Visibility
+            document.getElementById('step1').classList.remove('hidden');
+            document.getElementById('step1').style.opacity = 1;
+            document.getElementById('step2').classList.add('hidden', 'opacity-0');
+            document.getElementById('step3').classList.add('hidden', 'opacity-0');
+            document.getElementById('feedbackMsg').classList.add('hidden');
+            document.getElementById('nextLevelBtn').classList.add('hidden');
+            
+            // Reset Line & Ant
+            document.getElementById('midLabelBox').innerText = "؟";
+            document.getElementById('midLabelBox').className = "bg-amber-100 border-2 border-amber-500 rounded-xl px-4 py-1 text-xl font-black font-mono text-amber-700 shadow-sm transition-all";
+            document.getElementById('theAnt').classList.add('hidden');
+            document.getElementById('areaTop').style.display = 'none';
+            document.getElementById('areaBottom').style.display = 'none';
+
+            // Populate Data
+            document.getElementById('levelCounter').innerText = index + 1;
+            document.getElementById('targetNumberDisplay').innerText = data.target.toLocaleString('en-US');
+            document.getElementById('topLabel').innerText = data.top.toLocaleString('en-US');
+            document.getElementById('bottomLabel').innerText = data.bottom.toLocaleString('en-US');
+            document.getElementById('antNumber').innerText = data.target.toLocaleString('en-US');
+            
+            document.getElementById('s1_top').innerText = data.top.toLocaleString('en-US');
+            document.getElementById('s1_bottom').innerText = data.bottom.toLocaleString('en-US');
+            document.getElementById('s2_target').innerText = data.target.toLocaleString('en-US');
+
+            // Setup Midpoint Options (Shuffle them)
+            const optionsContainer = document.getElementById('midpointOptions');
+            optionsContainer.innerHTML = '';
+            let shuffledOptions = [...data.midOptions].sort(() => Math.random() - 0.5);
+            
+            shuffledOptions.forEach(opt => {
+                const btn = document.createElement('button');
+                btn.className = "bg-white border-2 border-blue-300 hover:bg-blue-50 text-blue-800 font-bold font-mono py-2 rounded-xl text-lg transition-colors";
+                btn.innerText = opt.toLocaleString('en-US');
+                btn.onclick = () => checkMidpoint(opt, btn);
+                optionsContainer.appendChild(btn);
+            });
+            
+            // Setup Rounding Buttons
+            document.getElementById('btnRoundTop').innerText = data.top.toLocaleString('en-US');
+            document.getElementById('btnRoundBottom').innerText = data.bottom.toLocaleString('en-US');
+
+            // تفعيل الأزرار مرة أخرى للمسألة الجديدة (حل مشكلة التعليق)
+            document.getElementById('btnRoundTop').disabled = false;
+            document.getElementById('btnRoundBottom').disabled = false;
+        }
+
+        function checkMidpoint(selectedVal, btnElement) {
+            const data = levels[currentLevel];
+            
+            if (selectedVal === data.mid) {
+                // Correct
+                btnElement.classList.add('bg-green-100', 'border-green-500', 'text-green-800');
+                
+                // Disable all buttons in step 1
+                const btns = document.getElementById('midpointOptions').querySelectorAll('button');
+                btns.forEach(b => { b.disabled = true; if(b !== btnElement) b.classList.add('opacity-50'); });
+
+                // Update Line
+                const midBox = document.getElementById('midLabelBox');
+                midBox.innerText = data.mid.toLocaleString('en-US');
+                midBox.classList.replace('bg-amber-100', 'bg-green-100');
+                midBox.classList.replace('border-amber-500', 'border-green-500');
+                midBox.classList.add('glow-green');
+
+                showFeedback("✅ ممتاز! عرفت نقطة المنتصف. الآن حدد مكان الرقم.", "green");
+
+                // Show Step 2
+                setTimeout(() => {
+                    const step2 = document.getElementById('step2');
+                    step2.classList.remove('hidden');
+                    // Small delay to allow display:block to apply before animating opacity
+                    setTimeout(() => step2.classList.remove('opacity-0'), 50);
+                    
+                    // Activate click areas on the line
+                    document.getElementById('areaTop').style.display = 'flex';
+                    document.getElementById('areaBottom').style.display = 'flex';
+                }, 800);
+
+            } else {
+                // Wrong
+                btnElement.classList.add('shake', 'bg-red-50', 'border-red-400', 'text-red-600');
+                showFeedback("🤔 تذكر، نقطة المنتصف تقع تماماً في النصف! (خمس مئة)", "red");
+                setTimeout(() => btnElement.classList.remove('shake', 'bg-red-50', 'border-red-400', 'text-red-600'), 800);
+            }
+        }
+
+        function placeAnt(area) {
+            if (antPlaced) return;
+            
+            const data = levels[currentLevel];
+            const theAnt = document.getElementById('theAnt');
+            
+            if (area === data.placement) {
+                // Correct Placement
+                antPlaced = true;
+                document.getElementById('areaTop').style.display = 'none';
+                document.getElementById('areaBottom').style.display = 'none';
+
+                theAnt.classList.remove('hidden');
+                
+                // Determine exact position visually (rough estimate for aesthetics)
+                let bottomPercent;
+                if (area === 'top') {
+                    // Position between 55% and 90%
+                    let ratio = (data.target - data.mid) / (data.top - data.mid);
+                    bottomPercent = 50 + (ratio * 40); 
+                } else {
+                    // Position between 10% and 45%
+                    let ratio = (data.target - data.bottom) / (data.mid - data.bottom);
+                    bottomPercent = 10 + (ratio * 40);
+                }
+                
+                // Start from bottom and animate up
+                theAnt.style.bottom = "0%";
+                setTimeout(() => {
+                    theAnt.style.bottom = `${bottomPercent}%`;
+                }, 100);
+
+                showFeedback("✅ رائع! وضعت النملة في المكان الصحيح.", "green");
+
+                // Prepare and show Step 3
+                document.getElementById('s3_halfText').innerText = area === 'top' ? "العلوي (تخطت المنتصف)" : "السفلي (لم تصل للمنتصف)";
+                
+                setTimeout(() => {
+                    const step3 = document.getElementById('step3');
+                    step3.classList.remove('hidden');
+                    setTimeout(() => step3.classList.remove('opacity-0'), 50);
+                }, 1000);
+
+            } else {
+                // Wrong placement
+                const clickedArea = area === 'top' ? document.getElementById('areaTop') : document.getElementById('areaBottom');
+                clickedArea.classList.add('bg-red-100', 'border-2', 'border-red-500');
+                showFeedback("🤔 راجع الرقم.. هل هو أكبر من المنتصف أم أصغر؟", "red");
+                setTimeout(() => clickedArea.classList.remove('bg-red-100', 'border-2', 'border-red-500'), 1000);
+            }
+        }
+
+        function checkRounding(choice) {
+            const data = levels[currentLevel];
+            const theAnt = document.getElementById('theAnt');
+            const isCorrect = (choice === 'top' && data.roundsTo === data.top) || 
+                              (choice === 'bottom' && data.roundsTo === data.bottom);
+            
+            if (isCorrect) {
+                // Disable buttons
+                document.getElementById('btnRoundTop').disabled = true;
+                document.getElementById('btnRoundBottom').disabled = true;
+
+                // Animate ant to final destination
+                if (choice === 'top') {
+                    theAnt.style.bottom = "95%";
+                    showFeedback("🎉 إجابة صحيحة! النملة أكملت طريقها للقمة وتم التقريب للأكبر.", "green");
+                } else {
+                    theAnt.style.bottom = "0%";
+                    showFeedback("🎉 إجابة صحيحة! النملة تعبت وانزلقت، فتم التقريب للأصغر.", "green");
+                }
+
+                // Show next level button
+                setTimeout(() => {
+                    document.getElementById('nextLevelBtn').classList.remove('hidden');
+                }, 1000);
+
+            } else {
+                // Wrong
+                showFeedback("❌ تذكر القاعدة: في النصف العلوي نقرب للأكبر، وفي السفلي للأصغر!", "red");
+                const btn = choice === 'top' ? document.getElementById('btnRoundTop') : document.getElementById('btnRoundBottom');
+                btn.classList.add('shake');
+                setTimeout(() => btn.classList.remove('shake'), 500);
+            }
+        }
+
+        function showFeedback(text, type) {
+            const msgBox = document.getElementById('feedbackMsg');
+            msgBox.innerText = text;
+            msgBox.classList.remove('hidden', 'bg-green-100', 'text-green-800', 'bg-red-100', 'text-red-800');
+            
+            if (type === 'green') {
+                msgBox.classList.add('bg-green-100', 'text-green-800');
+            } else {
+                msgBox.classList.add('bg-red-100', 'text-red-800');
+            }
+        }
+
+        function nextLevel() {
+            currentLevel++;
+            if (currentLevel >= levels.length) {
+                // Final Congrats
+                document.getElementById('step1').classList.add('hidden');
+                document.getElementById('step2').classList.add('hidden');
+                document.getElementById('step3').classList.add('hidden');
+                document.getElementById('nextLevelBtn').classList.add('hidden');
+                document.getElementById('numberLine').classList.add('hidden');
+                
+                const finalMsg = document.createElement('div');
+                finalMsg.className = "text-center p-8 bg-purple-100 rounded-3xl border-4 border-purple-400 col-span-2";
+                finalMsg.innerHTML = `
+                    <div class="text-6xl mb-4 animate-bounce">🏆</div>
+                    <h2 class="text-3xl font-black text-purple-900 mb-4">أنت بطل التقريب!</h2>
+                    <p class="text-xl font-bold text-purple-700">لقد ساعدت النمل في الصعود والانزلاق بشكل صحيح وأنهيت جميع المسائل.</p>
+                `;
+                document.querySelector('main').appendChild(finalMsg);
+            } else {
+                loadLevel(currentLevel);
+            }
+        }
+    </script>
+</body>
+</html>

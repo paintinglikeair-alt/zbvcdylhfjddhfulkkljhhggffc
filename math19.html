@@ -1,0 +1,438 @@
+ <!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ساعة النملة - قياس الوقت</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700;900&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Tajawal', sans-serif;
+            background-color: #f8fafc;
+            background-image: radial-gradient(#e2e8f0 2px, transparent 2px);
+            background-size: 30px 30px;
+            overflow-x: hidden;
+        }
+
+        .btn-playful {
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 6px 0 rgba(0,0,0,0.2);
+        }
+        .btn-playful:active:not(:disabled) {
+            transform: translateY(6px);
+            box-shadow: 0 0 0 rgba(0,0,0,0);
+        }
+        .btn-playful:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none !important;
+            box-shadow: 0 6px 0 rgba(0,0,0,0.2) !important;
+        }
+
+        .math-input {
+            text-align: center;
+            font-size: 1.75rem;
+            font-weight: 900;
+            border: 3px solid #cbd5e1;
+            background-color: white;
+            transition: all 0.3s;
+            font-family: monospace;
+        }
+        .math-input:focus {
+            outline: none;
+            border-color: #6366f1;
+            box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.3);
+        }
+        .input-correct {
+            background-color: #dcfce7 !important;
+            border-color: #22c55e !important;
+            color: #166534 !important;
+        }
+
+        .shake { animation: shake 0.5s cubic-bezier(.36,.07,.19,.97) both; }
+        @keyframes shake {
+            10%, 90% { transform: translate3d(-1px, 0, 0); }
+            20%, 80% { transform: translate3d(2px, 0, 0); }
+            30%, 50%, 70% { transform: translate3d(-4px, 0, 0); }
+            40%, 60% { transform: translate3d(4px, 0, 0); }
+        }
+
+        /* Analog Clock Styles */
+        .clock-face {
+            width: 120px;
+            height: 120px;
+            border: 4px solid #334155;
+            border-radius: 50%;
+            background-color: white;
+            position: relative;
+            box-shadow: inset 0 0 10px rgba(0,0,0,0.1), 0 4px 6px rgba(0,0,0,0.1);
+        }
+        .clock-center {
+            width: 10px;
+            height: 10px;
+            background-color: #1e293b;
+            border-radius: 50%;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 10;
+        }
+        .hand {
+            position: absolute;
+            bottom: 50%;
+            left: 50%;
+            transform-origin: bottom;
+            border-radius: 4px;
+            transition: transform 0.5s cubic-bezier(0.4, 2.0, 0.2, 1); /* Bouncy movement */
+        }
+        .hour-hand {
+            width: 6px;
+            height: 35px;
+            background-color: #ef4444; /* Red for hours as per book */
+            margin-left: -3px;
+            z-index: 8;
+        }
+        .minute-hand {
+            width: 4px;
+            height: 48px;
+            background-color: #3b82f6; /* Blue for minutes as per book */
+            margin-left: -2px;
+            z-index: 9;
+        }
+
+        /* Clock Numbers */
+        .clock-num {
+            position: absolute;
+            font-size: 0.8rem;
+            font-weight: bold;
+            color: #475569;
+            transform: translate(-50%, -50%);
+        }
+
+        /* Background Ants */
+        @keyframes crawlRight {
+            0% { transform: translate(-50px, 0) scaleX(-1) rotate(-5deg); }
+            50% { transform: translate(50vw, -15px) scaleX(-1) rotate(5deg); }
+            100% { transform: translate(110vw, 0) scaleX(-1) rotate(-5deg); }
+        }
+        .bg-ant-1 { animation: crawlRight 25s linear infinite; }
+    </style>
+</head>
+<body class="min-h-screen text-gray-800 flex flex-col items-center py-6 px-4 relative">
+
+    <div class="fixed top-20 -left-10 text-3xl bg-ant-1 z-0 pointer-events-none opacity-30">🐜</div>
+
+    <header class="w-full max-w-4xl text-center mb-8 z-10">
+        <div class="bg-white rounded-3xl p-6 shadow-xl border-4 border-indigo-500 relative overflow-hidden">
+            <span class="bg-indigo-600 text-white font-bold px-4 py-1 rounded-full text-sm absolute top-4 right-4">الدرس الرابع</span>
+            
+            <h1 class="text-3xl md:text-5xl font-black text-indigo-900 mb-2 mt-4 flex items-center justify-center gap-3">
+                <span>⏱️</span> ساعة النملة الذكية <span>🐜</span>
+            </h1>
+            <p class="text-lg md:text-xl text-indigo-700 font-bold mb-4">
+                تعلّم قراءة الوقت وضبط الساعات، واكتشف العلاقة بين الدقائق والثواني!
+            </p>
+        </div>
+    </header>
+
+    <main class="w-full max-w-4xl z-10 flex flex-col gap-8">
+        
+        <!-- القسم الأول: استكشف (الساعات) -->
+        <section id="phase1" class="bg-white rounded-3xl shadow-xl border-4 border-sky-400 p-6 md:p-8">
+            <div class="flex items-center gap-3 mb-6 border-b-2 border-sky-100 pb-4">
+                <span class="text-4xl">🕰️</span>
+                <h2 class="text-2xl md:text-3xl font-black text-sky-800">استكشف: يوميات النملة</h2>
+            </div>
+
+            <p class="text-lg font-bold text-gray-700 mb-6 bg-sky-50 p-4 rounded-xl border border-sky-200">
+                اقرأ الحدث، واكتب الوقت الصحيح في الساعة الرقمية. راقب كيف ستتحرك عقارب الساعة التناظرية تلقائياً: 
+                <span class="text-red-600 font-black">العقرب الأحمر للساعات</span>، و <span class="text-blue-600 font-black">العقرب الأزرق للدقائق</span>!
+            </p>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                
+                <!-- الحدث 1 -->
+                <div class="bg-gray-50 border-2 border-gray-200 rounded-2xl p-4 flex flex-col items-center text-center">
+                    <p class="font-bold text-sky-900 mb-2 h-14">تستيقظ النملة في الساعة <br><span class="text-xl font-black">السابعة تماماً</span></p>
+                    
+                    <!-- Analog Clock -->
+                    <div class="clock-face mb-6" id="clock-1">
+                        <div class="clock-center"></div>
+                        <div class="hand hour-hand" id="hour-hand-1" style="transform: rotate(0deg);"></div>
+                        <div class="hand minute-hand" id="minute-hand-1" style="transform: rotate(0deg);"></div>
+                    </div>
+
+                    <!-- Digital Clock Input -->
+                    <div class="bg-black text-white p-2 rounded-xl flex items-center justify-center gap-2 mb-4 w-full">
+                        <input type="number" id="min-input-1" class="math-input w-14 h-12 rounded bg-gray-800 text-green-400 border-gray-600 text-center" placeholder="00" min="0" max="59" oninput="updateClock(1)">
+                        <span class="text-2xl font-black animate-pulse">:</span>
+                        <input type="number" id="hr-input-1" class="math-input w-14 h-12 rounded bg-gray-800 text-green-400 border-gray-600 text-center" placeholder="00" min="1" max="12" oninput="updateClock(1)">
+                    </div>
+                </div>
+
+                <!-- الحدث 2 -->
+                <div class="bg-gray-50 border-2 border-gray-200 rounded-2xl p-4 flex flex-col items-center text-center">
+                    <p class="font-bold text-sky-900 mb-2 h-14">يبدأ طابور العمل الساعة <br><span class="text-xl font-black">الثامنة والنصف</span></p>
+                    
+                    <!-- Analog Clock -->
+                    <div class="clock-face mb-6" id="clock-2">
+                        <div class="clock-center"></div>
+                        <div class="hand hour-hand" id="hour-hand-2" style="transform: rotate(0deg);"></div>
+                        <div class="hand minute-hand" id="minute-hand-2" style="transform: rotate(0deg);"></div>
+                    </div>
+
+                    <!-- Digital Clock Input -->
+                    <div class="bg-black text-white p-2 rounded-xl flex items-center justify-center gap-2 mb-4 w-full">
+                        <input type="number" id="min-input-2" class="math-input w-14 h-12 rounded bg-gray-800 text-green-400 border-gray-600 text-center" placeholder="00" min="0" max="59" oninput="updateClock(2)">
+                        <span class="text-2xl font-black animate-pulse">:</span>
+                        <input type="number" id="hr-input-2" class="math-input w-14 h-12 rounded bg-gray-800 text-green-400 border-gray-600 text-center" placeholder="00" min="1" max="12" oninput="updateClock(2)">
+                    </div>
+                </div>
+
+                <!-- الحدث 3 -->
+                <div class="bg-gray-50 border-2 border-gray-200 rounded-2xl p-4 flex flex-col items-center text-center">
+                    <p class="font-bold text-sky-900 mb-2 h-14">تعود للمستعمرة الساعة <br><span class="text-xl font-black">الرابعة والربع</span></p>
+                    
+                    <!-- Analog Clock -->
+                    <div class="clock-face mb-6" id="clock-3">
+                        <div class="clock-center"></div>
+                        <div class="hand hour-hand" id="hour-hand-3" style="transform: rotate(0deg);"></div>
+                        <div class="hand minute-hand" id="minute-hand-3" style="transform: rotate(0deg);"></div>
+                    </div>
+
+                    <!-- Digital Clock Input -->
+                    <div class="bg-black text-white p-2 rounded-xl flex items-center justify-center gap-2 mb-4 w-full">
+                        <input type="number" id="min-input-3" class="math-input w-14 h-12 rounded bg-gray-800 text-green-400 border-gray-600 text-center" placeholder="00" min="0" max="59" oninput="updateClock(3)">
+                        <span class="text-2xl font-black animate-pulse">:</span>
+                        <input type="number" id="hr-input-3" class="math-input w-14 h-12 rounded bg-gray-800 text-green-400 border-gray-600 text-center" placeholder="00" min="1" max="12" oninput="updateClock(3)">
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="text-center">
+                <button onclick="checkPhase1()" id="btnPhase1" class="btn-playful bg-sky-500 hover:bg-sky-600 text-white font-black py-3 px-10 rounded-xl text-xl">
+                    تأكيد المواعيد ⏰
+                </button>
+            </div>
+            <div id="phase1Feedback" class="hidden mt-4 text-center font-bold text-lg"></div>
+
+        </section>
+
+        <!-- القسم الثاني: تعلم (التحويلات) -->
+        <section id="phase2" class="bg-white rounded-3xl shadow-xl border-4 border-purple-400 p-6 md:p-8 opacity-50 pointer-events-none transition-opacity duration-500 relative">
+            <div id="phase2Lock" class="absolute inset-0 z-20 flex flex-col items-center justify-center bg-white/70 backdrop-blur-sm rounded-3xl">
+                <span class="text-6xl mb-4">🔒</span>
+                <p class="text-2xl font-bold text-gray-800 text-center px-4">أضبط ساعات النملة أولاً لفتح جدول التحويلات!</p>
+            </div>
+
+            <div class="flex items-center gap-3 mb-6 border-b-2 border-purple-100 pb-4">
+                <span class="text-4xl">⚡</span>
+                <h2 class="text-2xl md:text-3xl font-black text-purple-800">تعلّم: سرعة الثواني</h2>
+            </div>
+
+            <div class="bg-purple-50 p-4 rounded-xl border border-purple-200 mb-6 flex items-start gap-4">
+                <span class="text-3xl mt-1">💡</span>
+                <p class="text-lg font-bold text-gray-700 leading-relaxed">
+                    تذكر القاعدة: الدقيقة الواحدة تحتوي على <span class="bg-purple-200 text-purple-900 px-2 rounded">60 ثانية</span>. للتحويل من دقائق إلى ثوانٍ، نضرب عدد الدقائق في 60.
+                    أكمل الجدول التالي (تذكر كتابة الأرقام بدون فواصل):
+                </p>
+            </div>
+
+            <!-- جدول النسب -->
+            <div class="overflow-x-auto pb-4">
+                <div class="min-w-[800px] border-4 border-purple-300 rounded-2xl overflow-hidden shadow-inner">
+                    <!-- الصف الأول: الدقائق (من 1 إلى 10) -->
+                    <div class="grid grid-cols-11 bg-purple-100 text-center border-b-2 border-purple-300">
+                        <div class="py-4 font-black text-lg text-purple-900 border-l-2 border-purple-200 bg-purple-200">الدقائق</div>
+                        <div class="py-4 font-black text-xl text-gray-800 border-l-2 border-purple-200">1</div>
+                        <div class="py-4 font-black text-xl text-gray-800 border-l-2 border-purple-200">2</div>
+                        <div class="py-4 font-black text-xl text-gray-800 border-l-2 border-purple-200">3</div>
+                        <div class="py-4 font-black text-xl text-gray-800 border-l-2 border-purple-200">4</div>
+                        <div class="py-4 font-black text-xl text-gray-800 border-l-2 border-purple-200">5</div>
+                        <div class="py-4 font-black text-xl text-gray-800 border-l-2 border-purple-200">6</div>
+                        <div class="py-4 font-black text-xl text-gray-800 border-l-2 border-purple-200">7</div>
+                        <div class="py-4 font-black text-xl text-gray-800 border-l-2 border-purple-200">8</div>
+                        <div class="py-4 font-black text-xl text-gray-800 border-l-2 border-purple-200">9</div>
+                        <div class="py-4 font-black text-xl text-gray-800">10</div>
+                    </div>
+                    <!-- الصف الثاني: الثواني (الإدخال) -->
+                    <div class="grid grid-cols-11 bg-white text-center items-center">
+                        <div class="py-4 h-full flex items-center justify-center font-black text-lg text-purple-900 border-l-2 border-purple-200 bg-purple-200">الثواني</div>
+                        <div class="py-2 border-l-2 border-purple-200 font-mono text-2xl font-black text-purple-700">60</div> <!-- محلولة كمثال -->
+                        <div class="py-2 border-l-2 border-purple-200 px-1"><input type="number" id="t-2" class="math-input w-full h-12 rounded-lg text-purple-900" dir="ltr"></div>
+                        <div class="py-2 border-l-2 border-purple-200 px-1"><input type="number" id="t-3" class="math-input w-full h-12 rounded-lg text-purple-900" dir="ltr"></div>
+                        <div class="py-2 border-l-2 border-purple-200 px-1"><input type="number" id="t-4" class="math-input w-full h-12 rounded-lg text-purple-900" dir="ltr"></div>
+                        <div class="py-2 border-l-2 border-purple-200 px-1"><input type="number" id="t-5" class="math-input w-full h-12 rounded-lg text-purple-900" dir="ltr"></div>
+                        <div class="py-2 border-l-2 border-purple-200 px-1"><input type="number" id="t-6" class="math-input w-full h-12 rounded-lg text-purple-900" dir="ltr"></div>
+                        <div class="py-2 border-l-2 border-purple-200 px-1"><input type="number" id="t-7" class="math-input w-full h-12 rounded-lg text-purple-900" dir="ltr"></div>
+                        <div class="py-2 border-l-2 border-purple-200 px-1"><input type="number" id="t-8" class="math-input w-full h-12 rounded-lg text-purple-900" dir="ltr"></div>
+                        <div class="py-2 border-l-2 border-purple-200 px-1"><input type="number" id="t-9" class="math-input w-full h-12 rounded-lg text-purple-900" dir="ltr"></div>
+                        <div class="py-2 px-1"><input type="number" id="t-10" class="math-input w-full h-12 rounded-lg text-purple-900" dir="ltr"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="text-center mt-6">
+                <button onclick="checkPhase2()" id="btnPhase2" class="btn-playful bg-purple-600 hover:bg-purple-700 text-white font-black py-3 px-10 rounded-xl text-xl">
+                    تحقق من الجدول 🔍
+                </button>
+            </div>
+            
+            <!-- Final Celebration -->
+            <div id="finalFeedback" class="hidden mt-8 bg-green-100 border-4 border-green-500 rounded-3xl p-6 text-center shadow-lg relative overflow-hidden">
+                <div class="text-7xl mb-4 animate-bounce">🏆</div>
+                <h2 class="text-3xl font-extrabold text-green-800 mb-2">أنت سيد الوقت!</h2>
+                <p class="text-xl text-green-700 font-bold">لقد أتقنت قراءة الساعات وتحويل الدقائق إلى ثوانٍ ببراعة.</p>
+                <button onclick="location.reload()" class="mt-6 btn-playful bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-8 rounded-xl text-xl">
+                    إعادة التدريب 🔄
+                </button>
+            </div>
+
+        </section>
+
+    </main>
+
+    <script>
+        // Draw clock numbers dynamically for the 3 clocks
+        function drawClockNumbers(clockId) {
+            const clock = document.getElementById(clockId);
+            const radius = 50; // distance from center
+            for (let i = 1; i <= 12; i++) {
+                const num = document.createElement('div');
+                num.className = 'clock-num';
+                num.innerText = i;
+                
+                // Math to position numbers in a circle
+                const angle = (i * 30 - 90) * (Math.PI / 180);
+                const x = 60 + radius * Math.cos(angle); // 60 is center (120/2)
+                const y = 60 + radius * Math.sin(angle);
+                
+                num.style.left = `${x}px`;
+                num.style.top = `${y}px`;
+                clock.appendChild(num);
+            }
+        }
+
+        // Initialize clocks
+        drawClockNumbers('clock-1');
+        drawClockNumbers('clock-2');
+        drawClockNumbers('clock-3');
+
+        // Logic for Phase 1 (Sinc Digital with Analog)
+        const targets = {
+            1: { h: 7, m: 0 },
+            2: { h: 8, m: 30 },
+            3: { h: 4, m: 15 }
+        };
+
+        function updateClock(id) {
+            let hr = parseInt(document.getElementById(`hr-input-${id}`).value) || 0;
+            let min = parseInt(document.getElementById(`min-input-${id}`).value) || 0;
+
+            // Constrain limits visually for the hands
+            if (hr > 12) hr = hr % 12;
+            if (min > 59) min = 59;
+
+            // Calculate degrees
+            // Minute hand: 360 deg / 60 min = 6 deg per min
+            const minDeg = min * 6;
+            
+            // Hour hand: 360 deg / 12 hr = 30 deg per hr. 
+            // Plus offset based on minutes: (30 deg / 60 min) = 0.5 deg per min
+            const hrDeg = (hr * 30) + (min * 0.5);
+
+            document.getElementById(`minute-hand-${id}`).style.transform = `rotate(${minDeg}deg)`;
+            document.getElementById(`hour-hand-${id}`).style.transform = `rotate(${hrDeg}deg)`;
+        }
+
+        function checkPhase1() {
+            let allCorrect = true;
+
+            for (let i = 1; i <= 3; i++) {
+                const hrInput = document.getElementById(`hr-input-${i}`);
+                const minInput = document.getElementById(`min-input-${i}`);
+                const hrVal = parseInt(hrInput.value);
+                const minVal = parseInt(minInput.value);
+
+                if (hrVal === targets[i].h && minVal === targets[i].m) {
+                    hrInput.classList.replace('border-gray-600', 'border-green-500');
+                    minInput.classList.replace('border-gray-600', 'border-green-500');
+                    hrInput.disabled = true;
+                    minInput.disabled = true;
+                } else {
+                    allCorrect = false;
+                    hrInput.parentElement.classList.add('shake');
+                    setTimeout(() => hrInput.parentElement.classList.remove('shake'), 500);
+                }
+            }
+
+            const feedback = document.getElementById('phase1Feedback');
+            if (allCorrect) {
+                document.getElementById('btnPhase1').style.display = 'none';
+                feedback.innerHTML = "✅ ممتاز! المواعيد دقيقة. عقارب الساعة توضح الوقت تماماً.";
+                feedback.className = "mt-4 text-center font-bold text-lg text-green-700 bg-green-100 p-3 rounded-xl inline-block";
+                feedback.classList.remove('hidden');
+
+                // Unlock Phase 2
+                setTimeout(() => {
+                    document.getElementById('phase2Lock').style.display = 'none';
+                    document.getElementById('phase2').classList.remove('opacity-50', 'pointer-events-none');
+                    document.getElementById('phase2').scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }, 1000);
+            } else {
+                feedback.innerHTML = "❌ راجع الأرقام جيداً! تأكد من وضع الساعات في اليمين والدقائق في اليسار.";
+                feedback.className = "mt-4 text-center font-bold text-lg text-red-700";
+                feedback.classList.remove('hidden');
+            }
+        }
+
+        // Logic for Phase 2 (Conversion Table)
+        function checkPhase2() {
+            let allCorrect = true;
+
+            // Check inputs from 2 to 10
+            for (let i = 2; i <= 10; i++) {
+                const input = document.getElementById(`t-${i}`);
+                const val = parseInt(input.value);
+                const expected = i * 60;
+
+                if (val === expected) {
+                    input.classList.add('input-correct');
+                    input.disabled = true;
+                } else {
+                    allCorrect = false;
+                    input.classList.add('shake', 'bg-red-50', 'border-red-400');
+                    setTimeout(() => input.classList.remove('shake', 'bg-red-50', 'border-red-400'), 500);
+                }
+            }
+
+            if (allCorrect) {
+                document.getElementById('btnPhase2').style.display = 'none';
+                document.getElementById('finalFeedback').classList.remove('hidden');
+                confettiEffect();
+            }
+        }
+
+        function confettiEffect() {
+            const colors = ['#8b5cf6', '#3b82f6', '#10b981', '#f59e0b'];
+            for(let i=0; i<50; i++) {
+                const conf = document.createElement('div');
+                conf.className = 'absolute w-3 h-3 rounded-full opacity-80 z-50';
+                conf.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                conf.style.left = Math.random() * 100 + 'vw';
+                conf.style.top = (window.scrollY - 20) + 'px';
+                conf.style.transition = 'all 3s ease-in';
+                document.body.appendChild(conf);
+                
+                setTimeout(() => {
+                    conf.style.top = (window.scrollY + window.innerHeight) + 'px';
+                    conf.style.transform = `rotate(${Math.random() * 720}deg) translateX(${Math.random() * 100 - 50}px)`;
+                }, 50);
+            }
+        }
+    </script>
+</body>
+</html>

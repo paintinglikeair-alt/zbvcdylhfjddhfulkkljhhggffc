@@ -1,0 +1,530 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>خاصية التوزيع في عملية الضرب</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700;900&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Tajawal', sans-serif;
+            background-color: #f8fafc;
+            background-image: radial-gradient(#cbd5e1 2px, transparent 2px);
+            background-size: 30px 30px;
+            overflow-x: hidden;
+        }
+
+        .btn-playful {
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 6px 0 rgba(0,0,0,0.2);
+        }
+        .btn-playful:active:not(:disabled) {
+            transform: translateY(6px);
+            box-shadow: 0 0 0 rgba(0,0,0,0);
+        }
+        .btn-playful:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none !important;
+            box-shadow: 0 6px 0 rgba(0,0,0,0.2) !important;
+        }
+
+        .math-input {
+            text-align: center;
+            font-size: 1.5rem;
+            font-weight: 900;
+            border: 3px solid #cbd5e1;
+            border-radius: 0.75rem;
+            background-color: white;
+            transition: all 0.3s;
+            font-family: monospace;
+        }
+        .math-input:focus {
+            outline: none;
+            border-color: #8b5cf6;
+            box-shadow: 0 0 0 4px rgba(139, 92, 246, 0.3);
+        }
+        .input-correct {
+            background-color: #dcfce7 !important;
+            border-color: #22c55e !important;
+            color: #166534 !important;
+        }
+
+        .shake { animation: shake 0.5s cubic-bezier(.36,.07,.19,.97) both; }
+        @keyframes shake {
+            10%, 90% { transform: translate3d(-1px, 0, 0); }
+            20%, 80% { transform: translate3d(2px, 0, 0); }
+            30%, 50%, 70% { transform: translate3d(-4px, 0, 0); }
+            40%, 60% { transform: translate3d(4px, 0, 0); }
+        }
+
+        .area-container {
+            display: flex;
+            border: 4px solid #6366f1; /* Indigo-500 */
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1);
+            background-color: white;
+            width: 100%;
+        }
+        .area-side {
+            background-color: #e0e7ff; /* Indigo-100 */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 900;
+            font-size: 2rem;
+            color: #3730a3;
+            padding: 0 1.5rem;
+            border-left: 4px solid #6366f1;
+        }
+        .area-main {
+            display: flex;
+            flex-direction: column;
+            width: 100%;
+        }
+        .area-headers {
+            display: flex;
+            background-color: #e0e7ff;
+            border-bottom: 4px solid #6366f1;
+            font-weight: 900;
+            color: #3730a3;
+        }
+        .area-boxes {
+            display: flex;
+            min-height: 120px;
+        }
+        .area-box-part {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+            border-right: 4px solid #6366f1;
+            background-color: #f8fafc;
+        }
+        .area-box-part:last-child {
+            border-right: none;
+        }
+    </style>
+</head>
+<body class="min-h-screen text-gray-800 flex flex-col items-center py-6 px-4 relative">
+
+    <header class="w-full max-w-5xl text-center mb-8 z-10">
+        <div class="bg-white rounded-3xl p-6 shadow-xl border-4 border-purple-500 relative overflow-hidden">
+            <span class="bg-purple-600 text-white font-bold px-4 py-1 rounded-full text-sm absolute top-4 right-4">الدرس الثاني - الوحدة السابعة</span>
+            
+            <h1 class="text-3xl md:text-5xl font-black text-purple-900 mb-2 mt-4 flex items-center justify-center gap-3">
+                <span>🪄</span> خاصية التوزيع <span>📦</span>
+            </h1>
+            <p class="text-lg md:text-xl text-purple-700 font-bold mb-4">
+                تفكيك الأعداد الكبيرة وتوزيع الضرب لتسهيل الحساب!
+            </p>
+        </div>
+    </header>
+
+    <main class="w-full max-w-5xl z-10 flex flex-col gap-8">
+        
+        <section id="explore" class="bg-white rounded-3xl shadow-xl border-4 border-rose-400 p-6 md:p-8">
+            <div class="flex items-center gap-3 mb-6 border-b-2 border-rose-100 pb-4">
+                <span class="text-4xl">🔍</span>
+                <h2 class="text-2xl md:text-3xl font-black text-rose-800">استكشف: تحليل الأعداد</h2>
+            </div>
+            
+            <p class="text-lg font-bold text-gray-700 mb-6 text-center">
+                اكتب العدد المجهول لإكمال عملية تحليل الأعداد بالصيغة الممتدة.
+            </p>
+
+            <div class="flex flex-col gap-4 max-w-2xl mx-auto font-mono text-xl md:text-2xl font-black text-gray-800" dir="ltr">
+                
+                <!-- Q1 -->
+                <div class="flex flex-wrap items-center justify-center gap-3 bg-rose-50 p-4 rounded-xl border border-rose-200">
+                    <span class="text-gray-500 font-sans text-lg ml-2">(1</span>
+                    <span>536</span> <span class="text-rose-500">=</span> <span>500</span> <span class="text-rose-500">+</span>
+                    <input type="number" id="exp-1" class="math-input text-rose-900 w-24 h-12" placeholder="؟">
+                    <span class="text-rose-500">+</span> <span>6</span>
+                </div>
+
+                <!-- Q2 -->
+                <div class="flex flex-wrap items-center justify-center gap-3 bg-rose-50 p-4 rounded-xl border border-rose-200">
+                    <span class="text-gray-500 font-sans text-lg ml-2">(2</span>
+                    <span>1,275</span> <span class="text-rose-500">=</span>
+                    <input type="number" id="exp-2" class="math-input text-rose-900 w-28 h-12" placeholder="؟">
+                    <span class="text-rose-500">+</span> <span>200</span> <span class="text-rose-500">+</span> <span>70</span> <span class="text-rose-500">+</span> <span>5</span>
+                </div>
+
+                <!-- Q3 -->
+                <div class="flex flex-wrap items-center justify-center gap-3 bg-rose-50 p-4 rounded-xl border border-rose-200">
+                    <span class="text-gray-500 font-sans text-lg ml-2">(3</span>
+                    <span>264</span> <span class="text-rose-500">=</span> <span>60</span> <span class="text-rose-500">+</span> <span>4</span> <span class="text-rose-500">+</span>
+                    <input type="number" id="exp-3" class="math-input text-rose-900 w-24 h-12" placeholder="؟">
+                </div>
+
+                <!-- Q4 -->
+                <div class="flex flex-wrap items-center justify-center gap-3 bg-rose-50 p-4 rounded-xl border border-rose-200">
+                    <span class="text-gray-500 font-sans text-lg ml-2">(4</span>
+                    <span>7,625</span> <span class="text-rose-500">=</span> <span>5</span> <span class="text-rose-500">+</span> <span>7000</span> <span class="text-rose-500">+</span> <span>20</span> <span class="text-rose-500">+</span>
+                    <input type="number" id="exp-4" class="math-input text-rose-900 w-24 h-12" placeholder="؟">
+                </div>
+
+                <!-- Q5 -->
+                <div class="flex flex-wrap items-center justify-center gap-3 bg-rose-50 p-4 rounded-xl border border-rose-200">
+                    <span class="text-gray-500 font-sans text-lg ml-2">(5</span>
+                    <span>357</span> <span class="text-rose-500">=</span> <span>50</span> <span class="text-rose-500">+</span>
+                    <input type="number" id="exp-5" class="math-input text-rose-900 w-24 h-12" placeholder="؟">
+                    <span class="text-rose-500">+</span> <span>7</span>
+                </div>
+
+            </div>
+
+            <div class="text-center mt-8">
+                <button onclick="checkExplore()" id="btn-explore" class="btn-playful bg-rose-500 hover:bg-rose-600 text-white font-black py-3 px-10 rounded-xl text-xl">
+                    تأكيد تحليل الأعداد ✅
+                </button>
+                <p id="explore-fb" class="hidden mt-4 font-bold text-lg text-green-700 bg-green-100 p-3 rounded-xl border border-green-300"></p>
+            </div>
+        </section>
+
+        <section id="learn" class="bg-white rounded-3xl shadow-xl border-4 border-indigo-500 p-6 md:p-8 opacity-50 pointer-events-none transition-all duration-500 relative">
+            
+            <div id="learn-lock" class="absolute inset-0 z-20 flex flex-col items-center justify-center bg-white/70 backdrop-blur-sm rounded-3xl">
+                <span class="text-6xl mb-4">🔒</span>
+                <p class="text-2xl font-bold text-gray-800 text-center px-4">أكمل استكشاف تحليل الأعداد لفتح مختبر التوزيع!</p>
+            </div>
+
+            <div class="flex items-center gap-3 mb-6 border-b-2 border-indigo-100 pb-4">
+                <span class="text-4xl">🛠️</span>
+                <h2 class="text-2xl md:text-3xl font-black text-indigo-800">تعلّم: مختبر التوزيع ومساحة المستطيل</h2>
+            </div>
+
+            <p class="text-lg font-bold text-gray-700 mb-6 text-center">
+                اختر مسألة للبدء. سنقوم بتفكيك العدد الكبير، ثم توزيع الضرب على كل جزء باستخدام نموذج المستطيل!
+            </p>
+
+            <!-- Problem Selector -->
+            <div class="flex flex-wrap justify-center gap-4 mb-8" dir="ltr">
+                <button onclick="loadProblem('p1')" id="btn-p1" class="btn-prob btn-playful bg-indigo-50 border-2 border-indigo-400 text-indigo-900 font-black py-3 px-6 rounded-xl text-xl font-mono hover:bg-indigo-100">249 × 5</button>
+                <button onclick="loadProblem('p2')" id="btn-p2" class="btn-prob btn-playful bg-indigo-50 border-2 border-indigo-400 text-indigo-900 font-black py-3 px-6 rounded-xl text-xl font-mono hover:bg-indigo-100">4,734 × 5</button>
+                <button onclick="loadProblem('p3')" id="btn-p3" class="btn-prob btn-playful bg-indigo-50 border-2 border-indigo-400 text-indigo-900 font-black py-3 px-6 rounded-xl text-xl font-mono hover:bg-indigo-100">530 × 7</button>
+                <button onclick="loadProblem('p4')" id="btn-p4" class="btn-prob btn-playful bg-indigo-50 border-2 border-indigo-400 text-indigo-900 font-black py-3 px-6 rounded-xl text-xl font-mono hover:bg-indigo-100">2,391 × 8</button>
+            </div>
+
+            <!-- Interactive Workspace (Hidden until problem selected) -->
+            <div id="workspace" class="hidden flex-col gap-8">
+                
+                <!-- Step 1: Decompose -->
+                <div class="bg-gray-50 border-2 border-gray-200 rounded-2xl p-6 text-center shadow-sm">
+                    <h3 class="font-bold text-indigo-800 mb-4 text-xl">الخطوة 1: فكك العدد الكبير (بالصيغة الممتدة)</h3>
+                    <div id="decomp-container" class="flex flex-wrap items-center justify-center gap-3 font-mono text-2xl font-black text-gray-800" dir="ltr">
+                        <!-- Injected via JS -->
+                    </div>
+                    <button id="btn-check-decomp" onclick="checkDecomp()" class="mt-6 btn-playful bg-indigo-500 hover:bg-indigo-600 text-white font-black py-2 px-8 rounded-xl text-lg">
+                        تأكيد التفكيك 🧩
+                    </button>
+                </div>
+
+                <!-- Step 2: Area Model -->
+                <div id="area-step" class="hidden bg-gray-50 border-2 border-gray-200 rounded-2xl p-6 text-center shadow-sm opacity-0 transition-opacity duration-500">
+                    <h3 class="font-bold text-indigo-800 mb-4 text-xl">الخطوة 2: وزع الضرب (احسب مساحة كل جزء)</h3>
+                    
+                    <div class="area-container" dir="ltr">
+                        <!-- Side Factor -->
+                        <div class="area-side" id="area-side-factor">
+                            <!-- e.g. 5 -->
+                        </div>
+                        
+                        <div class="area-main">
+                            <!-- Headers -->
+                            <div class="area-headers" id="area-headers">
+                                <!-- e.g. 200 | 40 | 9 -->
+                            </div>
+                            
+                            <!-- Boxes -->
+                            <div class="area-boxes" id="area-boxes">
+                                <!-- Inputs for partial products -->
+                            </div>
+                        </div>
+                    </div>
+
+                    <button id="btn-check-areas" onclick="checkAreas()" class="mt-6 btn-playful bg-indigo-500 hover:bg-indigo-600 text-white font-black py-2 px-8 rounded-xl text-lg">
+                        تأكيد المساحات 🧮
+                    </button>
+                </div>
+
+                <!-- Step 3: Final Addition -->
+                <div id="final-step" class="hidden bg-emerald-50 border-2 border-emerald-300 rounded-2xl p-6 text-center shadow-sm opacity-0 transition-opacity duration-500">
+                    <h3 class="font-bold text-emerald-800 mb-4 text-xl">الخطوة 3: اجمع النواتج للحصول على الحل النهائي!</h3>
+                    
+                    <div id="addition-container" class="flex flex-wrap items-center justify-center gap-3 font-mono text-2xl font-black text-gray-800" dir="ltr">
+                        <!-- Injected via JS -->
+                    </div>
+
+                    <button id="btn-check-final" onclick="checkFinal()" class="mt-6 btn-playful bg-emerald-600 hover:bg-emerald-700 text-white font-black py-3 px-10 rounded-xl text-xl">
+                        الناتج النهائي 🏆
+                    </button>
+                </div>
+
+            </div>
+
+        </section>
+
+        <!-- Final Victory Modal -->
+        <div id="finalVictory" class="hidden fixed inset-0 bg-black/80 z-50 flex items-center justify-center p-4 backdrop-blur-md">
+            <div class="bg-white rounded-3xl p-10 shadow-2xl border-8 border-indigo-500 text-center max-w-lg w-full transform transition-all duration-300">
+                <div class="text-8xl mb-4 animate-bounce">🎓</div>
+                <h2 class="text-4xl font-black text-indigo-800 mb-4">أنت بطل التوزيع!</h2>
+                <p class="text-xl text-gray-700 font-bold mb-6 leading-relaxed">
+                    لقد أتقنت استخدام خاصية التوزيع ونموذج مساحة المستطيل لضرب الأعداد الكبيرة.
+                </p>
+                <button onclick="location.reload()" class="btn-playful bg-indigo-600 hover:bg-indigo-700 text-white font-black py-4 px-10 rounded-2xl text-2xl w-full">
+                    إعادة التدريب 🔄
+                </button>
+            </div>
+        </div>
+
+    </main>
+
+    <script>
+        const expAnswers = {
+            'exp-1': 30,
+            'exp-2': 1000,
+            'exp-3': 200,
+            'exp-4': 600,
+            'exp-5': 300
+        };
+
+        function shakeInput(el) {
+            el.classList.add('shake', 'bg-red-50', 'border-red-400', 'text-red-700');
+            setTimeout(() => el.classList.remove('shake', 'bg-red-50', 'border-red-400', 'text-red-700'), 500);
+        }
+
+        function checkExplore() {
+            let allCorrect = true;
+
+            for (const [id, correctVal] of Object.entries(expAnswers)) {
+                const el = document.getElementById(id);
+                if (parseInt(el.value) === correctVal) {
+                    el.classList.add('input-correct');
+                    el.disabled = true;
+                } else {
+                    shakeInput(el);
+                    allCorrect = false;
+                }
+            }
+
+            if (allCorrect) {
+                document.getElementById('btn-explore').style.display = 'none';
+                const fb = document.getElementById('explore-fb');
+                fb.innerHTML = "✅ أحسنت! تفكيك الأعداد هو الخطوة الأولى لاستخدام خاصية التوزيع.";
+                fb.classList.remove('hidden');
+
+                // Unlock Learn Section
+                setTimeout(() => {
+                    document.getElementById('learn-lock').style.display = 'none';
+                    document.getElementById('learn').classList.remove('opacity-50', 'pointer-events-none');
+                    document.getElementById('learn').scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }, 1500);
+            }
+        }
+
+        const problems = {
+            'p1': { factor1: 5, factor2: 249, decomp: [200, 40, 9], areas: [1000, 200, 45], final: 1245 },
+            'p2': { factor1: 5, factor2: 4734, decomp: [4000, 700, 30, 4], areas: [20000, 3500, 150, 20], final: 23670 },
+            'p3': { factor1: 7, factor2: 530, decomp: [500, 30, 0], areas: [3500, 210, 0], final: 3710 },
+            'p4': { factor1: 8, factor2: 2391, decomp: [2000, 300, 90, 1], areas: [16000, 2400, 720, 8], final: 19128 }
+        };
+
+        let currentProb = null;
+        let solvedProblems = 0;
+
+        function loadProblem(pId) {
+            currentProb = problems[pId];
+            
+            // Highlight active button
+            document.querySelectorAll('.btn-prob').forEach(b => {
+                b.classList.remove('bg-indigo-200', 'border-indigo-600');
+                b.classList.add('bg-indigo-50', 'border-indigo-400');
+            });
+            document.getElementById(`btn-${pId}`).classList.replace('bg-indigo-50', 'bg-indigo-200');
+            document.getElementById(`btn-${pId}`).classList.replace('border-indigo-400', 'border-indigo-600');
+
+            // Reset Workspace
+            const ws = document.getElementById('workspace');
+            ws.classList.remove('hidden');
+            ws.classList.add('flex');
+            
+            document.getElementById('area-step').classList.add('hidden', 'opacity-0');
+            document.getElementById('final-step').classList.add('hidden', 'opacity-0');
+            document.getElementById('btn-check-decomp').style.display = 'block';
+
+            // 1. Build Decomposition UI
+            const decompContainer = document.getElementById('decomp-container');
+            decompContainer.innerHTML = `<span>${currentProb.factor2}</span> <span class="text-indigo-400">=</span>`;
+            
+            currentProb.decomp.forEach((val, index) => {
+                decompContainer.innerHTML += `<input type="number" id="dec-${index}" class="math-input text-indigo-900 w-24 h-12" placeholder="؟">`;
+                if (index < currentProb.decomp.length - 1) {
+                    decompContainer.innerHTML += `<span class="text-indigo-400">+</span>`;
+                }
+            });
+        }
+
+        function checkDecomp() {
+            let allCorrect = true;
+            currentProb.decomp.forEach((val, index) => {
+                const el = document.getElementById(`dec-${index}`);
+                if (parseInt(el.value) === val) {
+                    el.classList.add('input-correct');
+                    el.disabled = true;
+                } else {
+                    shakeInput(el);
+                    allCorrect = false;
+                }
+            });
+
+            if (allCorrect) {
+                document.getElementById('btn-check-decomp').style.display = 'none';
+                buildAreaModel();
+            }
+        }
+
+        function buildAreaModel() {
+            const areaSide = document.getElementById('area-side-factor');
+            const areaHeaders = document.getElementById('area-headers');
+            const areaBoxes = document.getElementById('area-boxes');
+
+            areaSide.innerText = currentProb.factor1;
+            areaHeaders.innerHTML = '';
+            areaBoxes.innerHTML = '';
+
+            currentProb.decomp.forEach((val, index) => {
+                // Header
+                areaHeaders.innerHTML += `<div class="flex-1 text-center py-2 ${index < currentProb.decomp.length - 1 ? 'border-r-4 border-indigo-500' : ''}">${val}</div>`;
+                
+                // Box
+                let bgClass = index % 2 === 0 ? 'bg-indigo-50/50' : 'bg-white';
+                areaBoxes.innerHTML += `
+                    <div class="area-box-part ${bgClass}">
+                        <span class="text-sm font-bold text-gray-400 mb-2">${currentProb.factor1} × ${val}</span>
+                        <input type="number" id="area-${index}" class="math-input text-indigo-900 w-24 h-12" placeholder="؟">
+                    </div>
+                `;
+            });
+
+            // Show Area Step
+            const areaStep = document.getElementById('area-step');
+            areaStep.classList.remove('hidden');
+            setTimeout(() => areaStep.classList.remove('opacity-0'), 50);
+            document.getElementById('btn-check-areas').style.display = 'inline-block';
+            
+            setTimeout(() => areaStep.scrollIntoView({ behavior: 'smooth', block: 'center' }), 100);
+        }
+
+        function checkAreas() {
+            let allCorrect = true;
+            currentProb.areas.forEach((val, index) => {
+                const el = document.getElementById(`area-${index}`);
+                if (parseInt(el.value) === val) {
+                    el.classList.add('input-correct');
+                    el.disabled = true;
+                } else {
+                    shakeInput(el);
+                    allCorrect = false;
+                }
+            });
+
+            if (allCorrect) {
+                document.getElementById('btn-check-areas').style.display = 'none';
+                buildFinalAddition();
+            }
+        }
+
+        function buildFinalAddition() {
+            const addContainer = document.getElementById('addition-container');
+            addContainer.innerHTML = '';
+
+            currentProb.areas.forEach((val, index) => {
+                addContainer.innerHTML += `<span class="text-indigo-700">${val}</span>`;
+                if (index < currentProb.areas.length - 1) {
+                    addContainer.innerHTML += `<span class="text-emerald-400">+</span>`;
+                }
+            });
+
+            addContainer.innerHTML += `
+                <span class="text-emerald-400">=</span>
+                <input type="number" id="final-ans" class="math-input text-emerald-900 border-emerald-400 bg-emerald-50 w-32 h-14" placeholder="الناتج">
+            `;
+
+            const finalStep = document.getElementById('final-step');
+            finalStep.classList.remove('hidden');
+            setTimeout(() => finalStep.classList.remove('opacity-0'), 50);
+            document.getElementById('btn-check-final').style.display = 'inline-block';
+            
+            setTimeout(() => finalStep.scrollIntoView({ behavior: 'smooth', block: 'center' }), 100);
+        }
+
+        function checkFinal() {
+            const el = document.getElementById('final-ans');
+            if (parseInt(el.value) === currentProb.final) {
+                el.classList.add('input-correct');
+                el.disabled = true;
+                document.getElementById('btn-check-final').style.display = 'none';
+
+                solvedProblems++;
+                
+                // Mark button as solved
+                const activeBtn = document.querySelector('.btn-prob.bg-indigo-200');
+                activeBtn.innerText += " ✅";
+                activeBtn.disabled = true;
+                activeBtn.classList.replace('bg-indigo-200', 'bg-green-100');
+                activeBtn.classList.replace('border-indigo-600', 'border-green-500');
+                activeBtn.classList.add('text-green-800');
+
+                if (solvedProblems === 4) {
+                    setTimeout(() => {
+                        document.getElementById('finalVictory').classList.remove('hidden');
+                        confettiEffect();
+                    }, 1000);
+                } else {
+                    // Hide workspace to encourage picking another
+                    setTimeout(() => {
+                        document.getElementById('workspace').classList.add('hidden');
+                        document.getElementById('workspace').classList.remove('flex');
+                        document.getElementById('learn').scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    }, 2000);
+                }
+
+            } else {
+                shakeInput(el);
+            }
+        }
+
+        function confettiEffect() {
+            const colors = ['#6366f1', '#10b981', '#f43f5e', '#f59e0b'];
+            for(let i=0; i<60; i++) {
+                const conf = document.createElement('div');
+                conf.className = 'absolute w-4 h-4 rounded-sm opacity-90 z-50 pointer-events-none';
+                if(Math.random() > 0.5) conf.classList.add('rounded-full');
+                
+                conf.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                conf.style.left = Math.random() * 100 + 'vw';
+                conf.style.top = (window.scrollY - 20) + 'px';
+                
+                const duration = Math.random() * 3 + 2; 
+                conf.style.transition = `all ${duration}s cubic-bezier(0.25, 0.46, 0.45, 0.94)`;
+                
+                document.body.appendChild(conf);
+                
+                setTimeout(() => {
+                    conf.style.top = (window.scrollY + window.innerHeight + 100) + 'px';
+                    conf.style.transform = `rotate(${Math.random() * 720}deg) translateX(${Math.random() * 200 - 100}px)`;
+                }, 50);
+                
+                setTimeout(() => { if (conf.parentNode) conf.parentNode.removeChild(conf); }, duration * 1000 + 100);
+            }
+        }
+    </script>
+</body>
+</html>

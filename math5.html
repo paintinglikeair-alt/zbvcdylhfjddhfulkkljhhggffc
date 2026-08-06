@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ترتيب الأعداد تنازلياً وتصاعدياً - مستعمرة النمل</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700;900&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Tajawal', sans-serif;
+            background-color: #fdf6e3;
+            background-image: radial-gradient(#e5d9c5 2px, transparent 2px);
+            background-size: 30px 30px;
+            overflow-x: hidden;
+        }
+
+        .btn-playful {
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 6px 0 rgba(0,0,0,0.2);
+        }
+        .btn-playful:active {
+            transform: translateY(6px);
+            box-shadow: 0 0 0 rgba(0,0,0,0);
+        }
+        .btn-playful:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none !important;
+            box-shadow: 0 6px 0 rgba(0,0,0,0.2) !important;
+        }
+
+        /* تصميم تلال النمل للمهمة الثانية */
+        .ant-hill-sortable {
+            background: linear-gradient(to bottom, #d97706, #92400e);
+            border-radius: 50% 50% 10% 10% / 70% 70% 10% 10%;
+            position: relative;
+            box-shadow: inset 0 -5px 15px rgba(0,0,0,0.4), 0 5px 10px rgba(0,0,0,0.2);
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        .ant-hill-sortable:hover:not(.placed) {
+            transform: scale(1.05) translateY(-5px);
+            box-shadow: inset 0 -5px 15px rgba(0,0,0,0.4), 0 10px 15px rgba(0,0,0,0.3);
+        }
+        
+        /* حركة النمل في الخلفية */
+        @keyframes crawlRight {
+            0% { transform: translate(-50px, 0) scaleX(-1) rotate(-5deg); }
+            50% { transform: translate(50vw, -15px) scaleX(-1) rotate(5deg); }
+            100% { transform: translate(110vw, 0) scaleX(-1) rotate(-5deg); }
+        }
+        @keyframes crawlLeft {
+            0% { transform: translate(110vw, 0) rotate(5deg); }
+            50% { transform: translate(50vw, 15px) rotate(-5deg); }
+            100% { transform: translate(-50px, 0) rotate(5deg); }
+        }
+        .bg-ant-1 { animation: crawlRight 22s linear infinite; }
+        .bg-ant-2 { animation: crawlLeft 26s linear infinite 3s; }
+
+        /* حركة الاهتزاز عند الخطأ */
+        .shake {
+            animation: shake 0.5s cubic-bezier(.36,.07,.19,.97) both;
+        }
+        @keyframes shake {
+            10%, 90% { transform: translate3d(-1px, 0, 0); }
+            20%, 80% { transform: translate3d(2px, 0, 0); }
+            30%, 50%, 70% { transform: translate3d(-4px, 0, 0); }
+            40%, 60% { transform: translate3d(4px, 0, 0); }
+        }
+    </style>
+</head>
+<body class="min-h-screen text-gray-800 flex flex-col items-center py-6 px-4 relative">
+
+    <!-- نمل الخلفية -->
+    <div class="fixed top-32 -left-10 text-3xl bg-ant-1 z-0 pointer-events-none opacity-40">🐜</div>
+    <div class="fixed bottom-20 -right-10 text-4xl bg-ant-2 z-0 pointer-events-none opacity-50">🐜</div>
+
+    <header class="w-full max-w-5xl text-center mb-8 z-10">
+        <div class="bg-white rounded-3xl p-6 shadow-xl border-4 border-purple-400 relative overflow-hidden">
+            <span class="bg-purple-500 text-white font-bold px-4 py-1 rounded-full text-sm absolute top-4 right-4">الدرس السابع</span>
+            <h1 class="text-3xl md:text-5xl font-black text-purple-900 mb-2 mt-4 flex items-center justify-center gap-3">
+                <span>📈</span> ترتيب الأعداد الكبيرة <span>📉</span>
+            </h1>
+            <p class="text-lg md:text-xl text-gray-600 font-bold">
+                من الأصغر للأكبر، أو العكس.. النمل يحب النظام! هل أنت مستعد للترتيب؟
+            </p>
+        </div>
+    </header>
+
+    <main class="w-full max-w-5xl z-10 flex flex-col gap-8">
+        
+        <section id="mission1" class="bg-white rounded-3xl shadow-xl border-4 border-rose-400 p-6 md:p-8">
+            <div class="flex items-center gap-3 mb-6 border-b-2 border-rose-100 pb-4">
+                <span class="text-4xl">🕵️‍♂️</span>
+                <h2 class="text-2xl md:text-3xl font-black text-rose-800">استكشف: فخ الأرقام الخادعة!</h2>
+            </div>
+
+            <p class="text-xl text-gray-700 mb-6 font-bold">
+                قارن تلميذ بين عددين، ولكنه وقع في فخ خطير! اقرأ إجابته واكتشف الخطأ.
+            </p>
+
+            <div class="flex flex-col md:flex-row gap-6 items-center justify-center mb-8">
+                <!-- المسألة -->
+                <div class="bg-rose-50 rounded-2xl p-6 border-2 border-rose-200 shadow-inner flex-1 w-full text-center">
+                    <p class="text-gray-500 font-bold mb-4">المسألة: ضع علامة ( > ، < ، = )</p>
+                    <div class="text-2xl md:text-3xl font-black text-rose-900 font-mono flex items-center justify-center gap-4" dir="ltr">
+                        <span>100,513</span>
+                        <span class="w-12 h-12 border-2 border-dashed border-gray-400 rounded-full flex items-center justify-center text-gray-400 bg-white" id="signSlot">؟</span>
+                        <span>89,906</span>
+                    </div>
+                </div>
+
+                <!-- إجابة التلميذ -->
+                <div class="bg-red-100 rounded-2xl p-6 border-2 border-red-300 shadow-md flex-1 w-full relative">
+                    <div class="absolute -top-4 -right-2 text-3xl">👦</div>
+                    <p class="text-red-800 font-bold mb-2">إجابة التلميذ:</p>
+                    <p class="text-xl font-bold text-gray-800">"أعتقد أن <span class="font-mono" dir="ltr">89,906 > 100,513</span>"</p>
+                    <p class="text-lg text-red-700 mt-2">السبب: لأن الرقم 8 أكبر من الرقم 1!</p>
+                </div>
+            </div>
+
+            <!-- خيارات الحل -->
+            <div class="bg-gray-50 rounded-2xl p-6 border-2 border-gray-200">
+                <h3 class="text-xl font-bold text-gray-800 mb-4 text-center">ما هو الخطأ الذي وقع فيه التلميذ؟</h3>
+                
+                <div class="flex flex-col gap-3" id="mcqContainer">
+                    <button onclick="checkErrorRule(false, this)" class="text-right p-4 rounded-xl border-2 border-gray-300 hover:bg-gray-100 font-bold text-lg transition-colors">
+                        ❌ الخطأ أنه لم يقارن بين رقمي العشرات في كلا العددين.
+                    </button>
+                    <button onclick="checkErrorRule(true, this)" class="text-right p-4 rounded-xl border-2 border-gray-300 hover:bg-amber-50 hover:border-amber-400 font-bold text-lg transition-colors">
+                        🤔 الخطأ أنه قارن الأرقام الأولى من اليسار، ونسي أن يعدّ عدد الخانات (الأرقام) أولاً!
+                    </button>
+                </div>
+
+                <div id="mission1Feedback" class="hidden mt-6 text-center">
+                    <!-- Feedback appears here -->
+                </div>
+            </div>
+        </section>
+
+        <section id="mission2" class="bg-white rounded-3xl shadow-xl border-4 border-green-500 p-6 md:p-8 opacity-50 pointer-events-none transition-opacity duration-500 relative">
+            
+            <div id="mission2Lock" class="absolute inset-0 z-20 flex flex-col items-center justify-center bg-white/70 backdrop-blur-sm rounded-3xl">
+                <span class="text-6xl mb-4">🔒</span>
+                <p class="text-2xl font-bold text-gray-800 text-center px-4">ساعد التلميذ في المهمة الأولى لفتح تحدي الترتيب!</p>
+            </div>
+
+            <div class="flex items-center gap-3 mb-6 border-b-2 border-green-100 pb-4">
+                <span class="text-4xl">🏕️</span>
+                <h2 class="text-2xl md:text-3xl font-black text-green-800">تعلّم: ترتيب تلال النمل تصاعدياً</h2>
+            </div>
+
+            <div class="bg-green-50 p-4 rounded-xl border border-green-200 mb-6 flex items-start gap-4">
+                <span class="text-3xl mt-1">📊</span>
+                <p class="text-lg font-bold text-gray-700 leading-relaxed">
+                    عدّ عمر مجموع عدد النمل في مناطق مختلفة. رتّب بيانات عمر <span class="text-green-700 font-black bg-green-200 px-2 py-0.5 rounded">تصاعدياً</span> (من الأصغر إلى الأكبر) عن طريق النقر على التلال بالترتيب الصحيح!
+                </p>
+            </div>
+
+            <!-- منطقة التلال غير المرتبة (ساحة اللعب) -->
+            <div class="bg-amber-50/50 rounded-2xl p-6 border-2 border-dashed border-amber-300 min-h-[200px] mb-8 relative">
+                <p class="text-center text-gray-500 font-bold mb-4">اضغط على التل الذي يحمل <span class="text-red-600">أصغر</span> عدد متبقي:</p>
+                
+                <div id="unsortedHills" class="flex flex-wrap justify-center items-end gap-6 md:gap-10 min-h-[160px]">
+                    <!-- سيتم إدراج التلال هنا بواسطة JS -->
+                </div>
+            </div>
+
+            <!-- منطقة الترتيب (الطابور) -->
+            <div class="bg-white rounded-2xl p-6 border-2 border-green-200 shadow-inner">
+                <div class="flex justify-between items-center mb-4">
+                    <h3 class="text-xl font-bold text-green-800">الطابور التصاعدي (النتيجة):</h3>
+                    <span class="text-sm font-bold text-gray-500 bg-gray-100 px-3 py-1 rounded-full flex items-center gap-1" dir="ltr">
+                        <span>الأصغر</span>
+                        <span>➡️</span>
+                        <span>الأكبر</span>
+                    </span>
+                </div>
+                
+                <div id="sortedLine" class="flex flex-wrap justify-start items-end gap-4 min-h-[120px] pb-4 border-b-4 border-gray-300 relative" dir="ltr">
+                    <!-- التلال المرتبة ستنتقل إلى هنا -->
+                    <div id="emptyLineMsg" class="absolute inset-0 flex items-center justify-center pointer-events-none opacity-40">
+                        <span class="text-xl font-bold text-gray-500">الطابور فارغ.. ابدأ باختيار أصغر رقم</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- رسالة الفوز النهائية -->
+            <div id="mission2Feedback" class="hidden mt-8 text-center p-6 bg-green-100 border-4 border-green-400 rounded-2xl">
+                <div class="text-6xl mb-4 animate-bounce-sm">🎉</div>
+                <h3 class="text-3xl font-black text-green-800 mb-2">ممتاز يا بطل الترتيب!</h3>
+                <p class="text-xl font-bold text-green-700">لقد قمت بترتيب الأعداد تصاعدياً بشكل صحيح تماماً.</p>
+            </div>
+
+        </section>
+    </main>
+
+    <script>
+        // --- المهمة 1: تحليل الخطأ ---
+        function checkErrorRule(isCorrect, btnElement) {
+            const feedback = document.getElementById('mission1Feedback');
+            const btns = document.getElementById('mcqContainer').children;
+            const signSlot = document.getElementById('signSlot');
+
+            if (isCorrect) {
+                // إجابة صحيحة
+                btnElement.className = "text-right p-4 rounded-xl border-4 border-green-500 bg-green-100 font-bold text-lg transition-colors";
+                for(let b of btns) { if(b !== btnElement) b.style.opacity = '0.5'; b.disabled = true; }
+                
+                // شرح القاعدة وتصحيح العلامة
+                feedback.innerHTML = `
+                    <div class="p-4 bg-green-50 border-2 border-green-300 rounded-xl">
+                        <p class="text-xl font-black text-green-800 mb-2">✅ أحسنت! القاعدة الذهبية تقول:</p>
+                        <p class="text-lg font-bold text-gray-700 mb-4">"العدد الذي يمتلك أرقاماً (خانات) أكثر، هو الأكبر دائماً!"</p>
+                        <p class="text-lg text-gray-800 font-mono" dir="ltr">
+                            100,513 (6 digits) <span class="text-2xl font-black text-green-600 mx-2">></span> 89,906 (5 digits)
+                        </p>
+                        <button onclick="unlockMission2()" class="mt-4 btn-playful bg-green-500 hover:bg-green-600 text-white font-black py-2 px-6 rounded-xl text-lg">
+                            افتح التحدي التالي 🚀
+                        </button>
+                    </div>
+                `;
+                feedback.classList.remove('hidden');
+                
+                // تحديث العلامة في المسألة
+                signSlot.innerText = ">";
+                signSlot.className = "w-12 h-12 rounded-full flex items-center justify-center font-black text-3xl text-white bg-green-500 shadow-md transform scale-110 transition-transform";
+
+            } else {
+                // إجابة خاطئة
+                btnElement.classList.add('shake', 'border-red-400', 'bg-red-50', 'text-red-700');
+                setTimeout(() => btnElement.classList.remove('shake'), 500);
+            }
+        }
+
+        function unlockMission2() {
+            document.getElementById('mission2Lock').style.display = 'none';
+            document.getElementById('mission2').classList.remove('opacity-50', 'pointer-events-none');
+            document.getElementById('mission2').scrollIntoView({ behavior: 'smooth', block: 'start' });
+            initSortingGame();
+        }
+
+
+        // --- المهمة 2: لعبة الترتيب التصاعدي ---
+        // الأرقام من صفحة الكتاب
+        const rawNumbers = [78090, 79010, 78091, 79100, 78999];
+        // الترتيب الصحيح (التصاعدي)
+        const sortedNumbers = [...rawNumbers].sort((a, b) => a - b);
+        let currentIndex = 0; // المؤشر الذي يتتبع الرقم الأصغر المطلوب حالياً
+
+        function initSortingGame() {
+            const unsortedContainer = document.getElementById('unsortedHills');
+            unsortedContainer.innerHTML = '';
+            currentIndex = 0;
+            document.getElementById('emptyLineMsg').style.display = 'flex';
+            document.getElementById('sortedLine').innerHTML = '<div id="emptyLineMsg" class="absolute inset-0 flex items-center justify-center pointer-events-none opacity-40"><span class="text-xl font-bold text-gray-500">الطابور فارغ.. ابدأ باختيار أصغر رقم</span></div>';
+            document.getElementById('mission2Feedback').classList.add('hidden');
+
+            // ترتيب عشوائي للتلال في ساحة اللعب
+            let shuffled = [...rawNumbers].sort(() => Math.random() - 0.5);
+
+            shuffled.forEach((num) => {
+                const hill = document.createElement('div');
+                hill.className = "flex flex-col items-center ant-hill-container group";
+                hill.dataset.value = num;
+                hill.onclick = () => handleHillClick(hill, num);
+
+                // شكل التل
+                const hillShape = document.createElement('div');
+                // أحجام عشوائية بسيطة للتلال لتبدو طبيعية
+                const sizeClass = Math.random() > 0.5 ? 'w-24 h-20' : 'w-28 h-24';
+                hillShape.className = `ant-hill-sortable ${sizeClass} flex items-end justify-center pb-2 relative z-10`;
+                
+                // نمل على التل للتزيين
+                hillShape.innerHTML = `
+                    <span class="absolute top-2 left-3 text-lg opacity-80 rotate-45">🐜</span>
+                    <span class="absolute top-1/2 right-2 text-sm opacity-60 -rotate-12">🐜</span>
+                `;
+
+                // لوحة الرقم
+                const numBoard = document.createElement('div');
+                numBoard.className = "mt-2 bg-white border-2 border-amber-600 rounded-lg px-3 py-1 font-mono font-black text-gray-800 shadow-sm z-20 group-hover:bg-amber-100 transition-colors";
+                numBoard.innerText = num.toLocaleString('en-US');
+
+                hill.appendChild(hillShape);
+                hill.appendChild(numBoard);
+                unsortedContainer.appendChild(hill);
+            });
+        }
+
+        function handleHillClick(hillElement, numValue) {
+            const expectedNumber = sortedNumbers[currentIndex];
+            
+            if (numValue === expectedNumber) {
+                // إجابة صحيحة: نقل التل إلى الطابور
+                document.getElementById('emptyLineMsg').style.display = 'none';
+                
+                // تعطيل النقر وإضافة تأثير
+                hillElement.onclick = null;
+                hillElement.classList.add('placed');
+                const shape = hillElement.querySelector('.ant-hill-sortable');
+                shape.classList.remove('ant-hill-sortable'); // إزالة تأثيرات الهوفر
+                shape.style.transform = 'none';
+                
+                // إضافة علامة صح خضراء صغيرة
+                const checkMark = document.createElement('div');
+                checkMark.className = "absolute -top-4 -right-2 bg-green-500 text-white rounded-full w-6 h-6 flex items-center justify-center font-bold text-sm shadow-md z-30";
+                checkMark.innerText = "✓";
+                hillElement.appendChild(checkMark);
+
+                // تحريكه لمنطقة الطابور
+                document.getElementById('sortedLine').appendChild(hillElement);
+                
+                currentIndex++;
+
+                // التحقق من إنهاء اللعبة
+                if (currentIndex === sortedNumbers.length) {
+                    setTimeout(() => {
+                        document.getElementById('mission2Feedback').classList.remove('hidden');
+                    }, 500);
+                }
+
+            } else {
+                // إجابة خاطئة: التل يهتز
+                const shape = hillElement.querySelector('.ant-hill-sortable');
+                shape.classList.add('shake', 'border-4', 'border-red-500');
+                
+                // إظهار رسالة توجيهية مؤقتة
+                const msgBox = document.createElement('div');
+                msgBox.className = "absolute -top-10 bg-red-100 text-red-800 px-3 py-1 rounded-lg font-bold text-sm whitespace-nowrap shadow-md z-30";
+                msgBox.innerText = "ليس هذا الأصغر! قارن جيداً 🤔";
+                hillElement.appendChild(msgBox);
+
+                setTimeout(() => {
+                    shape.classList.remove('shake', 'border-4', 'border-red-500');
+                    if(hillElement.contains(msgBox)) hillElement.removeChild(msgBox);
+                }, 1500);
+            }
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,465 @@
+ <!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>مهرجان التفاح الذهبي - المراجعة الشاملة</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700;900&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Tajawal', sans-serif;
+            background-color: #fdf4ff; /* لون زهري/بنفسجي فاتح مبهج */
+            background-image: radial-gradient(#f5d0fe 2px, transparent 2px);
+            background-size: 30px 30px;
+            overflow-x: hidden;
+        }
+
+        .btn-playful {
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 6px 0 rgba(0,0,0,0.2);
+        }
+        .btn-playful:active:not(:disabled) {
+            transform: translateY(6px);
+            box-shadow: 0 0 0 rgba(0,0,0,0);
+        }
+        .btn-playful:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none !important;
+            box-shadow: 0 6px 0 rgba(0,0,0,0.2) !important;
+        }
+
+        /* حركات النمل */
+        @keyframes walkRight {
+            0% { transform: translate(-50px, 0) scaleX(-1) rotate(-5deg); }
+            50% { transform: translate(50vw, -10px) scaleX(-1) rotate(5deg); }
+            100% { transform: translate(110vw, 0) scaleX(-1) rotate(-5deg); }
+        }
+        .bg-ant { animation: walkRight 25s linear infinite; }
+
+        /* حركة الاهتزاز عند الخطأ */
+        .shake { animation: shake 0.5s cubic-bezier(.36,.07,.19,.97) both; }
+        @keyframes shake {
+            10%, 90% { transform: translate3d(-1px, 0, 0); }
+            20%, 80% { transform: translate3d(2px, 0, 0); }
+            30%, 50%, 70% { transform: translate3d(-4px, 0, 0); }
+            40%, 60% { transform: translate3d(4px, 0, 0); }
+        }
+
+        /* حركة التفاحة الذهبية */
+        .golden-apple {
+            filter: drop-shadow(0 0 10px #fbbf24);
+            animation: pulse-gold 2s infinite;
+        }
+        @keyframes pulse-gold {
+            0% { transform: scale(1); filter: drop-shadow(0 0 10px #fbbf24); }
+            50% { transform: scale(1.1); filter: drop-shadow(0 0 20px #f59e0b); }
+            100% { transform: scale(1); filter: drop-shadow(0 0 10px #fbbf24); }
+        }
+
+        .challenge-container {
+            display: none; /* مخفي افتراضياً */
+            animation: fadeIn 0.5s ease-in-out;
+        }
+        .challenge-container.active {
+            display: block;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* شكل التل للترتيب */
+        .sortable-hill {
+            transition: all 0.2s;
+            cursor: pointer;
+        }
+        .sortable-hill:hover { transform: scale(1.05); }
+    </style>
+</head>
+<body class="min-h-screen text-gray-800 flex flex-col items-center py-6 px-4 relative">
+
+    <!-- نملة الخلفية -->
+    <div class="fixed top-1/4 -left-10 text-4xl bg-ant z-0 pointer-events-none opacity-40">🐜</div>
+
+    <!-- الترويسة وعداد التقدم -->
+    <header class="w-full max-w-4xl text-center mb-8 z-10">
+        <div class="bg-white rounded-3xl p-6 shadow-xl border-4 border-fuchsia-400 relative overflow-hidden">
+            <span class="bg-fuchsia-500 text-white font-bold px-4 py-1 rounded-full text-sm absolute top-4 right-4">المراجعة النهائية</span>
+            <h1 class="text-3xl md:text-5xl font-black text-fuchsia-900 mb-4 mt-4 flex items-center justify-center gap-3">
+                <span>👑</span> مهرجان التفاح الذهبي <span>🍎</span>
+            </h1>
+            
+            <!-- شريط التفاحات -->
+            <div class="bg-fuchsia-50 border-2 border-fuchsia-200 rounded-2xl p-4 inline-block">
+                <p class="text-fuchsia-800 font-bold mb-2">اجمع 5 تفاحات ذهبية للملكة:</p>
+                <div class="flex gap-2 justify-center text-3xl" id="progressApples">
+                    <span class="grayscale opacity-50" id="apple-1">🍎</span>
+                    <span class="grayscale opacity-50" id="apple-2">🍎</span>
+                    <span class="grayscale opacity-50" id="apple-3">🍎</span>
+                    <span class="grayscale opacity-50" id="apple-4">🍎</span>
+                    <span class="grayscale opacity-50" id="apple-5">🍎</span>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="w-full max-w-4xl z-10 relative min-h-[400px]">
+        
+        <!-- نافذة البداية -->
+        <div id="welcomeScreen" class="bg-white rounded-3xl p-8 shadow-2xl border-4 border-purple-400 text-center active challenge-container">
+            <div class="text-8xl mb-4">🏰</div>
+            <h2 class="text-3xl font-black text-purple-800 mb-4">أهلاً بك في المستعمرة الكبرى!</h2>
+            <p class="text-xl text-gray-700 font-bold mb-8 leading-relaxed">
+                الملكة تحتاج إلى <span class="text-amber-500 font-black">5 تفاحات ذهبية</span> لإقامة مهرجان نهاية الصيف.<br>
+                في كل غرفة من غرف المستعمرة هناك لغز رياضي. هل أنت مستعد لإثبات أنك بطل الوحدة الأولى؟
+            </p>
+            <button onclick="startChallenges()" class="btn-playful bg-purple-600 hover:bg-purple-700 text-white font-black py-4 px-10 rounded-2xl text-2xl">
+                ابدأ التحدي الأول! 🚀
+            </button>
+        </div>
+
+        <!-- التحدي 1: القيمة المكانية -->
+        <div id="challenge1" class="bg-white rounded-3xl p-8 shadow-2xl border-4 border-teal-400 text-center challenge-container">
+            <h2 class="text-2xl font-black text-teal-800 mb-4 border-b-2 border-teal-100 pb-2 flex items-center justify-center gap-2">
+                <span>1️⃣</span> الغرفة الأولى: مضاعفة القيم
+            </h2>
+            <p class="text-xl text-gray-700 font-bold mb-6">
+                لدينا الرقم <span class="font-mono font-black text-teal-600 text-2xl">7</span> في خانة العشرات (قيمته 70).<br>
+                اضغط على الزر ليقفز الرقم لليسار حتى تصل قيمته إلى <span class="font-mono font-black text-red-600 text-2xl">7,000</span>!
+            </p>
+
+            <div class="flex flex-col items-center gap-6">
+                <div class="bg-teal-50 border-4 border-teal-200 rounded-2xl p-6 text-center w-full max-w-md">
+                    <p class="text-sm font-bold text-teal-700 mb-2">القيمة الحالية:</p>
+                    <p id="c1-value" class="text-5xl font-black text-teal-900 font-mono tracking-widest" dir="ltr">70</p>
+                </div>
+                
+                <button onclick="c1Jump()" id="btn-c1" class="btn-playful bg-teal-500 hover:bg-teal-600 text-white font-black py-3 px-8 rounded-xl text-xl flex items-center gap-2">
+                    <span>⬅️</span> قفز لليسار (× 10)
+                </button>
+            </div>
+        </div>
+
+        <!-- التحدي 2: الصيغ وتكوين الأعداد -->
+        <div id="challenge2" class="bg-white rounded-3xl p-8 shadow-2xl border-4 border-blue-400 text-center challenge-container">
+            <h2 class="text-2xl font-black text-blue-800 mb-4 border-b-2 border-blue-100 pb-2 flex items-center justify-center gap-2">
+                <span>2️⃣</span> الغرفة الثانية: فك الشفرة السرية
+            </h2>
+            <p class="text-xl text-gray-700 font-bold mb-6">
+                اكتشف الصيغة القياسية الصحيحة لفتح الباب!
+            </p>
+
+            <div class="bg-blue-50 border-4 border-blue-200 rounded-2xl p-6 mb-8">
+                <p class="text-gray-500 font-bold mb-2">الصيغة الممتدة:</p>
+                <p class="text-2xl md:text-3xl font-black text-blue-900 font-mono" dir="ltr">
+                    (8 × 1,000,000) + (5 × 10,000) + (3 × 10)
+                </p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <button onclick="checkC2(false, this)" class="btn-playful bg-gray-100 hover:bg-gray-200 text-gray-800 font-black py-4 rounded-xl text-2xl font-mono" dir="ltr">8,500,030</button>
+                <button onclick="checkC2(true, this)" class="btn-playful bg-gray-100 hover:bg-gray-200 text-gray-800 font-black py-4 rounded-xl text-2xl font-mono" dir="ltr">8,050,030</button>
+                <button onclick="checkC2(false, this)" class="btn-playful bg-gray-100 hover:bg-gray-200 text-gray-800 font-black py-4 rounded-xl text-2xl font-mono" dir="ltr">853</button>
+            </div>
+        </div>
+
+        <!-- التحدي 3: المقارنة -->
+        <div id="challenge3" class="bg-white rounded-3xl p-8 shadow-2xl border-4 border-rose-400 text-center challenge-container">
+            <h2 class="text-2xl font-black text-rose-800 mb-4 border-b-2 border-rose-100 pb-2 flex items-center justify-center gap-2">
+                <span>3️⃣</span> الغرفة الثالثة: ميزان النمل
+            </h2>
+            <p class="text-xl text-gray-700 font-bold mb-8">
+                قارن بين عدد التفاح في المخزنين لتعرف أيهما الأكبر!
+            </p>
+
+            <div class="flex items-center justify-center gap-4 md:gap-10 mb-8">
+                <!-- الرقم الأول -->
+                <div class="bg-rose-50 border-4 border-rose-200 p-4 rounded-2xl">
+                    <p class="text-2xl md:text-3xl font-black font-mono text-gray-800" dir="ltr">1,450,900</p>
+                </div>
+                
+                <!-- العلامة -->
+                <div id="c3-sign" class="w-16 h-16 rounded-full border-4 border-dashed border-gray-400 flex items-center justify-center text-3xl font-black text-gray-400 bg-white">
+                    ؟
+                </div>
+
+                <!-- الرقم الثاني -->
+                <div class="bg-rose-50 border-4 border-rose-200 p-4 rounded-2xl">
+                    <p class="text-2xl md:text-3xl font-black font-mono text-gray-800" dir="ltr">1,540,900</p>
+                </div>
+            </div>
+
+            <div class="flex justify-center gap-4">
+                <button onclick="checkC3('>')" class="btn-playful bg-rose-500 hover:bg-rose-600 text-white font-black w-20 h-20 rounded-full text-4xl">></button>
+                <button onclick="checkC3('=')" class="btn-playful bg-gray-400 hover:bg-gray-500 text-white font-black w-20 h-20 rounded-full text-4xl">=</button>
+                <button onclick="checkC3('<')" class="btn-playful bg-blue-500 hover:bg-blue-600 text-white font-black w-20 h-20 rounded-full text-4xl"><</button>
+            </div>
+        </div>
+
+        <!-- التحدي 4: الترتيب -->
+        <div id="challenge4" class="bg-white rounded-3xl p-8 shadow-2xl border-4 border-amber-400 text-center challenge-container">
+            <h2 class="text-2xl font-black text-amber-800 mb-4 border-b-2 border-amber-100 pb-2 flex items-center justify-center gap-2">
+                <span>4️⃣</span> الغرفة الرابعة: طابور العمل
+            </h2>
+            <p class="text-xl text-gray-700 font-bold mb-4">
+                رتب هذه الأعداد <span class="bg-amber-200 px-2 rounded text-amber-900 font-black">تنازلياً</span> (من الأكبر للأصغر). اضغط على الأكبر المتبقي!
+            </p>
+
+            <div class="bg-amber-50 rounded-2xl p-6 border-2 border-dashed border-amber-300 min-h-[140px] mb-6">
+                <div id="c4-unsorted" class="flex flex-wrap justify-center gap-4">
+                    <!-- Numbers will be injected here -->
+                </div>
+            </div>
+
+            <div class="bg-white rounded-2xl p-4 border-2 border-amber-200">
+                <div class="flex justify-between items-center mb-2 text-sm font-bold text-gray-500" dir="ltr">
+                    <span>الأكبر ⬅️</span>
+                    <span>➡️ الأصغر</span>
+                </div>
+                <div id="c4-sorted" class="flex flex-wrap justify-start items-center gap-4 min-h-[80px] border-b-4 border-gray-300 pb-2" dir="ltr">
+                    <!-- Sorted items go here -->
+                </div>
+            </div>
+        </div>
+
+        <!-- التحدي 5: التقريب -->
+        <div id="challenge5" class="bg-white rounded-3xl p-8 shadow-2xl border-4 border-green-500 text-center challenge-container">
+            <h2 class="text-2xl font-black text-green-800 mb-4 border-b-2 border-green-100 pb-2 flex items-center justify-center gap-2">
+                <span>5️⃣</span> الغرفة الأخيرة: شجرة التقريب
+            </h2>
+            <p class="text-xl text-gray-700 font-bold mb-6">
+                قرّب العدد <span class="font-mono text-2xl font-black text-green-700" dir="ltr">34,500</span> لأقرب ألف.
+            </p>
+
+            <div class="flex justify-center mb-8">
+                <div class="relative w-8 h-[250px] bg-gradient-to-b from-green-600 to-green-400 rounded-full mx-auto">
+                    <!-- Top mark -->
+                    <div class="absolute -left-16 top-0 text-right w-14 font-mono font-black text-gray-600">35,000</div>
+                    <div class="absolute w-6 h-1 bg-green-800 left-1 top-0"></div>
+                    
+                    <!-- Mid mark -->
+                    <div class="absolute -left-16 top-1/2 -translate-y-1/2 text-right w-14 font-mono font-bold text-amber-600 text-sm">34,500<br>(المنتصف)</div>
+                    <div class="absolute w-8 h-2 bg-amber-500 left-0 top-1/2 -translate-y-1/2 rounded-full"></div>
+
+                    <!-- Bottom mark -->
+                    <div class="absolute -left-16 bottom-0 text-right w-14 font-mono font-black text-gray-600">34,000</div>
+                    <div class="absolute w-6 h-1 bg-green-800 left-1 bottom-0"></div>
+
+                    <!-- Target Ant -->
+                    <div class="absolute -right-12 top-1/2 -translate-y-1/2 text-3xl z-10 filter drop-shadow-md">
+                        🐜<span class="absolute -top-3 right-4 text-sm bg-white border border-gray-300 rounded px-1 font-mono font-bold">34,500</span>
+                    </div>
+                </div>
+            </div>
+
+            <p class="text-lg font-bold text-gray-600 mb-4">بما أن النملة وقفت على المنتصف تماماً.. إلى أين ستتجه؟</p>
+            <div class="flex justify-center gap-4">
+                <button onclick="checkC5(35000)" class="btn-playful bg-green-500 hover:bg-green-600 text-white font-black py-3 px-8 rounded-xl text-2xl font-mono" dir="ltr">35,000</button>
+                <button onclick="checkC5(34000)" class="btn-playful bg-gray-400 hover:bg-gray-500 text-white font-black py-3 px-8 rounded-xl text-2xl font-mono" dir="ltr">34,000</button>
+            </div>
+        </div>
+
+        <!-- رسالة النجاح في مهمة -->
+        <div id="feedbackModal" class="hidden fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4 backdrop-blur-sm">
+            <div class="bg-white rounded-3xl p-8 shadow-2xl border-8 border-yellow-400 text-center max-w-sm w-full transform transition-all duration-300">
+                <div class="text-8xl mb-4 golden-apple">🍎</div>
+                <h2 class="text-3xl font-black text-yellow-600 mb-2">ممتاز!</h2>
+                <p class="text-xl text-gray-700 font-bold mb-6">لقد حصلت على تفاحة ذهبية!</p>
+                <button onclick="nextChallengeBtn()" class="btn-playful bg-yellow-500 hover:bg-yellow-600 text-white font-black py-3 px-8 rounded-xl text-xl w-full">
+                    الغرفة التالية ➡️
+                </button>
+            </div>
+        </div>
+
+        <!-- رسالة الختام العظمى -->
+        <div id="finalVictory" class="hidden bg-white rounded-3xl p-8 shadow-2xl border-8 border-fuchsia-500 text-center challenge-container">
+            <div class="text-8xl mb-4 animate-bounce">🏆</div>
+            <h2 class="text-4xl font-black text-fuchsia-800 mb-4">أنت بطل الرياضيات!</h2>
+            <p class="text-xl text-gray-700 font-bold mb-6 leading-relaxed">
+                اكتملت التفاحات الذهبية الخمس! 🍎🍎🍎🍎🍎<br>
+                الملكة والمستعمرة كلها فخورة بك. لقد أثبت أنك أتقنت الوحدة الأولى بامتياز!
+            </p>
+            <button onclick="location.reload()" class="btn-playful bg-fuchsia-600 hover:bg-fuchsia-700 text-white font-black py-4 px-10 rounded-2xl text-2xl">
+                العب مرة أخرى 🔄
+            </button>
+        </div>
+
+    </main>
+
+    <script>
+        let currentChallenge = 0; // 0 is welcome screen
+        
+        function updateProgress() {
+            if (currentChallenge > 0 && currentChallenge <= 5) {
+                const apple = document.getElementById(`apple-${currentChallenge}`);
+                apple.classList.remove('grayscale', 'opacity-50');
+                apple.classList.add('golden-apple');
+            }
+        }
+
+        function showFeedback() {
+            updateProgress();
+            document.getElementById('feedbackModal').classList.remove('hidden');
+        }
+
+        function hideFeedback() {
+            document.getElementById('feedbackModal').classList.add('hidden');
+        }
+
+        function goToChallenge(num) {
+            // Hide all
+            document.querySelectorAll('.challenge-container').forEach(el => {
+                el.classList.remove('active');
+            });
+            // Show target
+            if (num <= 5) {
+                document.getElementById(`challenge${num}`).classList.add('active');
+            } else {
+                document.getElementById('finalVictory').classList.add('active');
+                confettiEffect();
+            }
+        }
+
+        function startChallenges() {
+            currentChallenge = 1;
+            goToChallenge(currentChallenge);
+        }
+
+        function nextChallengeBtn() {
+            hideFeedback();
+            currentChallenge++;
+            if (currentChallenge === 4) initC4(); // setup C4 dynamically
+            goToChallenge(currentChallenge);
+        }
+
+        function shakeElement(el) {
+            el.classList.add('shake', 'bg-red-200', 'border-red-500');
+            setTimeout(() => el.classList.remove('shake', 'bg-red-200', 'border-red-500'), 500);
+        }
+
+        // --- Challenge 1 Logic ---
+        let c1Val = 70;
+        function c1Jump() {
+            c1Val *= 10;
+            document.getElementById('c1-value').innerText = c1Val.toLocaleString('en-US');
+            if (c1Val === 7000) {
+                document.getElementById('btn-c1').disabled = true;
+                setTimeout(showFeedback, 500);
+            } else if (c1Val > 7000) {
+                c1Val = 70; // reset
+                document.getElementById('c1-value').innerText = c1Val;
+                shakeElement(document.getElementById('c1-value').parentElement);
+            }
+        }
+
+        // --- Challenge 2 Logic ---
+        function checkC2(isCorrect, btn) {
+            if (isCorrect) {
+                btn.classList.replace('bg-gray-100', 'bg-green-500');
+                btn.classList.add('text-white');
+                setTimeout(showFeedback, 500);
+            } else {
+                shakeElement(btn);
+            }
+        }
+
+        // --- Challenge 3 Logic ---
+        function checkC3(sign) {
+            // 1,450,900 is < 1,540,900
+            const correctSign = '<';
+            const signBox = document.getElementById('c3-sign');
+            signBox.innerText = sign;
+            signBox.classList.remove('text-gray-400');
+            signBox.classList.add('text-gray-900');
+
+            if (sign === correctSign) {
+                signBox.classList.add('bg-green-200', 'border-green-500');
+                setTimeout(showFeedback, 500);
+            } else {
+                signBox.classList.add('bg-red-200', 'border-red-500');
+                setTimeout(() => {
+                    signBox.innerText = '؟';
+                    signBox.classList.remove('bg-red-200', 'border-red-500', 'text-gray-900');
+                    signBox.classList.add('text-gray-400');
+                }, 800);
+            }
+        }
+
+        // --- Challenge 4 Logic ---
+        const c4Numbers = [92000, 89000, 90500, 92500]; // Unsorted
+        const c4Sorted = [...c4Numbers].sort((a, b) => b - a); // Descending (الأكبر للأصغر)
+        let c4CurrentIndex = 0;
+
+        function initC4() {
+            const container = document.getElementById('c4-unsorted');
+            container.innerHTML = '';
+            c4CurrentIndex = 0;
+            
+            // Shuffle
+            let shuffled = [...c4Numbers].sort(() => Math.random() - 0.5);
+            
+            shuffled.forEach(num => {
+                const btn = document.createElement('button');
+                btn.className = "sortable-hill bg-amber-200 border-4 border-amber-500 text-amber-900 font-black font-mono text-xl py-3 px-6 rounded-3xl shadow-sm";
+                btn.innerText = num.toLocaleString('en-US');
+                btn.onclick = () => handleC4Click(num, btn);
+                container.appendChild(btn);
+            });
+        }
+
+        function handleC4Click(num, btn) {
+            if (num === c4Sorted[c4CurrentIndex]) {
+                // Correct
+                btn.onclick = null;
+                btn.classList.replace('bg-amber-200', 'bg-green-200');
+                btn.classList.replace('border-amber-500', 'border-green-500');
+                document.getElementById('c4-sorted').appendChild(btn);
+                c4CurrentIndex++;
+                
+                if (c4CurrentIndex === c4Sorted.length) {
+                    setTimeout(showFeedback, 500);
+                }
+            } else {
+                // Wrong
+                shakeElement(btn);
+            }
+        }
+
+        // --- Challenge 5 Logic ---
+        function checkC5(ans) {
+            // Midpoint rule: if at midpoint, round up (35000)
+            if (ans === 35000) {
+                setTimeout(showFeedback, 500);
+            } else {
+                // Find button and shake
+                const btns = document.getElementById('challenge5').querySelectorAll('button');
+                btns.forEach(b => {
+                    if (b.innerText.includes("34,000")) shakeElement(b);
+                });
+            }
+        }
+
+        // --- Final Celebration ---
+        function confettiEffect() {
+            // Simple visual effect for final screen
+            const colors = ['#fbbf24', '#f472b6', '#34d399', '#60a5fa'];
+            for(let i=0; i<30; i++) {
+                const conf = document.createElement('div');
+                conf.className = 'absolute w-3 h-3 rounded-full opacity-70 z-50';
+                conf.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                conf.style.left = Math.random() * 100 + 'vw';
+                conf.style.top = -10 + 'px';
+                conf.style.transition = 'all 2s ease-in';
+                document.body.appendChild(conf);
+                
+                setTimeout(() => {
+                    conf.style.top = '100vh';
+                    conf.style.transform = `rotate(${Math.random() * 360}deg) translateX(${Math.random() * 50 - 25}px)`;
+                }, 100);
+            }
+        }
+    </script>
+</body>
+</html>

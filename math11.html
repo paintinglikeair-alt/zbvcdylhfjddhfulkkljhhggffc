@@ -1,0 +1,470 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>الطرح مع إعادة التسمية - محقق النمل</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700;900&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Tajawal', sans-serif;
+            background-color: #faf5ff; /* خلفية بنفسجي فاتح جداً */
+            background-image: radial-gradient(#e9d5ff 2px, transparent 2px);
+            background-size: 30px 30px;
+            overflow-x: hidden;
+        }
+
+        .btn-playful {
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 6px 0 rgba(0,0,0,0.2);
+        }
+        .btn-playful:active:not(:disabled) {
+            transform: translateY(6px);
+            box-shadow: 0 0 0 rgba(0,0,0,0);
+        }
+        .btn-playful:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none !important;
+            box-shadow: 0 6px 0 rgba(0,0,0,0.2) !important;
+        }
+
+        /* تنسيقات شبكة الرياضيات العمودية */
+        .math-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr); /* +, H, T, O */
+            gap: 0.5rem;
+            align-items: center;
+            justify-items: center;
+            font-family: monospace;
+            font-size: 2.5rem;
+            font-weight: 900;
+        }
+        
+        .math-input {
+            width: 3rem;
+            height: 3.5rem;
+            text-align: center;
+            font-size: 2.5rem;
+            font-weight: 900;
+            border: 3px solid #cbd5e1;
+            border-radius: 0.75rem;
+            background-color: white;
+            transition: all 0.3s;
+        }
+        .math-input:focus {
+            outline: none;
+            border-color: #8b5cf6;
+            box-shadow: 0 0 0 4px rgba(139, 92, 246, 0.3);
+        }
+        
+        /* حركة التشطيب (الاستلاف) */
+        .strikethrough {
+            position: relative;
+            color: #94a3b8; /* لون باهت بعد التشطيب */
+        }
+        .strikethrough::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: -10%;
+            width: 120%;
+            height: 4px;
+            background-color: #ef4444; /* خط أحمر */
+            transform: rotate(-15deg);
+            animation: strike 0.3s ease-out forwards;
+        }
+        @keyframes strike {
+            0% { width: 0; }
+            100% { width: 120%; }
+        }
+
+        .carry-number {
+            font-size: 1.5rem;
+            color: #ef4444;
+            animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+        }
+        @keyframes popIn {
+            0% { transform: scale(0); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        .shake { animation: shake 0.5s cubic-bezier(.36,.07,.19,.97) both; }
+        @keyframes shake {
+            10%, 90% { transform: translate3d(-1px, 0, 0); }
+            20%, 80% { transform: translate3d(2px, 0, 0); }
+            30%, 50%, 70% { transform: translate3d(-4px, 0, 0); }
+            40%, 60% { transform: translate3d(4px, 0, 0); }
+        }
+
+        .ant-detective {
+            animation: float 3s ease-in-out infinite;
+        }
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+            100% { transform: translateY(0px); }
+        }
+    </style>
+</head>
+<body class="min-h-screen text-gray-800 flex flex-col items-center py-6 px-4 relative">
+
+    <header class="w-full max-w-4xl text-center mb-8 z-10">
+        <div class="bg-white rounded-3xl p-6 shadow-xl border-4 border-purple-500 relative overflow-hidden">
+            <span class="bg-purple-600 text-white font-bold px-4 py-1 rounded-full text-sm absolute top-4 right-4">الدرس الثالث</span>
+            
+            <h1 class="text-3xl md:text-5xl font-black text-purple-900 mb-2 mt-4 flex items-center justify-center gap-3">
+                <span class="ant-detective text-5xl">🐜🔍</span> محقق النمل السري
+            </h1>
+            <p class="text-xl text-purple-700 font-bold mb-4">
+                الطرح مع إعادة التسمية.. لنكتشف اللغز ونصحح الأخطاء!
+            </p>
+        </div>
+    </header>
+
+    <main class="w-full max-w-4xl z-10 flex flex-col gap-8">
+        
+        <!-- المرحلة 1: اكتشاف الخطأ -->
+        <section id="phase1" class="bg-white rounded-3xl shadow-xl border-4 border-rose-400 p-6 md:p-8">
+            <div class="flex items-center gap-3 mb-6 border-b-2 border-rose-100 pb-4">
+                <span class="text-4xl">🚨</span>
+                <h2 class="text-2xl md:text-3xl font-black text-rose-800">استكشف: تحليل الأخطاء</h2>
+            </div>
+
+            <p class="text-lg font-bold text-gray-700 mb-6">
+                حلل إجابة النملة الصغيرة في المسألة التالية. هناك شيء غريب حدث أثناء الطرح!
+            </p>
+
+            <div class="flex flex-col md:flex-row gap-6 mb-8">
+                <!-- لوحة الحل الخاطئ -->
+                <div class="bg-rose-50 rounded-2xl p-6 border-2 border-rose-200 shadow-inner flex-1 text-center relative">
+                    <div class="absolute -top-4 -right-2 text-3xl">🐜📝</div>
+                    <p class="text-rose-900 font-black text-xl mb-4 border-b border-rose-200 pb-2">حل النملة (خاطئ ❌)</p>
+                    
+                    <div class="font-mono text-xl font-bold text-gray-700 space-y-2" dir="ltr">
+                        <p class="text-2xl font-black text-gray-900 mb-4">521 - 37 = 516</p>
+                        <p class="text-sm text-gray-500">طريقة النملة:</p>
+                        <p>500 - 0 = 500</p>
+                        <p class="bg-red-100 rounded px-2 inline-block">30 - 20 = 10 ❓</p>
+                        <br>
+                        <p class="bg-red-100 rounded px-2 inline-block">7 - 1 = 6 ❓</p>
+                        <div class="border-t-2 border-gray-400 w-32 mx-auto mt-2 pt-2 text-2xl font-black text-gray-900">
+                            516
+                        </div>
+                    </div>
+                </div>
+
+                <!-- سؤال التحليل -->
+                <div class="bg-gray-50 rounded-2xl p-6 border-2 border-gray-200 flex-1 flex flex-col justify-center">
+                    <h3 class="text-xl font-black text-gray-800 mb-4">في رأيك أيها المحقق.. ما هو الخطأ الكارثي الذي فعلته النملة؟</h3>
+                    <div class="space-y-3" id="errorOptions">
+                        <button onclick="checkError(false, this)" class="w-full text-right p-4 rounded-xl border-2 border-gray-300 hover:bg-gray-100 font-bold transition-colors">
+                            أ) نسيت أن تطرح المئات تماماً.
+                        </button>
+                        <button onclick="checkError(true, this)" class="w-full text-right p-4 rounded-xl border-2 border-gray-300 hover:bg-amber-50 font-bold transition-colors">
+                            ب) طرحت الرقم الصغير من الكبير في كل خانة! (مثلاً طرحت 1 من 7 بدلاً من طرح 7 من 1).
+                        </button>
+                        <button onclick="checkError(false, this)" class="w-full text-right p-4 rounded-xl border-2 border-gray-300 hover:bg-gray-100 font-bold transition-colors">
+                            ج) قامت بجمع الأرقام بدلاً من طرحها.
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- رسالة نجاح المرحلة 1 -->
+            <div id="phase1Feedback" class="hidden text-center p-4 bg-green-100 border-2 border-green-400 rounded-xl">
+                <!-- تضاف بـ JS -->
+            </div>
+        </section>
+
+
+        <!-- المرحلة 2: الحل الصحيح (إعادة التسمية) -->
+        <section id="phase2" class="bg-white rounded-3xl shadow-xl border-4 border-emerald-500 p-6 md:p-8 opacity-50 pointer-events-none transition-opacity duration-500 relative">
+            <div id="phase2Lock" class="absolute inset-0 z-20 flex flex-col items-center justify-center bg-white/70 backdrop-blur-sm rounded-3xl">
+                <span class="text-6xl mb-4">🔒</span>
+                <p class="text-2xl font-bold text-gray-800 text-center px-4">اكتشف الخطأ أولاً لفتح غرفة العمليات الجراحية للأرقام!</p>
+            </div>
+
+            <div class="flex items-center gap-3 mb-6 border-b-2 border-emerald-100 pb-4">
+                <span class="text-4xl">🧮</span>
+                <h2 class="text-2xl md:text-3xl font-black text-emerald-800">تعلّم: الحل الصحيح بخطواتك</h2>
+            </div>
+            
+            <p class="text-lg font-bold text-gray-700 mb-6 text-center">
+                هيا نقم بعملية الطرح بشكل صحيح. استخدم أزرار <strong class="text-emerald-600">"إعادة التسمية"</strong> (الاستلاف) عندما يكون الرقم العلوي أصغر من السفلي!
+            </p>
+
+            <div class="flex flex-col md:flex-row justify-center items-center gap-10">
+                
+                <!-- لوحة الطرح العمودي -->
+                <div class="bg-emerald-50 p-6 rounded-3xl border-4 border-emerald-200 shadow-inner" dir="ltr">
+                    <div class="math-grid w-max mx-auto text-gray-800">
+                        <!-- صف المسميات (فارغ للترتيب) -->
+                        <div></div>
+                        <div class="text-sm font-sans text-gray-400 pb-2">H</div>
+                        <div class="text-sm font-sans text-gray-400 pb-2">T</div>
+                        <div class="text-sm font-sans text-gray-400 pb-2">O</div>
+
+                        <!-- صف الإعارة (Carry / Borrow) -->
+                        <div></div>
+                        <div class="carry-number h-8" id="carry-h"></div>
+                        <div class="carry-number h-8" id="carry-t"></div>
+                        <div class="carry-number h-8" id="carry-o"></div>
+
+                        <!-- الرقم الأول (المطروح منه) -->
+                        <div></div>
+                        <div id="top-h">5</div>
+                        <div id="top-t">2</div>
+                        <div id="top-o">1</div>
+
+                        <!-- الرقم الثاني (المطروح) -->
+                        <div class="text-emerald-600">-</div>
+                        <div></div>
+                        <div>3</div>
+                        <div>7</div>
+
+                        <!-- خط الجمع -->
+                        <div class="col-span-4 w-full h-1 bg-emerald-300 my-2 rounded"></div>
+
+                        <!-- صف النتيجة (Inputs) -->
+                        <div></div>
+                        <div><input type="number" id="res-h" class="math-input text-emerald-700" disabled></div>
+                        <div><input type="number" id="res-t" class="math-input text-emerald-700" disabled></div>
+                        <div><input type="number" id="res-o" class="math-input text-emerald-700" disabled></div>
+                    </div>
+                </div>
+
+                <!-- لوحة التحكم بالخطوات -->
+                <div class="flex flex-col gap-4 w-full md:w-auto">
+                    <!-- الخطوة 1 -->
+                    <div class="bg-white border-2 border-gray-200 p-4 rounded-xl" id="step1-box">
+                        <p class="font-bold text-gray-700 mb-2">الآحاد: هل يمكن طرح 7 من 1؟</p>
+                        <button onclick="regroupOnes()" id="btn-regroup-1" class="btn-playful bg-emerald-500 hover:bg-emerald-600 text-white font-black py-2 px-4 rounded-lg w-full text-lg">
+                            لا! استلف من العشرات 🔄
+                        </button>
+                    </div>
+
+                    <!-- الخطوة 2 -->
+                    <div class="bg-white border-2 border-gray-200 p-4 rounded-xl opacity-50 pointer-events-none transition-all" id="step2-box">
+                        <p class="font-bold text-gray-700 mb-2">العشرات: هل يمكن طرح 3 من 1؟</p>
+                        <button onclick="regroupTens()" id="btn-regroup-2" class="btn-playful bg-emerald-500 hover:bg-emerald-600 text-white font-black py-2 px-4 rounded-lg w-full text-lg">
+                            لا! استلف من المئات 🔄
+                        </button>
+                    </div>
+                    
+                    <button onclick="checkFinalMath()" id="btn-check-math" class="btn-playful bg-purple-600 hover:bg-purple-700 text-white font-black py-3 px-6 rounded-xl w-full text-xl mt-4 hidden">
+                        تحقق من النتيجة النهائية ✅
+                    </button>
+                </div>
+            </div>
+
+            <!-- رسالة الفوز النهائية للمرحلة 2 -->
+            <div id="phase2Feedback" class="hidden text-center p-6 bg-emerald-100 border-4 border-emerald-400 rounded-2xl mt-8">
+                <h3 class="text-3xl font-black text-emerald-800 mb-2">🎉 إجابة دقيقة وصحيحة 100%!</h3>
+                <p class="text-xl font-bold text-emerald-700">لقد أعدت التسمية بشكل سليم. الإجابة هي <span class="font-mono text-3xl font-black mx-2" dir="ltr">484</span>.</p>
+                
+                <div class="mt-6 bg-white p-4 rounded-xl border border-emerald-200 inline-block text-right">
+                    <h4 class="font-bold text-emerald-900 mb-2">🤔 هل إجابتنا معقولة؟ (التقدير):</h4>
+                    <p class="font-mono text-lg font-bold text-gray-700" dir="ltr">
+                        520 - 40 = 480 <span class="font-sans mr-2">⬅️ تقريب لأقرب عشرة</span>
+                    </p>
+                    <p class="text-emerald-700 font-bold mt-2">الإجابة الدقيقة (484) قريبة جداً من التقدير (480)، إذن إجابتنا معقولة جداً!</p>
+                </div>
+            </div>
+
+        </section>
+    </main>
+
+    <script>
+        // --- المرحلة 1: تحليل الأخطاء ---
+        function checkError(isCorrect, btn) {
+            const btns = document.getElementById('errorOptions').children;
+            const feedback = document.getElementById('phase1Feedback');
+
+            if (isCorrect) {
+                // Correct choice
+                btn.className = "w-full text-right p-4 rounded-xl border-4 border-green-500 bg-green-100 font-bold text-lg text-green-900 transition-colors";
+                for(let b of btns) { if(b !== btn) b.style.opacity = '0.5'; b.disabled = true; }
+                
+                feedback.innerHTML = `
+                    <p class="text-xl font-black text-green-800 mb-2">✅ محقق ممتاز!</p>
+                    <p class="text-lg font-bold text-gray-700">الخطأ الأكبر هو طرح (1 من 7) وطرح (20 من 30). لا يمكننا تغيير ترتيب الطرح أبداً! يجب أن نستلف.</p>
+                    <button onclick="unlockPhase2()" class="mt-4 btn-playful bg-green-500 hover:bg-green-600 text-white font-black py-2 px-6 rounded-xl text-lg">
+                        هيا نصلح الخطأ ➡️
+                    </button>
+                `;
+                feedback.classList.remove('hidden');
+            } else {
+                // Wrong choice
+                btn.classList.add('shake', 'border-red-400', 'bg-red-50', 'text-red-700');
+                setTimeout(() => btn.classList.remove('shake', 'border-red-400', 'bg-red-50', 'text-red-700'), 500);
+            }
+        }
+
+        function unlockPhase2() {
+            document.getElementById('phase2Lock').style.display = 'none';
+            document.getElementById('phase2').classList.remove('opacity-50', 'pointer-events-none');
+            document.getElementById('phase2').scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+
+
+        // --- المرحلة 2: العمليات الجراحية (إعادة التسمية) ---
+        
+        let step = 1;
+
+        // الخطوة 1: استلاف للآحاد
+        function regroupOnes() {
+            const topT = document.getElementById('top-t');
+            const topO = document.getElementById('top-o');
+            const carryT = document.getElementById('carry-t');
+            const carryO = document.getElementById('carry-o');
+            
+            // Visual Strike-through and New Numbers
+            topT.classList.add('strikethrough');
+            carryT.innerText = '1';
+            
+            topO.classList.add('strikethrough');
+            carryO.innerText = '11';
+
+            // Button UI update
+            const btn = document.getElementById('btn-regroup-1');
+            btn.innerText = "✓ تم الاستلاف";
+            btn.classList.replace('bg-emerald-500', 'bg-gray-400');
+            btn.classList.replace('hover:bg-emerald-600', 'hover:bg-gray-500');
+            btn.disabled = true;
+
+            // Enable Ones Input
+            const inputO = document.getElementById('res-o');
+            inputO.disabled = false;
+            inputO.focus();
+            
+            // Add listener to auto-progress
+            inputO.addEventListener('input', function() {
+                if(this.value === '4') { // 11 - 7
+                    this.classList.replace('text-emerald-700', 'text-green-600');
+                    this.style.backgroundColor = '#dcfce7'; // light green
+                    this.disabled = true;
+                    
+                    // Unlock Step 2
+                    const step2Box = document.getElementById('step2-box');
+                    step2Box.classList.remove('opacity-50', 'pointer-events-none');
+                } else if (this.value !== '') {
+                    shakeInput(this);
+                }
+            });
+        }
+
+        // الخطوة 2: استلاف للعشرات
+        function regroupTens() {
+            const topH = document.getElementById('top-h');
+            const carryT = document.getElementById('carry-t');
+            const carryH = document.getElementById('carry-h');
+            
+            // Visual Strike-through and New Numbers
+            topH.classList.add('strikethrough');
+            carryH.innerText = '4';
+            
+            carryT.classList.add('strikethrough'); // Cross out the '1' we carried earlier
+            setTimeout(() => {
+                // To avoid visual mess, we just replace it with 11
+                carryT.classList.remove('strikethrough');
+                carryT.innerText = '11';
+                carryT.style.animation = 'none'; // reset animation
+                void carryT.offsetWidth; // trigger reflow
+                carryT.style.animation = 'popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards';
+            }, 100);
+
+            // Button UI update
+            const btn = document.getElementById('btn-regroup-2');
+            btn.innerText = "✓ تم الاستلاف";
+            btn.classList.replace('bg-emerald-500', 'bg-gray-400');
+            btn.classList.replace('hover:bg-emerald-600', 'hover:bg-gray-500');
+            btn.disabled = true;
+
+            // Enable Tens Input
+            const inputT = document.getElementById('res-t');
+            inputT.disabled = false;
+            inputT.focus();
+            
+            // Add listener to auto-progress
+            inputT.addEventListener('input', function() {
+                if(this.value === '8') { // 11 - 3
+                    this.classList.replace('text-emerald-700', 'text-green-600');
+                    this.style.backgroundColor = '#dcfce7'; // light green
+                    this.disabled = true;
+                    
+                    // Enable Hundreds Input automatically
+                    const inputH = document.getElementById('res-h');
+                    inputH.disabled = false;
+                    inputH.focus();
+
+                    inputH.addEventListener('input', function() {
+                        if(this.value === '4') { // 4 - 0
+                            this.classList.replace('text-emerald-700', 'text-green-600');
+                            this.style.backgroundColor = '#dcfce7'; // light green
+                            this.disabled = true;
+                            
+                            // Show final check button
+                            document.getElementById('btn-check-math').classList.remove('hidden');
+                        } else if (this.value !== '') {
+                            shakeInput(this);
+                        }
+                    });
+
+                } else if (this.value !== '') {
+                    shakeInput(this);
+                }
+            });
+        }
+
+        function shakeInput(element) {
+            element.classList.add('shake', 'border-red-500', 'bg-red-50');
+            element.style.color = '#ef4444';
+            setTimeout(() => {
+                element.classList.remove('shake', 'border-red-500', 'bg-red-50');
+                element.style.color = ''; // reset
+                element.value = ''; // clear wrong answer
+            }, 500);
+        }
+
+        function checkFinalMath() {
+            // Check if all inputs are correct and disabled (meaning they passed the checks)
+            const o = document.getElementById('res-o').value;
+            const t = document.getElementById('res-t').value;
+            const h = document.getElementById('res-h').value;
+
+            if (o === '4' && t === '8' && h === '4') {
+                document.getElementById('btn-check-math').style.display = 'none';
+                
+                // Show final celebration & estimation
+                const fb = document.getElementById('phase2Feedback');
+                fb.classList.remove('hidden');
+                
+                // Confetti Effect
+                confettiEffect();
+            }
+        }
+
+        // Simple Confetti
+        function confettiEffect() {
+            const colors = ['#10b981', '#3b82f6', '#f59e0b', '#8b5cf6'];
+            for(let i=0; i<40; i++) {
+                const conf = document.createElement('div');
+                conf.className = 'absolute w-3 h-3 rounded-full opacity-80 z-50';
+                conf.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                conf.style.left = Math.random() * 100 + 'vw';
+                conf.style.top = -10 + 'px';
+                conf.style.transition = 'all 3s ease-in';
+                document.body.appendChild(conf);
+                
+                setTimeout(() => {
+                    conf.style.top = '100vh';
+                    conf.style.transform = `rotate(${Math.random() * 720}deg) translateX(${Math.random() * 100 - 50}px)`;
+                }, 100);
+            }
+        }
+
+    </script>
+</body>
+</html>

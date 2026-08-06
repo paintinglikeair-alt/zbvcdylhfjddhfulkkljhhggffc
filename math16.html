@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>مستعمرة القياس - الدرس الأول</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700;900&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Tajawal', sans-serif;
+            background-color: #faf5ff; /* بنفسجي فاتح جداً يطابق لون الوحدة */
+            background-image: radial-gradient(#e9d5ff 2px, transparent 2px);
+            background-size: 30px 30px;
+            overflow-x: hidden;
+        }
+
+        .btn-playful {
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 6px 0 rgba(0,0,0,0.2);
+        }
+        .btn-playful:active:not(:disabled) {
+            transform: translateY(6px);
+            box-shadow: 0 0 0 rgba(0,0,0,0);
+        }
+        .btn-playful:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none !important;
+            box-shadow: 0 6px 0 rgba(0,0,0,0.2) !important;
+        }
+
+        .shake { animation: shake 0.5s cubic-bezier(.36,.07,.19,.97) both; }
+        @keyframes shake {
+            10%, 90% { transform: translate3d(-1px, 0, 0); }
+            20%, 80% { transform: translate3d(2px, 0, 0); }
+            30%, 50%, 70% { transform: translate3d(-4px, 0, 0); }
+            40%, 60% { transform: translate3d(4px, 0, 0); }
+        }
+
+        .metric-card {
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        .metric-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        }
+        .metric-active {
+            transform: scale(1.05);
+            border-color: #7e22ce !important; /* purple-700 */
+            background-color: #f3e8ff !important; /* purple-100 */
+            box-shadow: 0 0 15px rgba(126, 34, 206, 0.4);
+        }
+
+        .ruler-edge {
+            background-image: repeating-linear-gradient(90deg, transparent, transparent 10px, #475569 10px, #475569 12px);
+            background-position: bottom;
+            background-size: 100% 8px;
+            background-repeat: no-repeat;
+        }
+    </style>
+</head>
+<body class="min-h-screen text-gray-800 flex flex-col items-center py-6 px-4 relative">
+
+    <header class="w-full max-w-4xl text-center mb-8 z-10">
+        <div class="bg-white rounded-3xl p-6 shadow-xl border-4 border-purple-500 relative overflow-hidden ruler-edge pb-10">
+            <span class="bg-purple-600 text-white font-bold px-4 py-1 rounded-full text-sm absolute top-4 right-4">الدرس الأول</span>
+            
+            <h1 class="text-3xl md:text-5xl font-black text-purple-900 mb-2 mt-4 flex items-center justify-center gap-3">
+                <span>🧭</span> قياس الطول <span>📏</span>
+            </h1>
+            <p class="text-lg md:text-xl text-purple-700 font-bold mb-4">
+                متى نستخدم الكيلومتر؟ ومتى نستخدم المليمتر؟ لنستكشف معاً!
+            </p>
+        </div>
+    </header>
+
+    <main class="w-full max-w-4xl z-10 flex flex-col gap-8">
+        
+        <section class="bg-white rounded-3xl shadow-xl border-4 border-sky-400 p-6 md:p-8">
+            <div class="flex items-center justify-between mb-6 border-b-2 border-sky-100 pb-4">
+                <div class="flex items-center gap-3">
+                    <span class="text-4xl">🔎</span>
+                    <h2 class="text-2xl md:text-3xl font-black text-sky-800">استكشف: اختر الوحدة المناسبة</h2>
+                </div>
+                <div class="bg-sky-100 text-sky-800 font-bold px-3 py-1 rounded-lg text-sm">
+                    سؤال <span id="qCounter">1</span>/5
+                </div>
+            </div>
+
+            <!-- Quiz Container -->
+            <div id="quizContainer" class="bg-sky-50 rounded-2xl p-6 border-2 border-sky-200 text-center relative min-h-[250px] flex flex-col items-center justify-center">
+                
+                <div id="qEmoji" class="text-6xl mb-4 filter drop-shadow-md transition-transform duration-300">👦</div>
+                <h3 id="qText" class="text-2xl font-black text-gray-800 mb-8">طول التلميذ</h3>
+
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-3 w-full max-w-2xl" id="optionsContainer">
+                    <!-- Buttons injected via JS -->
+                </div>
+
+                <!-- Feedback -->
+                <div id="quizFeedback" class="hidden absolute inset-0 bg-white/90 backdrop-blur-sm rounded-2xl flex flex-col items-center justify-center z-20">
+                    <div id="feedbackEmoji" class="text-6xl mb-2">✅</div>
+                    <p id="feedbackText" class="text-2xl font-black text-green-700 mb-4">إجابة صحيحة!</p>
+                    <button onclick="nextQuestion()" class="btn-playful bg-sky-500 hover:bg-sky-600 text-white font-bold py-2 px-8 rounded-xl text-xl">
+                        السؤال التالي ➡️
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Quiz Success -->
+            <div id="quizSuccess" class="hidden bg-green-100 rounded-2xl p-6 border-4 border-green-400 text-center mt-6">
+                <h3 class="text-2xl font-black text-green-800 mb-2">🎉 مستكشف رائع!</h3>
+                <p class="text-lg font-bold text-green-700">لقد عرفت متى تستخدم كل وحدة قياس بنجاح.</p>
+            </div>
+        </section>
+
+        <section class="bg-white rounded-3xl shadow-xl border-4 border-purple-500 p-6 md:p-8">
+            <div class="flex items-center gap-3 mb-6 border-b-2 border-purple-100 pb-4">
+                <span class="text-4xl">👨‍🏫</span>
+                <h2 class="text-2xl md:text-3xl font-black text-purple-800">تعلّم: عائلة الوحدات المترية</h2>
+            </div>
+            
+            <p class="text-lg text-gray-700 font-bold mb-6 text-center">
+                اضغط على أي وحدة في الجدول لتكتشف معناها وقيمتها بالنسبة لـ <span class="bg-purple-100 text-purple-800 px-2 rounded">الوحدة الأساسية (المتر)</span>.
+            </p>
+
+            <!-- Interactive Grid -->
+            <div class="overflow-x-auto pb-4">
+                <div class="min-w-[700px] grid grid-cols-7 gap-2 text-center" dir="ltr">
+                    <!-- Header -->
+                    <div class="col-span-7 grid grid-cols-7 gap-2 mb-2">
+                        <div class="font-black text-purple-900 bg-purple-200 py-2 rounded-t-xl">كيلو</div>
+                        <div class="font-black text-purple-900 bg-purple-200 py-2 rounded-t-xl">هكتو</div>
+                        <div class="font-black text-purple-900 bg-purple-200 py-2 rounded-t-xl">ديكا</div>
+                        <div class="font-black text-white bg-purple-600 py-2 rounded-t-xl shadow-md transform scale-105 z-10">الوحدة (متر)</div>
+                        <div class="font-black text-purple-900 bg-purple-200 py-2 rounded-t-xl">ديسي</div>
+                        <div class="font-black text-purple-900 bg-purple-200 py-2 rounded-t-xl">سنتي</div>
+                        <div class="font-black text-purple-900 bg-purple-200 py-2 rounded-t-xl">ملي</div>
+                    </div>
+                    
+                    <!-- Interactive Body -->
+                    <div class="col-span-7 grid grid-cols-7 gap-2 h-24">
+                        <div onclick="showMetricInfo('kilo', this)" class="metric-card bg-gray-50 border-2 border-gray-200 rounded-b-xl flex items-center justify-center font-bold text-gray-600">اضغط للاكتشاف</div>
+                        <div onclick="showMetricInfo('hecto', this)" class="metric-card bg-gray-50 border-2 border-gray-200 rounded-b-xl flex items-center justify-center font-bold text-gray-600">اضغط للاكتشاف</div>
+                        <div onclick="showMetricInfo('deca', this)" class="metric-card bg-gray-50 border-2 border-gray-200 rounded-b-xl flex items-center justify-center font-bold text-gray-600">اضغط للاكتشاف</div>
+                        
+                        <!-- Base Unit -->
+                        <div class="bg-purple-100 border-4 border-purple-500 rounded-b-xl flex flex-col items-center justify-center font-black text-purple-800 shadow-md transform scale-105 z-10 cursor-default">
+                            <span>1</span>
+                            <span class="text-sm font-bold">وحدة واحدة</span>
+                        </div>
+                        
+                        <div onclick="showMetricInfo('deci', this)" class="metric-card bg-gray-50 border-2 border-gray-200 rounded-b-xl flex flex-col items-center justify-center font-bold text-gray-600">اضغط للاكتشاف</div>
+                        <div onclick="showMetricInfo('centi', this)" class="metric-card bg-gray-50 border-2 border-gray-200 rounded-b-xl flex flex-col items-center justify-center font-bold text-gray-600">اضغط للاكتشاف</div>
+                        <div onclick="showMetricInfo('milli', this)" class="metric-card bg-gray-50 border-2 border-gray-200 rounded-b-xl flex flex-col items-center justify-center font-bold text-gray-600">اضغط للاكتشاف</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Info Display Box -->
+            <div id="metricInfoBox" class="mt-6 bg-purple-50 border-2 border-purple-300 rounded-2xl p-6 text-center hidden min-h-[120px] flex-col justify-center items-center">
+                <h3 id="mTitle" class="text-2xl font-black text-purple-800 mb-2"></h3>
+                <p id="mDesc" class="text-xl font-bold text-gray-700 font-mono" dir="ltr"></p>
+                <p id="mExtra" class="text-md text-gray-500 mt-2 font-bold"></p>
+            </div>
+
+        </section>
+
+    </main>
+
+    <script>
+        // --- Quiz Logic (استكشف) ---
+        const questions = [
+            { text: "طول التلميذ", emoji: "👦", correct: "سنتيمتر" },
+            { text: "المسافة بين المنزل والمدرسة", emoji: "🏫", correct: "كيلومتر" },
+            { text: "طول نهر النيل", emoji: "🌊", correct: "كيلومتر" },
+            { text: "طول النملة", emoji: "🐜", correct: "مليمتر" },
+            { text: "المسافة من القاهرة إلى الإسكندرية", emoji: "🚗", correct: "كيلومتر" }
+        ];
+
+        const allUnits = ["كيلومتر", "متر", "سنتيمتر", "مليمتر"];
+        let currentQIndex = 0;
+
+        function loadQuestion() {
+            if (currentQIndex >= questions.length) {
+                document.getElementById('quizContainer').style.display = 'none';
+                document.getElementById('quizSuccess').classList.remove('hidden');
+                return;
+            }
+
+            const q = questions[currentQIndex];
+            document.getElementById('qCounter').innerText = currentQIndex + 1;
+            
+            const emojiEl = document.getElementById('qEmoji');
+            emojiEl.innerText = q.emoji;
+            emojiEl.style.transform = 'scale(0.5)';
+            setTimeout(() => emojiEl.style.transform = 'scale(1)', 50);
+
+            document.getElementById('qText').innerText = q.text;
+
+            const optsContainer = document.getElementById('optionsContainer');
+            optsContainer.innerHTML = '';
+
+            allUnits.forEach(unit => {
+                const btn = document.createElement('button');
+                btn.className = "btn-playful bg-white border-2 border-sky-300 hover:bg-sky-50 text-sky-900 font-bold py-3 rounded-xl text-lg transition-colors";
+                btn.innerText = unit;
+                btn.onclick = () => checkQuiz(unit, q.correct, btn);
+                optsContainer.appendChild(btn);
+            });
+        }
+
+        function checkQuiz(selected, correct, btn) {
+            const feedbackBox = document.getElementById('quizFeedback');
+            const feedbackEmoji = document.getElementById('feedbackEmoji');
+            const feedbackText = document.getElementById('feedbackText');
+
+            if (selected === correct) {
+                btn.classList.replace('bg-white', 'bg-green-500');
+                btn.classList.add('text-white');
+                
+                feedbackEmoji.innerText = "✅";
+                feedbackText.innerText = "أحسنت! وحدة قياس مناسبة.";
+                feedbackText.className = "text-2xl font-black text-green-700 mb-4";
+                
+                feedbackBox.classList.remove('hidden');
+            } else {
+                btn.classList.add('shake', 'bg-red-100', 'border-red-400', 'text-red-700');
+                setTimeout(() => btn.classList.remove('shake', 'bg-red-100', 'border-red-400', 'text-red-700'), 500);
+            }
+        }
+
+        function nextQuestion() {
+            document.getElementById('quizFeedback').classList.add('hidden');
+            currentQIndex++;
+            loadQuestion();
+        }
+
+        // Initialize Quiz
+        window.onload = loadQuestion;
+
+
+        // --- Metric Table Logic (تعلم) ---
+        const metricData = {
+            'kilo': { title: 'كيلو (Kilo)', desc: '1000 وحدة', extra: 'يساوي 1000 متر. نستخدمه للمسافات الطويلة جداً!' },
+            'hecto': { title: 'هكتو (Hecto)', desc: '100 وحدة', extra: 'يساوي 100 متر.' },
+            'deca': { title: 'ديكا (Deca)', desc: '10 وحدات', extra: 'يساوي 10 أمتار.' },
+            'deci': { title: 'ديسي (Deci)', desc: '1 / 10 من الوحدة', extra: 'المتر الواحد يساوي 10 ديسيمتر.' },
+            'centi': { title: 'سنتي (Centi)', desc: '1 / 100 من الوحدة', extra: 'المتر الواحد يساوي 100 سنتيمتر. نستخدمه لطول كتاب أو قلم!' },
+            'milli': { title: 'ملي (Milli)', desc: '1 / 1000 من الوحدة', extra: 'المتر الواحد يساوي 1000 مليمتر. نستخدمه للأشياء الدقيقة جداً كالنملة!' }
+        };
+
+        function showMetricInfo(key, element) {
+            // Reset all cards
+            document.querySelectorAll('.metric-card').forEach(card => {
+                card.classList.remove('metric-active');
+            });
+
+            // Activate clicked card
+            element.classList.add('metric-active');
+            
+            // Show info
+            const infoBox = document.getElementById('metricInfoBox');
+            infoBox.classList.remove('hidden');
+            infoBox.classList.add('flex');
+            
+            // Temporary animation
+            infoBox.style.transform = 'scale(0.95)';
+            infoBox.style.opacity = '0.5';
+            
+            setTimeout(() => {
+                infoBox.style.transform = 'scale(1)';
+                infoBox.style.opacity = '1';
+                infoBox.style.transition = 'all 0.2s';
+                
+                document.getElementById('mTitle').innerText = metricData[key].title;
+                document.getElementById('mDesc').innerText = metricData[key].desc;
+                document.getElementById('mExtra').innerText = metricData[key].extra;
+            }, 50);
+        }
+    </script>
+</body>
+</html>

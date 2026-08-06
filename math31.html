@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>تكوين معادلات المقارنة - سباق وسائل النقل</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700;900&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Tajawal', sans-serif;
+            background-color: #f5f3ff; /* خلفية بنفسجي فاتح (الوحدة الخامسة) */
+            background-image: radial-gradient(#ede9fe 2px, transparent 2px);
+            background-size: 30px 30px;
+            overflow-x: hidden;
+        }
+
+        .btn-playful {
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 6px 0 rgba(0,0,0,0.2);
+        }
+        .btn-playful:active:not(:disabled) {
+            transform: translateY(6px);
+            box-shadow: 0 0 0 rgba(0,0,0,0);
+        }
+        .btn-playful:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none !important;
+            box-shadow: 0 6px 0 rgba(0,0,0,0.2) !important;
+        }
+
+        .math-input {
+            width: 4rem;
+            text-align: center;
+            font-weight: 900;
+            font-size: 1.5rem;
+            border: 3px solid #cbd5e1;
+            border-radius: 0.75rem;
+            background-color: white;
+            transition: all 0.3s;
+            font-family: monospace;
+            padding: 0.25rem;
+        }
+        .math-input:focus {
+            outline: none;
+            border-color: #8b5cf6;
+            box-shadow: 0 0 0 4px rgba(139, 92, 246, 0.3);
+        }
+        .input-correct {
+            background-color: #dcfce7 !important;
+            border-color: #22c55e !important;
+            color: #166534 !important;
+        }
+
+        .shake { animation: shake 0.5s cubic-bezier(.36,.07,.19,.97) both; }
+        @keyframes shake {
+            10%, 90% { transform: translate3d(-1px, 0, 0); }
+            20%, 80% { transform: translate3d(2px, 0, 0); }
+            30%, 50%, 70% { transform: translate3d(-4px, 0, 0); }
+            40%, 60% { transform: translate3d(4px, 0, 0); }
+        }
+
+        /* تنسيقات وسائل النقل */
+        .vehicle-card {
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        .vehicle-card:hover {
+            transform: scale(1.02) translateX(-10px);
+            box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1);
+        }
+
+        .highlight-word {
+            background-color: #fef08a; /* أصفر فاتح */
+            color: #854d0e;
+            padding: 0 4px;
+            border-radius: 4px;
+            font-weight: 900;
+        }
+    </style>
+</head>
+<body class="min-h-screen text-gray-800 flex flex-col items-center py-6 px-4 relative">
+
+    <!-- الترويسة -->
+    <header class="w-full max-w-4xl text-center mb-8 z-10">
+        <div class="bg-white rounded-3xl p-6 shadow-xl border-4 border-purple-600 relative overflow-hidden">
+            <span class="bg-purple-700 text-white font-bold px-4 py-1 rounded-full text-sm absolute top-4 right-4">الدرس الثاني - الوحدة 5</span>
+            
+            <h1 class="text-3xl md:text-5xl font-black text-purple-900 mb-2 mt-4 flex items-center justify-center gap-3">
+                <span>✈️</span> تكوين معادلات المقارنة <span>🏎️</span>
+            </h1>
+            <p class="text-lg md:text-xl text-purple-700 font-bold mb-4">
+                كيف نستخدم الرموز (المتغيرات) وعملية الضرب لكتابة المعادلات؟
+            </p>
+        </div>
+    </header>
+
+    <main class="w-full max-w-4xl z-10 flex flex-col gap-8">
+
+        <!-- القسم الأول: استكشف (لوحة وسائل النقل) -->
+        <section class="bg-white rounded-3xl shadow-xl border-4 border-indigo-400 p-6 md:p-8">
+            <div class="flex items-center gap-3 mb-6 border-b-2 border-indigo-100 pb-4">
+                <span class="text-4xl">📊</span>
+                <h2 class="text-2xl md:text-3xl font-black text-indigo-800">استكشف: لوحة سرعات وسائل النقل</h2>
+            </div>
+
+            <p class="text-lg text-gray-700 font-bold mb-6 text-center">
+                اقرأ العبارات التالية. لاحظ كيف نستخدم كلمات مثل <span class="highlight-word">ضعف</span> و <span class="highlight-word">أضعاف</span> للمقارنة باستخدام الضرب!
+            </p>
+
+            <div class="flex flex-col gap-4">
+                
+                <!-- القارب -->
+                <div class="vehicle-card bg-blue-100 border-2 border-blue-300 rounded-2xl p-4 flex items-center gap-4">
+                    <div class="bg-blue-500 text-white rounded-full w-14 h-14 flex items-center justify-center text-3xl shadow-inner shrink-0">⛵</div>
+                    <p class="text-blue-900 font-bold text-lg md:text-xl">يتحرك القارب الشراعي بسرعة تقريباً تساوي <span class="highlight-word">ضعف</span> سرعة شخص يسير على قدميه.</p>
+                </div>
+
+                <!-- الدراجة -->
+                <div class="vehicle-card bg-emerald-100 border-2 border-emerald-300 rounded-2xl p-4 flex items-center gap-4">
+                    <div class="bg-emerald-500 text-white rounded-full w-14 h-14 flex items-center justify-center text-3xl shadow-inner shrink-0">🚲</div>
+                    <p class="text-emerald-900 font-bold text-lg md:text-xl">تتحرك الدراجة بسرعة تقريباً من 3 إلى 4 <span class="highlight-word">أضعاف</span> سرعة القارب الشراعي.</p>
+                </div>
+
+                <!-- السفينة السياحية -->
+                <div class="vehicle-card bg-amber-100 border-2 border-amber-300 rounded-2xl p-4 flex items-center gap-4">
+                    <div class="bg-amber-500 text-white rounded-full w-14 h-14 flex items-center justify-center text-3xl shadow-inner shrink-0">🚢</div>
+                    <p class="text-amber-900 font-bold text-lg md:text-xl">تتحرك السفينة السياحية بسرعة 8 <span class="highlight-word">أضعاف</span> سرعة شخص يسير على قدميه.</p>
+                </div>
+
+                <!-- السيارة -->
+                <div class="vehicle-card bg-orange-100 border-2 border-orange-300 rounded-2xl p-4 flex items-center gap-4">
+                    <div class="bg-orange-500 text-white rounded-full w-14 h-14 flex items-center justify-center text-3xl shadow-inner shrink-0">🚗</div>
+                    <p class="text-orange-900 font-bold text-lg md:text-xl">تتحرك السيارة بسرعة تساوي 20 <span class="highlight-word">ضعفاً</span> من سرعة الشخص، و<span class="highlight-word">ضعف</span> سرعة السفينة.</p>
+                </div>
+
+                <!-- القطار -->
+                <div class="vehicle-card bg-purple-100 border-2 border-purple-300 rounded-2xl p-4 flex items-center gap-4">
+                    <div class="bg-purple-500 text-white rounded-full w-14 h-14 flex items-center justify-center text-3xl shadow-inner shrink-0">🚄</div>
+                    <p class="text-purple-900 font-bold text-lg md:text-xl">القطارات فائقة السرعة تتحرك 8 <span class="highlight-word">أضعاف</span> السفينة وأكثر من 30 <span class="highlight-word">ضعفاً</span> للقارب.</p>
+                </div>
+
+                <!-- الطائرة -->
+                <div class="vehicle-card bg-yellow-100 border-2 border-yellow-400 rounded-2xl p-4 flex items-center gap-4">
+                    <div class="bg-yellow-500 text-white rounded-full w-14 h-14 flex items-center justify-center text-3xl shadow-inner shrink-0">✈️</div>
+                    <p class="text-yellow-900 font-bold text-lg md:text-xl">تتحرك طائرات الركاب 200 <span class="highlight-word">ضعف</span> سرعة الشخص و<span class="highlight-word">ضعف</span> سرعة القطار.</p>
+                </div>
+
+            </div>
+            
+            <div class="text-center mt-8">
+                <button onclick="unlockLearning()" id="btn-unlock" class="btn-playful bg-indigo-600 hover:bg-indigo-700 text-white font-black py-3 px-10 rounded-xl text-xl">
+                    انتقل إلى معمل المعادلات ⚙️
+                </button>
+            </div>
+        </section>
+
+        <!-- القسم الثاني: تعلّم (تكوين المعادلات) -->
+        <section id="learningSection" class="bg-white rounded-3xl shadow-xl border-4 border-fuchsia-400 p-6 md:p-8 opacity-50 pointer-events-none transition-all duration-500 relative">
+            
+            <div id="learningLock" class="absolute inset-0 z-20 flex flex-col items-center justify-center bg-white/70 backdrop-blur-sm rounded-3xl">
+                <span class="text-6xl mb-4">🔒</span>
+                <p class="text-2xl font-bold text-gray-800 text-center">اقرأ لوحة السرعات أولاً!</p>
+            </div>
+
+            <div class="flex items-center gap-3 mb-6 border-b-2 border-fuchsia-100 pb-4">
+                <span class="text-4xl">🛠️</span>
+                <h2 class="text-2xl md:text-3xl font-black text-fuchsia-800">تعلّم: معمل تكوين المعادلات</h2>
+            </div>
+
+            <p class="text-lg text-gray-700 font-bold mb-6 text-center leading-relaxed">
+                استخدم الحرف <strong class="text-fuchsia-600 font-mono text-xl">X</strong> لتمثيل العدد المجهول.
+                <br>تذكر: كلمة <span class="bg-gray-200 px-2 rounded">ضعف</span> تعني الضرب في <span class="font-black text-xl">2</span>!
+            </p>
+
+            <div class="flex flex-col gap-8">
+                
+                <!-- المعادلة 1 -->
+                <div class="bg-fuchsia-50 rounded-2xl p-6 border-2 border-fuchsia-200">
+                    <div class="flex items-center gap-4 mb-4">
+                        <span class="text-4xl">⛵</span>
+                        <p class="text-xl font-bold text-fuchsia-900">1) سرعة القارب تساوي <span class="underline decoration-fuchsia-400 decoration-4">ضعف</span> سرعة الشخص.</p>
+                    </div>
+                    <p class="text-gray-600 font-bold mb-4">إذا كانت سرعة الشخص المجهولة هي <span class="font-mono text-xl font-black text-purple-600">X</span>، اكتب المعادلة التي تحسب سرعة القارب:</p>
+                    
+                    <div class="flex flex-wrap items-center justify-center gap-3 bg-white p-4 rounded-xl border border-fuchsia-100 shadow-sm font-mono text-2xl font-black" dir="ltr">
+                        <select id="eq1-num" class="math-input text-fuchsia-700 cursor-pointer appearance-none">
+                            <option value="-" selected>-</option>
+                            <option value="2">2</option>
+                            <option value="3">3</option>
+                            <option value="20">20</option>
+                        </select>
+                        <span class="text-fuchsia-400">×</span>
+                        <span class="text-purple-600">X</span>
+                        <span class="text-fuchsia-400">=</span>
+                        <span class="text-gray-500 font-sans text-lg border-b-2 border-dashed border-gray-400 pb-1" dir="rtl">سرعة القارب</span>
+                    </div>
+                </div>
+
+                <!-- المعادلة 2 -->
+                <div class="bg-fuchsia-50 rounded-2xl p-6 border-2 border-fuchsia-200">
+                    <div class="flex items-center gap-4 mb-4">
+                        <span class="text-4xl">🚗</span>
+                        <p class="text-xl font-bold text-fuchsia-900">2) سرعة السيارة تساوي <span class="underline decoration-fuchsia-400 decoration-4">20 ضعفاً</span> من سرعة الشخص.</p>
+                    </div>
+                    <p class="text-gray-600 font-bold mb-4">إذا كانت سرعة الشخص المجهولة هي <span class="font-mono text-xl font-black text-purple-600">Y</span>، اكتب المعادلة التي تحسب سرعة السيارة:</p>
+                    
+                    <div class="flex flex-wrap items-center justify-center gap-3 bg-white p-4 rounded-xl border border-fuchsia-100 shadow-sm font-mono text-2xl font-black" dir="ltr">
+                        <select id="eq2-num" class="math-input text-fuchsia-700 cursor-pointer appearance-none">
+                            <option value="-" selected>-</option>
+                            <option value="2">2</option>
+                            <option value="10">10</option>
+                            <option value="20">20</option>
+                        </select>
+                        <span class="text-fuchsia-400">×</span>
+                        <span class="text-purple-600">Y</span>
+                        <span class="text-fuchsia-400">=</span>
+                        <span class="text-gray-500 font-sans text-lg border-b-2 border-dashed border-gray-400 pb-1" dir="rtl">سرعة السيارة</span>
+                    </div>
+                </div>
+
+                <!-- المعادلة 3 -->
+                <div class="bg-fuchsia-50 rounded-2xl p-6 border-2 border-fuchsia-200">
+                    <div class="flex items-center gap-4 mb-4">
+                        <span class="text-4xl">🚢</span>
+                        <p class="text-xl font-bold text-fuchsia-900">3) سرعة السفينة تساوي <span class="underline decoration-fuchsia-400 decoration-4">8 أضعاف</span> سرعة الشخص.</p>
+                    </div>
+                    <p class="text-gray-600 font-bold mb-4">إذا كانت سرعة الشخص المجهولة هي <span class="font-mono text-xl font-black text-purple-600">Z</span>، اكتب المعادلة التي تحسب سرعة السفينة:</p>
+                    
+                    <div class="flex flex-wrap items-center justify-center gap-3 bg-white p-4 rounded-xl border border-fuchsia-100 shadow-sm font-mono text-2xl font-black" dir="ltr">
+                        <select id="eq3-num" class="math-input text-fuchsia-700 cursor-pointer appearance-none">
+                            <option value="-" selected>-</option>
+                            <option value="4">4</option>
+                            <option value="8">8</option>
+                            <option value="80">80</option>
+                        </select>
+                        <span class="text-fuchsia-400">×</span>
+                        <span class="text-purple-600">Z</span>
+                        <span class="text-fuchsia-400">=</span>
+                        <span class="text-gray-500 font-sans text-lg border-b-2 border-dashed border-gray-400 pb-1" dir="rtl">سرعة السفينة</span>
+                    </div>
+                </div>
+
+            </div>
+            
+            <div class="text-center mt-8">
+                <button onclick="checkEquations()" id="btn-check-eq" class="btn-playful bg-fuchsia-600 hover:bg-fuchsia-700 text-white font-black py-3 px-10 rounded-xl text-xl">
+                    تأكيد المعادلات ✅
+                </button>
+            </div>
+            
+            <div id="finalVictory" class="hidden mt-8 text-center p-6 bg-green-100 border-4 border-green-500 rounded-2xl relative overflow-hidden">
+                <div class="text-6xl mb-4 animate-bounce">🏆</div>
+                <h3 class="text-3xl font-black text-green-800 mb-2">أنت صانع معادلات محترف!</h3>
+                <p class="text-xl font-bold text-green-700">لقد تمكنت من تحويل الكلمات إلى لغة الرياضيات بنجاح.</p>
+                <button onclick="location.reload()" class="mt-6 btn-playful bg-green-600 hover:bg-green-700 text-white font-black py-2 px-8 rounded-xl text-lg">
+                    إعادة اللعب 🔄
+                </button>
+            </div>
+
+        </section>
+
+    </main>
+
+    <script>
+        function unlockLearning() {
+            // Hide unlock button
+            document.getElementById('btn-unlock').style.display = 'none';
+            
+            // Unlock section 2
+            const learnSec = document.getElementById('learningSection');
+            document.getElementById('learningLock').style.display = 'none';
+            learnSec.classList.remove('opacity-50', 'pointer-events-none');
+            
+            // Scroll to it
+            setTimeout(() => {
+                learnSec.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }, 100);
+        }
+
+        function shakeElement(el) {
+            el.classList.add('shake', 'border-red-400', 'bg-red-50', 'text-red-700');
+            setTimeout(() => {
+                el.classList.remove('shake', 'border-red-400', 'bg-red-50', 'text-red-700');
+            }, 500);
+        }
+
+        function checkEquations() {
+            const eq1 = document.getElementById('eq1-num');
+            const eq2 = document.getElementById('eq2-num');
+            const eq3 = document.getElementById('eq3-num');
+            
+            let isAllCorrect = true;
+
+            // Eq 1: Double -> 2
+            if (eq1.value === '2') {
+                eq1.classList.add('input-correct');
+                eq1.disabled = true;
+            } else {
+                shakeElement(eq1);
+                isAllCorrect = false;
+            }
+
+            // Eq 2: 20 times -> 20
+            if (eq2.value === '20') {
+                eq2.classList.add('input-correct');
+                eq2.disabled = true;
+            } else {
+                shakeElement(eq2);
+                isAllCorrect = false;
+            }
+
+            // Eq 3: 8 times -> 8
+            if (eq3.value === '8') {
+                eq3.classList.add('input-correct');
+                eq3.disabled = true;
+            } else {
+                shakeElement(eq3);
+                isAllCorrect = false;
+            }
+
+            if (isAllCorrect) {
+                document.getElementById('btn-check-eq').style.display = 'none';
+                document.getElementById('finalVictory').classList.remove('hidden');
+                confettiEffect();
+            }
+        }
+
+        function confettiEffect() {
+            const colors = ['#8b5cf6', '#d946ef', '#10b981', '#f59e0b']; // Purple, Fuchsia, Green, Amber
+            for(let i=0; i<50; i++) {
+                const conf = document.createElement('div');
+                conf.className = 'absolute w-3 h-3 rounded-full opacity-80 z-50';
+                conf.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                conf.style.left = Math.random() * 100 + 'vw';
+                conf.style.top = (window.scrollY - 20) + 'px';
+                conf.style.transition = 'all 3s ease-in';
+                document.body.appendChild(conf);
+                
+                setTimeout(() => {
+                    conf.style.top = (window.scrollY + window.innerHeight) + 'px';
+                    conf.style.transform = `rotate(${Math.random() * 720}deg) translateX(${Math.random() * 100 - 50}px)`;
+                }, 50);
+            }
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>تطبيقات القياس 2 - ألغاز النمل</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700;900&display=swap" rel="stylesheet">
+    
+    <style>
+        body {
+            font-family: 'Tajawal', sans-serif;
+            background-color: #f8fafc;
+            background-image: radial-gradient(#cbd5e1 2px, transparent 2px);
+            background-size: 30px 30px;
+            overflow-x: hidden;
+        }
+
+        .btn-playful {
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 6px 0 rgba(0,0,0,0.2);
+        }
+        .btn-playful:active:not(:disabled) {
+            transform: translateY(6px);
+            box-shadow: 0 0 0 rgba(0,0,0,0);
+        }
+        .btn-playful:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none !important;
+            box-shadow: 0 6px 0 rgba(0,0,0,0.2) !important;
+        }
+
+        .math-input {
+            width: 5rem;
+            text-align: center;
+            font-size: 1.5rem;
+            font-weight: 900;
+            border: 3px solid #cbd5e1;
+            border-radius: 0.75rem;
+            background-color: white;
+            transition: all 0.3s;
+            font-family: monospace;
+        }
+        .math-input:focus {
+            outline: none;
+            border-color: #6366f1;
+            box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.3);
+        }
+        .input-correct {
+            background-color: #dcfce7 !important;
+            border-color: #22c55e !important;
+            color: #166534 !important;
+        }
+
+        .shake { animation: shake 0.5s cubic-bezier(.36,.07,.19,.97) both; }
+        @keyframes shake {
+            10%, 90% { transform: translate3d(-1px, 0, 0); }
+            20%, 80% { transform: translate3d(2px, 0, 0); }
+            30%, 50%, 70% { transform: translate3d(-4px, 0, 0); }
+            40%, 60% { transform: translate3d(4px, 0, 0); }
+        }
+
+        /* The Ant Well Styles */
+        .well-container {
+            position: relative;
+            height: 300px;
+            width: 100px;
+            background: linear-gradient(to bottom, #bae6fd, #0ea5e9, #0f172a);
+            border-left: 8px solid #475569;
+            border-right: 8px solid #475569;
+            border-bottom: 8px solid #1e293b;
+            border-radius: 0 0 10px 10px;
+            margin: 0 auto;
+        }
+
+        .well-mark {
+            position: absolute;
+            left: -20px;
+            font-weight: bold;
+            font-size: 0.8rem;
+            color: #475569;
+        }
+
+        .well-ant {
+            position: absolute;
+            bottom: 0%; /* 0 to 100% */
+            left: 50%;
+            transform: translateX(-50%) scaleX(-1);
+            font-size: 2rem;
+            transition: bottom 0.8s ease-in-out;
+            z-index: 10;
+            filter: drop-shadow(0 2px 2px rgba(0,0,0,0.5));
+        }
+
+        /* Twig Styles */
+        .twig-container {
+            width: 100%;
+            height: 40px;
+            background: linear-gradient(to bottom, #b45309, #78350f);
+            border-radius: 8px;
+            display: flex;
+            transition: all 0.5s ease;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        .twig-part {
+            height: 100%;
+            border-right: 2px dashed rgba(255,255,255,0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            opacity: 0;
+            transition: opacity 0.5s ease;
+        }
+        .twig-part:first-child { border-right: none; }
+    </style>
+</head>
+<body class="min-h-screen text-gray-800 flex flex-col items-center py-6 px-4 relative">
+
+    <header class="w-full max-w-4xl text-center mb-8 z-10">
+        <div class="bg-white rounded-3xl p-6 shadow-xl border-4 border-indigo-500 relative overflow-hidden">
+            <span class="bg-indigo-600 text-white font-bold px-4 py-1 rounded-full text-sm absolute top-4 right-4">الدرس السابع</span>
+            
+            <h1 class="text-3xl md:text-5xl font-black text-indigo-900 mb-2 mt-4 flex items-center justify-center gap-3">
+                <span>🧩</span> ألغاز القياس العجيبة <span>🧠</span>
+            </h1>
+            <p class="text-lg md:text-xl text-indigo-700 font-bold mb-4">
+                تطبيقات القياس (2): استخدم ذكاءك لدمج القسمة والضرب مع القياسات!
+            </p>
+        </div>
+    </header>
+
+    <main class="w-full max-w-4xl z-10 flex flex-col gap-8">
+        
+        <section id="challenge1" class="bg-white rounded-3xl shadow-xl border-4 border-sky-400 p-6 md:p-8">
+            <div class="flex items-center gap-3 mb-6 border-b-2 border-sky-100 pb-4">
+                <span class="text-4xl">🕳️</span>
+                <h2 class="text-2xl md:text-3xl font-black text-sky-800">لغز بئر النمل (خدعة الأيام!)</h2>
+            </div>
+
+            <div class="bg-sky-50 rounded-2xl p-6 border-2 border-sky-200 mb-8 text-center md:text-right">
+                <p class="text-lg font-bold text-gray-800 leading-relaxed">
+                    توجد نملة في قاع بئر بعمق <span class="text-xl font-black text-sky-700 bg-sky-100 px-2 rounded">20 متراً</span> وتحاول الوصول إلى الأعلى.
+                    <br>كل يوم تتسلق <span class="text-xl font-black text-green-600 bg-green-100 px-2 rounded">4 أمتار</span> للأعلى، ولكن في كل ليلة تنزلق إلى الوراء <span class="text-xl font-black text-red-600 bg-red-100 px-2 rounded">مترين</span> للأسفل!
+                    <br><span class="text-sky-900 font-black mt-2 inline-block">ما عدد الأيام التي تلزمها للخروج من البئر؟</span>
+                </p>
+            </div>
+
+            <div class="flex flex-col md:flex-row gap-8 items-center justify-center">
+                
+                <!-- The Visual Simulator -->
+                <div class="flex flex-col items-center">
+                    <p class="font-bold text-gray-500 mb-2">جهاز المحاكاة (شاهد ماذا يحدث!)</p>
+                    <div class="well-container">
+                        <span class="well-mark" style="bottom: 100%;">20م</span>
+                        <span class="well-mark" style="bottom: 75%;">15م</span>
+                        <span class="well-mark" style="bottom: 50%;">10م</span>
+                        <span class="well-mark" style="bottom: 25%;">5م</span>
+                        <span class="well-mark" style="bottom: 0%;">0م</span>
+                        
+                        <div id="sim-ant" class="well-ant">🐜</div>
+                    </div>
+                    
+                    <div class="mt-4 flex flex-col gap-2 w-full">
+                        <div class="bg-gray-100 rounded-lg p-2 text-center font-bold font-mono border-2 border-gray-300">
+                            اليوم: <span id="day-counter" class="text-indigo-600 text-xl">0</span> <br>
+                            الارتفاع: <span id="height-counter" class="text-green-600 text-xl">0</span> م
+                        </div>
+                        <button id="btn-simulate" onclick="simulateDay()" class="btn-playful bg-sky-500 hover:bg-sky-600 text-white font-black py-2 px-4 rounded-xl w-full text-lg shadow-sm">
+                            ☀️ تقدم يوماً واحداً
+                        </button>
+                    </div>
+                </div>
+
+                <!-- The Input Area -->
+                <div class="bg-gray-50 p-6 rounded-2xl border-2 border-gray-200 flex-1 flex flex-col justify-center items-center text-center w-full">
+                    <h3 class="text-xl font-black text-gray-700 mb-4">هل اكتشفت الخدعة؟</h3>
+                    <p class="text-gray-600 font-bold mb-4 text-sm">في اليوم الذي تصل فيه للقمة (20 م)، ستخرج ولن تنزلق ليلاً!</p>
+                    <div class="flex items-center gap-3">
+                        <span class="font-bold text-lg text-gray-800">عدد الأيام =</span>
+                        <input type="number" id="c1-ans" class="math-input text-sky-900" placeholder="؟" dir="ltr">
+                        <button id="btn-c1-check" onclick="checkC1()" class="btn-playful bg-indigo-600 hover:bg-indigo-700 text-white font-black py-2 px-6 rounded-xl text-lg">تحقق</button>
+                    </div>
+                    <p id="c1-feedback" class="hidden mt-4 font-bold text-lg p-3 rounded-xl w-full"></p>
+                </div>
+
+            </div>
+        </section>
+
+        <section id="challenge2" class="bg-white rounded-3xl shadow-xl border-4 border-amber-500 p-6 md:p-8 opacity-50 pointer-events-none transition-opacity duration-500 relative">
+            
+            <div id="c2-lock" class="absolute inset-0 z-20 flex flex-col items-center justify-center bg-white/70 backdrop-blur-sm rounded-3xl">
+                <span class="text-6xl mb-4">🔒</span>
+                <p class="text-2xl font-bold text-gray-800 text-center px-4">حل لغز البئر أولاً لفتح لغز المهندس!</p>
+            </div>
+
+            <div class="flex items-center gap-3 mb-6 border-b-2 border-amber-100 pb-4">
+                <span class="text-4xl">🪵</span>
+                <h2 class="text-2xl md:text-3xl font-black text-amber-800">تعلم: غصن الخشب (خطوات متعددة)</h2>
+            </div>
+
+            <div class="bg-amber-50 p-6 rounded-2xl border-2 border-amber-200 mb-8">
+                <p class="text-lg font-bold text-gray-800 leading-relaxed text-center">
+                    أحمد لديه قطعة من الخشب طولها <span class="font-black text-amber-700 text-2xl mx-1 bg-white px-2 rounded">12</span> متراً. 
+                    يريد تقطيعها إلى <span class="font-black text-amber-700 text-2xl mx-1 bg-white px-2 rounded">3</span> أطوال متساوية.
+                </p>
+            </div>
+
+            <div class="flex flex-col gap-6">
+                <!-- الخطوة أ: القسمة -->
+                <div class="bg-white border-2 border-gray-200 p-6 rounded-2xl text-center shadow-sm">
+                    <p class="font-black text-xl text-gray-700 mb-4">الخطوة 1: ما طول كل قطعة بالأمتار؟ (استخدم القسمة)</p>
+                    
+                    <div class="flex flex-col items-center gap-4">
+                        <div class="flex items-center justify-center gap-3 text-3xl font-mono font-black text-gray-800" dir="ltr">
+                            <span>12</span> <span class="text-amber-500">÷</span> <span>3</span> <span class="text-amber-500">=</span>
+                            <input type="number" id="c2-step1-ans" class="math-input text-amber-900 w-24" placeholder="؟">
+                            <span class="font-sans text-xl text-gray-500">متر</span>
+                        </div>
+                        <button id="btn-c2-s1" onclick="checkC2Step1()" class="btn-playful bg-amber-500 hover:bg-amber-600 text-white font-black py-2 px-8 rounded-xl text-lg mt-2">اقطع الخشب 🪚</button>
+                    </div>
+
+                    <!-- Wood Visualizer -->
+                    <div class="mt-6 w-full max-w-md mx-auto">
+                        <div id="wood-visual" class="twig-container justify-center">
+                            <span id="wood-text" class="text-white font-bold mt-2">غصن كامل (12 متراً)</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- الخطوة ب: التحويل (مخفية في البداية) -->
+                <div id="c2-step2-box" class="bg-white border-2 border-gray-200 p-6 rounded-2xl text-center shadow-sm opacity-50 pointer-events-none transition-all duration-300">
+                    <p class="font-black text-xl text-gray-700 mb-4">الخطوة 2: ما طول كل قطعة بالسنتيمتر؟ (تحويل المتر لـ سم)</p>
+                    <p class="text-sm font-bold text-gray-500 mb-4">تلميح: المتر = 100 سم. (نضرب في 100)</p>
+
+                    <div class="flex flex-col items-center gap-4">
+                        <div class="flex items-center justify-center gap-3 text-3xl font-mono font-black text-gray-800" dir="ltr">
+                            <span id="c2-s2-val1" class="text-gray-400">؟</span> <span class="text-amber-500">×</span> <span>100</span> <span class="text-amber-500">=</span>
+                            <input type="number" id="c2-step2-ans" class="math-input text-indigo-900 w-32" placeholder="؟" disabled>
+                            <span class="font-sans text-xl text-gray-500">سم</span>
+                        </div>
+                        <button id="btn-c2-s2" onclick="checkC2Step2()" class="btn-playful bg-indigo-600 hover:bg-indigo-700 text-white font-black py-2 px-8 rounded-xl text-lg mt-2 hidden">تأكيد التحويل ✅</button>
+                    </div>
+                </div>
+
+            </div>
+
+        </section>
+
+        <div id="finalVictory" class="hidden fixed inset-0 bg-black/80 z-50 flex items-center justify-center p-4 backdrop-blur-md">
+            <div class="bg-white rounded-3xl p-10 shadow-2xl border-8 border-indigo-500 text-center max-w-lg w-full transform transition-all duration-300">
+                <div class="text-8xl mb-4 animate-bounce">🏆</div>
+                <h2 class="text-4xl font-black text-indigo-800 mb-4">أنت عبقري الرياضيات!</h2>
+                <p class="text-xl text-gray-700 font-bold mb-6 leading-relaxed">
+                    لقد قمت بحل أعقد الألغاز! استخدمت المنطق السليم في لغز البئر، ودمجت القسمة مع التحويلات في لغز الخشب.
+                </p>
+                <button onclick="location.reload()" class="btn-playful bg-indigo-600 hover:bg-indigo-700 text-white font-black py-4 px-10 rounded-2xl text-2xl w-full">
+                    تحدي جديد 🔄
+                </button>
+            </div>
+        </div>
+
+    </main>
+
+    <script>
+        // --- Challenge 1: The Ant Well ---
+        let currentDay = 0;
+        let currentHeight = 0;
+        let isSimulating = false;
+
+        function simulateDay() {
+            if (isSimulating || currentHeight >= 20) return;
+            isSimulating = true;
+            
+            const btn = document.getElementById('btn-simulate');
+            const ant = document.getElementById('sim-ant');
+            const dayDisp = document.getElementById('day-counter');
+            const hDisp = document.getElementById('height-counter');
+
+            btn.disabled = true;
+            btn.innerText = "⏳ جاري الصعود...";
+
+            currentDay++;
+            dayDisp.innerText = currentDay;
+
+            // Day: Climb 4m
+            currentHeight += 4;
+            updateAntVisual(ant, currentHeight);
+            hDisp.innerText = currentHeight;
+
+            if (currentHeight >= 20) {
+                // Escaped!
+                setTimeout(() => {
+                    btn.innerText = "🎉 نجت النملة!";
+                    btn.classList.replace('bg-sky-500', 'bg-green-500');
+                    isSimulating = false;
+                }, 800);
+                return;
+            }
+
+            // Night: Slip 2m
+            setTimeout(() => {
+                btn.innerText = "🌙 جاء الليل.. تنزلق";
+                currentHeight -= 2;
+                updateAntVisual(ant, currentHeight);
+                hDisp.innerText = currentHeight;
+                
+                setTimeout(() => {
+                    btn.innerText = "☀️ تقدم يوماً واحداً";
+                    btn.disabled = false;
+                    isSimulating = false;
+                }, 800);
+            }, 1000);
+        }
+
+        function updateAntVisual(antElement, height) {
+            // Map 0-20m to 0-100% bottom property
+            let percent = (height / 20) * 100;
+            if (percent > 100) percent = 100;
+            antElement.style.bottom = `${percent}%`;
+        }
+
+        function checkC1() {
+            const ans = document.getElementById('c1-ans');
+            const btn = document.getElementById('btn-c1-check');
+            const fb = document.getElementById('c1-feedback');
+
+            if (ans.value === "9") {
+                // Win
+                ans.classList.add('input-correct');
+                ans.disabled = true;
+                btn.style.display = 'none';
+                
+                fb.innerHTML = "✅ عبقري! في اليوم التاسع تصعد 4 أمتار فتصل للقمة وتخرج ولن تنزلق ليلاً.";
+                fb.className = "mt-4 font-bold text-lg p-3 rounded-xl w-full bg-green-100 text-green-800 border-2 border-green-400 text-center";
+                fb.classList.remove('hidden');
+
+                // Unlock C2
+                setTimeout(() => {
+                    document.getElementById('c2-lock').style.display = 'none';
+                    document.getElementById('challenge2').classList.remove('opacity-50', 'pointer-events-none');
+                    document.getElementById('challenge2').scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }, 1500);
+
+            } else {
+                // Wrong
+                ans.classList.add('shake', 'bg-red-50', 'border-red-400');
+                fb.innerHTML = "❌ جرب استخدام جهاز المحاكاة لترى متى تخرج النملة بالضبط!";
+                fb.className = "mt-4 font-bold text-lg p-3 rounded-xl w-full bg-red-100 text-red-800 text-center";
+                fb.classList.remove('hidden');
+                setTimeout(() => ans.classList.remove('shake', 'bg-red-50', 'border-red-400'), 500);
+            }
+        }
+
+        // --- Challenge 2: Wood Chopper ---
+        function checkC2Step1() {
+            const ans = document.getElementById('c2-step1-ans');
+            const btn = document.getElementById('btn-c2-s1');
+            
+            if (ans.value === "4") {
+                ans.classList.add('input-correct');
+                ans.disabled = true;
+                btn.style.display = 'none';
+
+                // Wood Animation
+                const wood = document.getElementById('wood-visual');
+                wood.innerHTML = `
+                    <div class="twig-part w-1/3">4م</div>
+                    <div class="twig-part w-1/3">4م</div>
+                    <div class="twig-part w-1/3">4م</div>
+                `;
+                wood.classList.add('gap-2'); // separate pieces
+                setTimeout(() => {
+                    const parts = wood.querySelectorAll('.twig-part');
+                    parts.forEach(p => p.style.opacity = '1');
+                }, 100);
+
+                // Unlock Step 2
+                const step2Box = document.getElementById('c2-step2-box');
+                const val1 = document.getElementById('c2-s2-val1');
+                const s2Input = document.getElementById('c2-step2-ans');
+                const s2Btn = document.getElementById('btn-c2-s2');
+
+                step2Box.classList.remove('opacity-50', 'pointer-events-none');
+                val1.innerText = "4";
+                val1.classList.remove('text-gray-400');
+                val1.classList.add('text-amber-800');
+                
+                s2Input.disabled = false;
+                s2Btn.classList.remove('hidden');
+
+            } else {
+                ans.classList.add('shake', 'bg-red-50', 'border-red-400');
+                setTimeout(() => ans.classList.remove('shake', 'bg-red-50', 'border-red-400'), 500);
+            }
+        }
+
+        function checkC2Step2() {
+            const ans = document.getElementById('c2-step2-ans');
+            
+            if (ans.value === "400") {
+                ans.classList.add('input-correct');
+                ans.disabled = true;
+                
+                // Final Win
+                document.getElementById('finalVictory').classList.remove('hidden');
+                confettiEffect();
+
+            } else {
+                ans.classList.add('shake', 'bg-red-50', 'border-red-400');
+                setTimeout(() => ans.classList.remove('shake', 'bg-red-50', 'border-red-400'), 500);
+            }
+        }
+
+        // --- Celebration Effect ---
+        function confettiEffect() {
+            const colors = ['#f59e0b', '#3b82f6', '#10b981', '#6366f1'];
+            for(let i=0; i<60; i++) {
+                const conf = document.createElement('div');
+                conf.className = 'absolute w-3 h-3 rounded-full opacity-90 z-50';
+                conf.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                conf.style.left = Math.random() * 100 + 'vw';
+                conf.style.top = -20 + 'px';
+                conf.style.transition = 'all 3s ease-in';
+                document.body.appendChild(conf);
+                
+                setTimeout(() => {
+                    conf.style.top = '100vh';
+                    conf.style.transform = `rotate(${Math.random() * 720}deg) translateX(${Math.random() * 150 - 75}px)`;
+                }, 50);
+            }
+        }
+    </script>
+</body>
+</html>

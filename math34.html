@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>مختبر الخواص السحرية للضرب</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700;900&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Tajawal', sans-serif;
+            background-color: #f5f3ff; /* خلفية بنفسجي فاتح (الوحدة الخامسة) */
+            background-image: radial-gradient(#ede9fe 2px, transparent 2px);
+            background-size: 30px 30px;
+            overflow-x: hidden;
+        }
+
+        .btn-playful {
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 6px 0 rgba(0,0,0,0.2);
+        }
+        .btn-playful:active:not(:disabled) {
+            transform: translateY(6px);
+            box-shadow: 0 0 0 rgba(0,0,0,0);
+        }
+        .btn-playful:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none !important;
+            box-shadow: 0 6px 0 rgba(0,0,0,0.2) !important;
+        }
+
+        .math-input {
+            width: 6rem;
+            text-align: center;
+            font-size: 1.75rem;
+            font-weight: 900;
+            border: 3px solid #cbd5e1;
+            border-radius: 0.75rem;
+            background-color: white;
+            transition: all 0.3s;
+            font-family: monospace;
+        }
+        .math-input:focus {
+            outline: none;
+            border-color: #8b5cf6;
+            box-shadow: 0 0 0 4px rgba(139, 92, 246, 0.3);
+        }
+        .input-correct {
+            background-color: #dcfce7 !important;
+            border-color: #22c55e !important;
+            color: #166534 !important;
+        }
+
+        .shake { animation: shake 0.5s cubic-bezier(.36,.07,.19,.97) both; }
+        @keyframes shake {
+            10%, 90% { transform: translate3d(-1px, 0, 0); }
+            20%, 80% { transform: translate3d(2px, 0, 0); }
+            30%, 50%, 70% { transform: translate3d(-4px, 0, 0); }
+            40%, 60% { transform: translate3d(4px, 0, 0); }
+        }
+
+        /* تأثير المرآة (الضرب في 1) */
+        .mirror-magic {
+            animation: mirrorFlash 1s ease-in-out forwards;
+        }
+        @keyframes mirrorFlash {
+            0% { transform: scale(1); filter: brightness(1); }
+            50% { transform: scale(1.1); filter: brightness(1.5) drop-shadow(0 0 15px #fde047); }
+            100% { transform: scale(1); filter: brightness(1); }
+        }
+
+        /* تأثير الثقب الأسود (الضرب في 0) */
+        .black-hole-magic {
+            animation: blackHoleSuck 1s ease-in-out forwards;
+        }
+        @keyframes blackHoleSuck {
+            0% { transform: scale(1) rotate(0deg); opacity: 1; filter: grayscale(0); }
+            40% { transform: scale(0.1) rotate(180deg); opacity: 0; filter: grayscale(1); }
+            60% { transform: scale(0.1) rotate(180deg); opacity: 0; color: #1f2937; }
+            100% { transform: scale(1) rotate(360deg); opacity: 1; color: #1f2937; }
+        }
+
+        /* حركة المترو */
+        .metro-track {
+            overflow: hidden;
+            position: relative;
+            height: 60px;
+            background: #e2e8f0;
+            border-top: 4px solid #cbd5e1;
+            border-bottom: 4px solid #cbd5e1;
+            border-radius: 8px;
+        }
+        .metro-train {
+            position: absolute;
+            font-size: 2.5rem;
+            top: 0;
+            left: -50px;
+            transition: left 1s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+    </style>
+</head>
+<body class="min-h-screen text-gray-800 flex flex-col items-center py-6 px-4 relative">
+
+    <header class="w-full max-w-4xl text-center mb-8 z-10">
+        <div class="bg-white rounded-3xl p-6 shadow-xl border-4 border-fuchsia-500 relative overflow-hidden">
+            <span class="bg-fuchsia-600 text-white font-bold px-4 py-1 rounded-full text-sm absolute top-4 right-4">الدرس الخامس</span>
+            <div class="absolute -top-4 -left-4 text-6xl opacity-20 animate-pulse">✨</div>
+            
+            <h1 class="text-3xl md:text-5xl font-black text-fuchsia-900 mb-2 mt-4 flex items-center justify-center gap-3">
+                <span>🪄</span> مختبر الخواص السحرية <span>✨</span>
+            </h1>
+            <p class="text-lg md:text-xl text-fuchsia-700 font-bold mb-4">
+                ماذا يفعل الرقم 1؟ وما هو سر الرقم صفر؟ اكتشف بنفسك!
+            </p>
+        </div>
+    </header>
+
+    <main class="w-full max-w-4xl z-10 flex flex-col gap-8">
+        
+        <section id="phase1" class="bg-white rounded-3xl shadow-xl border-4 border-purple-400 p-6 md:p-8">
+            <div class="flex items-center gap-3 mb-6 border-b-2 border-purple-100 pb-4">
+                <span class="text-4xl">🧪</span>
+                <h2 class="text-2xl md:text-3xl font-black text-purple-800">استكشف: جرّب التعاويذ!</h2>
+            </div>
+            
+            <p class="text-lg font-bold text-gray-700 mb-6 text-center">
+                اكتب أي رقم كبيراً كان أو صغيراً، ثم جرب عليه تعويذة <span class="bg-yellow-100 text-yellow-800 px-2 rounded">(× 1)</span> أو تعويذة <span class="bg-gray-800 text-white px-2 rounded">(× 0)</span> ولاحظ النتيجة!
+            </p>
+
+            <div class="bg-purple-50 rounded-2xl p-6 border-2 border-purple-200 mb-8 flex flex-col items-center">
+                <div class="flex flex-col md:flex-row items-center gap-6 mb-8">
+                    <!-- إدخال الرقم -->
+                    <div class="text-center">
+                        <p class="font-bold text-purple-900 mb-2">أدخل رقماً هنا:</p>
+                        <input type="number" id="magicInput" class="math-input text-purple-700 w-32 h-16 text-3xl" value="758" dir="ltr">
+                    </div>
+
+                    <div class="text-4xl font-black text-purple-300 hidden md:block">⬅️</div>
+
+                    <!-- أزرار التعاويذ -->
+                    <div class="flex flex-col gap-3 w-full md:w-auto">
+                        <button onclick="castSpell(1)" class="btn-playful bg-yellow-400 hover:bg-yellow-500 text-yellow-900 font-black py-3 px-8 rounded-xl text-xl flex items-center justify-center gap-2 border-2 border-yellow-500">
+                            <span>🪞</span> تعويذة المرآة (× 1)
+                        </button>
+                        <button onclick="castSpell(0)" class="btn-playful bg-gray-800 hover:bg-gray-900 text-white font-black py-3 px-8 rounded-xl text-xl flex items-center justify-center gap-2 border-2 border-gray-900">
+                            <span>🕳️</span> تعويذة الثقب الأسود (× 0)
+                        </button>
+                    </div>
+                </div>
+
+                <!-- شاشة العرض السحرية -->
+                <div class="w-full max-w-sm bg-white border-4 border-purple-300 rounded-2xl p-8 text-center shadow-inner relative overflow-hidden h-40 flex flex-col items-center justify-center">
+                    <p class="text-sm font-bold text-gray-400 absolute top-2">النتيجة السحرية</p>
+                    <div id="magicResult" class="text-6xl font-black font-mono text-gray-800" dir="ltr">
+                        ؟
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-gray-50 p-6 rounded-2xl border-2 border-gray-200 mt-6 transition-all duration-500" id="quizSection">
+                <h3 class="text-xl font-black text-gray-800 mb-4 text-center">بناءً على تجاربك، أكمل تعريف الخواص:</h3>
+                
+                <div class="space-y-6">
+                    <!-- سؤال المحايد -->
+                    <div class="bg-white p-4 rounded-xl border border-gray-200 shadow-sm">
+                        <p class="font-bold text-lg text-purple-900 mb-3">1) <strong class="bg-yellow-100 px-2 rounded">خاصية العنصر المحايد</strong> في الضرب تعني أن:</p>
+                        <div class="flex flex-col sm:flex-row gap-3">
+                            <button onclick="checkQuiz('identity', false, this)" class="btn-playful flex-1 bg-gray-100 hover:bg-gray-200 text-gray-700 font-bold py-2 rounded-lg">أي عدد نضربه في 1 يصبح صفراً.</button>
+                            <button onclick="checkQuiz('identity', true, this)" class="btn-playful flex-1 bg-gray-100 hover:bg-yellow-100 border-2 border-transparent text-gray-700 font-bold py-2 rounded-lg">أي عدد نضربه في 1 يبقى كما هو (لا يتغير).</button>
+                        </div>
+                    </div>
+
+                    <!-- سؤال الصفر -->
+                    <div class="bg-white p-4 rounded-xl border border-gray-200 shadow-sm">
+                        <p class="font-bold text-lg text-gray-800 mb-3">2) <strong class="bg-gray-200 px-2 rounded">خاصية الضرب في صفر</strong> تعني أن:</p>
+                        <div class="flex flex-col sm:flex-row gap-3">
+                            <button onclick="checkQuiz('zero', true, this)" class="btn-playful flex-1 bg-gray-100 hover:bg-gray-200 border-2 border-transparent text-gray-700 font-bold py-2 rounded-lg">حاصل ضرب أي عدد في صفر يعطينا صفراً دائماً.</button>
+                            <button onclick="checkQuiz('zero', false, this)" class="btn-playful flex-1 bg-gray-100 hover:bg-gray-200 text-gray-700 font-bold py-2 rounded-lg">حاصل ضرب أي عدد في صفر يعطينا نفس العدد.</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="phase2" class="bg-white rounded-3xl shadow-xl border-4 border-blue-500 p-6 md:p-8 opacity-50 pointer-events-none transition-all duration-500 relative">
+            
+            <div id="phase2Lock" class="absolute inset-0 z-20 flex flex-col items-center justify-center bg-white/70 backdrop-blur-sm rounded-3xl">
+                <span class="text-6xl mb-4">🔒</span>
+                <p class="text-2xl font-bold text-gray-800 text-center px-4">أكمل تعريف الخواص في المختبر لفتح محطة المترو!</p>
+            </div>
+
+            <div class="flex items-center gap-3 mb-6 border-b-2 border-blue-100 pb-4">
+                <span class="text-4xl">🚇</span>
+                <h2 class="text-2xl md:text-3xl font-black text-blue-800">تعلّم: أنماط الضرب ومترو القاهرة</h2>
+            </div>
+
+            <div class="bg-blue-50 rounded-2xl p-6 border-2 border-blue-200 mb-8">
+                <p class="text-lg font-bold text-gray-700 mb-4 leading-relaxed text-center">
+                    الآن دعنا نكتشف نمط الضرب في <strong class="text-blue-600 font-mono" dir="ltr">10, 100, 1000</strong>.<br>
+                    إذا كان الشخص العادي يمشي بسرعة <span class="bg-white px-2 rounded font-black text-blue-800 font-mono" dir="ltr">5</span> كم/ساعة، فما سرعة المركبات الأخرى؟
+                </p>
+
+                <!-- Metro Animation track -->
+                <div class="metro-track mb-6">
+                    <div id="train-icon" class="metro-train">🚇</div>
+                </div>
+
+                <div class="space-y-4">
+                    <!-- Q1 -->
+                    <div class="flex flex-col md:flex-row items-center justify-between bg-white p-4 rounded-xl border border-blue-100 shadow-sm gap-4">
+                        <div class="flex items-center gap-3">
+                            <span class="text-3xl">🚲</span>
+                            <span class="font-bold text-gray-700">الدراجة أسرع <strong class="text-blue-600 font-mono">10</strong> أضعاف. سرعة الدراجة:</span>
+                        </div>
+                        <div class="flex items-center gap-3 font-mono text-xl font-black" dir="ltr">
+                            <span>5 × 10 = </span>
+                            <input type="number" id="p2-q1" class="math-input text-blue-800 w-24">
+                        </div>
+                    </div>
+
+                    <!-- Q2 -->
+                    <div class="flex flex-col md:flex-row items-center justify-between bg-white p-4 rounded-xl border border-blue-100 shadow-sm gap-4">
+                        <div class="flex items-center gap-3">
+                            <span class="text-3xl">🚇</span>
+                            <span class="font-bold text-gray-700">المترو أسرع <strong class="text-blue-600 font-mono">100</strong> ضعف. سرعة المترو:</span>
+                        </div>
+                        <div class="flex items-center gap-3 font-mono text-xl font-black" dir="ltr">
+                            <span>5 × 100 = </span>
+                            <input type="number" id="p2-q2" class="math-input text-blue-800 w-24">
+                        </div>
+                    </div>
+
+                    <!-- Q3 -->
+                    <div class="flex flex-col md:flex-row items-center justify-between bg-white p-4 rounded-xl border border-blue-100 shadow-sm gap-4">
+                        <div class="flex items-center gap-3">
+                            <span class="text-3xl">✈️</span>
+                            <span class="font-bold text-gray-700">الطائرة أسرع <strong class="text-blue-600 font-mono">1000</strong> ضعف. سرعة الطائرة:</span>
+                        </div>
+                        <div class="flex items-center gap-3 font-mono text-xl font-black" dir="ltr">
+                            <span>5 × 1000 = </span>
+                            <input type="number" id="p2-q3" class="math-input text-blue-800 w-24">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="text-center mt-8">
+                    <button onclick="checkPatterns()" id="btn-patterns" class="btn-playful bg-blue-600 hover:bg-blue-700 text-white font-black py-3 px-10 rounded-xl text-xl w-full md:w-auto">
+                        تأكيد السرعات 🚀
+                    </button>
+                </div>
+            </div>
+
+            <div id="finalFeedback" class="hidden mt-6 text-center p-6 bg-gradient-to-r from-blue-100 to-fuchsia-100 border-4 border-blue-500 rounded-3xl shadow-lg">
+                <div class="text-6xl mb-4 animate-bounce">🥇</div>
+                <h3 class="text-3xl font-black text-blue-900 mb-2">أنت بطل الأنماط!</h3>
+                <div class="bg-white p-4 rounded-xl inline-block mt-2 border-2 border-blue-200">
+                    <p class="text-lg font-bold text-gray-800 text-right">
+                        <strong>الخلاصة الذهبية:</strong> <br>
+                        • الضرب في 1: نفس الرقم.<br>
+                        • الضرب في 0: صفر دائماً.<br>
+                        • الضرب في (10, 100, 1000): نكتب نفس الرقم ونضيف أمامه الأصفار!
+                    </p>
+                </div>
+                <div class="mt-6">
+                    <button onclick="location.reload()" class="btn-playful bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-8 rounded-xl text-lg">
+                        تحدي جديد 🔄
+                    </button>
+                </div>
+            </div>
+
+        </section>
+
+    </main>
+
+    <script>
+        // --- Phase 1: Magic Spells Logic ---
+        function castSpell(type) {
+            const inputVal = document.getElementById('magicInput').value;
+            const resBox = document.getElementById('magicResult');
+            
+            if (inputVal === "") {
+                shakeInput(document.getElementById('magicInput'));
+                return;
+            }
+
+            // Reset animations
+            resBox.className = "text-6xl font-black font-mono";
+            // force reflow
+            void resBox.offsetWidth;
+
+            if (type === 1) {
+                // Identity property
+                resBox.innerText = inputVal;
+                resBox.classList.add('mirror-magic', 'text-yellow-600');
+            } else if (type === 0) {
+                // Zero property
+                resBox.innerText = inputVal; // Show initial briefly
+                resBox.classList.add('black-hole-magic');
+                
+                // Change text to 0 mid-animation
+                setTimeout(() => {
+                    resBox.innerText = "0";
+                }, 500);
+            }
+        }
+
+        function shakeInput(el) {
+            el.classList.add('shake', 'border-red-400', 'bg-red-50');
+            setTimeout(() => el.classList.remove('shake', 'border-red-400', 'bg-red-50'), 500);
+        }
+
+        // --- Phase 1.5: Quiz Logic ---
+        let q1Correct = false;
+        let q2Correct = false;
+
+        function checkQuiz(questionType, isCorrect, btn) {
+            const btns = btn.parentElement.children;
+
+            if (isCorrect) {
+                // Correct
+                btn.className = "btn-playful flex-1 bg-green-100 border-2 border-green-500 text-green-900 font-bold py-2 rounded-lg transition-colors";
+                for(let b of btns) { if(b !== btn) { b.style.opacity = '0.5'; b.disabled = true; } }
+                
+                if (questionType === 'identity') q1Correct = true;
+                if (questionType === 'zero') q2Correct = true;
+
+                if (q1Correct && q2Correct) {
+                    unlockPhase2();
+                }
+            } else {
+                // Wrong
+                btn.classList.add('shake', 'bg-red-100', 'text-red-800');
+                setTimeout(() => btn.classList.remove('shake', 'bg-red-100', 'text-red-800'), 500);
+            }
+        }
+
+        function unlockPhase2() {
+            setTimeout(() => {
+                document.getElementById('phase2Lock').style.display = 'none';
+                const p2 = document.getElementById('phase2');
+                p2.classList.remove('opacity-50', 'pointer-events-none');
+                p2.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }, 800);
+        }
+
+        // --- Phase 2: Metro Patterns Logic ---
+        function checkPatterns() {
+            const q1 = document.getElementById('p2-q1');
+            const q2 = document.getElementById('p2-q2');
+            const q3 = document.getElementById('p2-q3');
+            let allCorrect = true;
+
+            if (parseInt(q1.value) === 50) { q1.classList.add('input-correct'); q1.disabled = true; } else { shakeInput(q1); allCorrect = false; }
+            if (parseInt(q2.value) === 500) { q2.classList.add('input-correct'); q2.disabled = true; } else { shakeInput(q2); allCorrect = false; }
+            if (parseInt(q3.value) === 5000) { q3.classList.add('input-correct'); q3.disabled = true; } else { shakeInput(q3); allCorrect = false; }
+
+            if (allCorrect) {
+                document.getElementById('btn-patterns').style.display = 'none';
+                
+                // Animate Metro
+                const train = document.getElementById('train-icon');
+                train.style.left = '100%';
+                
+                // Show feedback
+                setTimeout(() => {
+                    document.getElementById('finalFeedback').classList.remove('hidden');
+                    document.getElementById('finalFeedback').scrollIntoView({ behavior: 'smooth', block: 'end' });
+                    confettiEffect();
+                }, 1000);
+            }
+        }
+
+        // --- Celebration Effect ---
+        function confettiEffect() {
+            const colors = ['#8b5cf6', '#3b82f6', '#10b981', '#f59e0b'];
+            for(let i=0; i<60; i++) {
+                const conf = document.createElement('div');
+                conf.className = 'absolute w-3 h-3 rounded-full opacity-90 z-50';
+                conf.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                conf.style.left = Math.random() * 100 + 'vw';
+                conf.style.top = -20 + 'px';
+                conf.style.transition = 'all 3s ease-in';
+                document.body.appendChild(conf);
+                
+                setTimeout(() => {
+                    conf.style.top = '100vh';
+                    conf.style.transform = `rotate(${Math.random() * 720}deg) translateX(${Math.random() * 150 - 75}px)`;
+                }, 50);
+            }
+        }
+    </script>
+</body>
+</html>

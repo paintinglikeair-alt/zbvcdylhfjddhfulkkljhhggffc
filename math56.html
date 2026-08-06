@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>مصنع السيارات - مقدمة ترتيب العمليات</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700;900&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Tajawal', sans-serif;
+            background-color: #f1f5f9; /* رمادي فاتح مريح */
+            background-image: 
+                linear-gradient(to right, #e2e8f0 1px, transparent 1px),
+                linear-gradient(to bottom, #e2e8f0 1px, transparent 1px);
+            background-size: 40px 40px;
+            overflow-x: hidden;
+        }
+
+        .btn-playful {
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 6px 0 rgba(0,0,0,0.2);
+            position: relative;
+        }
+        .btn-playful:active:not(:disabled) {
+            transform: translateY(6px);
+            box-shadow: 0 0 0 rgba(0,0,0,0);
+        }
+        .btn-playful:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none !important;
+            box-shadow: 0 6px 0 rgba(0,0,0,0.2) !important;
+        }
+
+        /* حزام ناقل الحركة (Conveyor Belt) */
+        .conveyor-belt {
+            height: 20px;
+            background: repeating-linear-gradient(
+                90deg,
+                #475569,
+                #475569 20px,
+                #334155 20px,
+                #334155 40px
+            );
+            border-bottom: 4px solid #1e293b;
+            border-top: 2px solid #1e293b;
+            border-radius: 4px;
+            animation: moveBelt 2s linear infinite;
+        }
+        @keyframes moveBelt {
+            0% { background-position: 0 0; }
+            100% { background-position: -40px 0; } /* يتحرك لليسار */
+        }
+
+        .shake { animation: shake 0.5s cubic-bezier(.36,.07,.19,.97) both; }
+        @keyframes shake {
+            10%, 90% { transform: translate3d(-1px, 0, 0); }
+            20%, 80% { transform: translate3d(2px, 0, 0); }
+            30%, 50%, 70% { transform: translate3d(-4px, 0, 0); }
+            40%, 60% { transform: translate3d(4px, 0, 0); }
+        }
+
+        .pop-in { animation: popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; }
+        @keyframes popIn {
+            0% { transform: scale(0.5); opacity: 0; }
+            80% { transform: scale(1.05); opacity: 1; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        /* تنسيق خطوات المصنع */
+        .factory-slot {
+            width: 100px;
+            height: 100px;
+            border: 3px dashed #94a3b8;
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: rgba(255,255,255,0.5);
+            font-size: 3rem;
+            transition: all 0.3s;
+        }
+        .factory-slot.filled {
+            border-style: solid;
+            background-color: white;
+            border-color: #3b82f6;
+            animation: popIn 0.3s ease-out forwards;
+        }
+
+    </style>
+</head>
+<body class="min-h-screen text-gray-800 flex flex-col items-center py-6 px-4 relative">
+
+    <!-- -->
+    <header class="w-full max-w-4xl text-center mb-8 z-10">
+        <div class="bg-white rounded-3xl p-6 shadow-xl border-4 border-indigo-600 relative overflow-hidden">
+            <span class="bg-indigo-700 text-white font-bold px-4 py-1 rounded-full text-sm absolute top-4 right-4">الوحدة الثامنة</span>
+            
+            <h1 class="text-3xl md:text-5xl font-black text-indigo-900 mb-4 mt-4 flex items-center justify-center gap-3">
+                <span>⚙️</span> مصنع السيارات <span>🚗</span>
+            </h1>
+            
+            <div class="bg-indigo-50 border-2 border-indigo-200 rounded-2xl p-4 inline-block text-right w-full max-w-3xl relative mt-2">
+                <p class="text-indigo-900 font-bold text-xl leading-relaxed mb-2">
+                    ذهب عمر ومريم في رحلة مدرسية إلى مصنع السيارات. تعلموا هناك أن <strong class="bg-indigo-200 px-2 rounded">"الترتيب"</strong> هو سر نجاح أي صناعة!
+                </p>
+                <p class="text-gray-700 font-bold">ماذا يحدث لو قمنا بدهان السيارة قبل تجميع أجزائها؟ 🤔</p>
+            </div>
+        </div>
+    </header>
+
+    <main class="w-full max-w-4xl z-10 flex flex-col gap-8">
+        
+        <!-- -->
+        <section id="phase1" class="bg-white rounded-3xl shadow-xl border-4 border-sky-400 p-6 md:p-8">
+            <div class="flex items-center gap-3 mb-6 border-b-2 border-sky-100 pb-4">
+                <span class="text-4xl">🛠️</span>
+                <h2 class="text-2xl md:text-3xl font-black text-sky-800">استكشف: خط التجميع</h2>
+            </div>
+            
+            <p class="text-lg font-bold text-gray-700 mb-6 text-center">
+                اضغط على الأزرار بالترتيب المنطقي الصحيح لصنع سيارة.
+            </p>
+
+            <!-- منطقة خط التجميع (العرض) -->
+            <div class="mb-10 w-full max-w-2xl mx-auto">
+                <div class="flex justify-center gap-4 md:gap-8 mb-2" id="assembly-line">
+                    <div class="factory-slot" id="slot-0">1️⃣</div>
+                    <div class="factory-slot" id="slot-1">2️⃣</div>
+                    <div class="factory-slot" id="slot-2">3️⃣</div>
+                </div>
+                <div class="conveyor-belt"></div>
+            </div>
+
+            <!-- أزرار الخطوات -->
+            <div class="flex flex-wrap justify-center gap-4" id="step-buttons">
+                <button onclick="addStep('paint', '🎨', this)" class="btn-playful bg-pink-100 border-4 border-pink-400 hover:bg-pink-200 text-pink-900 font-black py-4 px-6 rounded-2xl text-xl flex flex-col items-center gap-2">
+                    <span class="text-4xl">🎨</span> دهان السيارة
+                </button>
+                <button onclick="addStep('engine', '⚙️', this)" class="btn-playful bg-amber-100 border-4 border-amber-400 hover:bg-amber-200 text-amber-900 font-black py-4 px-6 rounded-2xl text-xl flex flex-col items-center gap-2">
+                    <span class="text-4xl">⚙️</span> تركيب المحرك
+                </button>
+                <button onclick="addStep('chassis', '🛻', this)" class="btn-playful bg-slate-100 border-4 border-slate-400 hover:bg-slate-200 text-slate-900 font-black py-4 px-6 rounded-2xl text-xl flex flex-col items-center gap-2">
+                    <span class="text-4xl">🛻</span> بناء الهيكل
+                </button>
+            </div>
+
+            <!-- أزرار التحكم والرسائل -->
+            <div class="text-center mt-8">
+                <button onclick="checkFactoryOrder()" id="btn-check-factory" class="hidden btn-playful bg-sky-500 hover:bg-sky-600 text-white font-black py-3 px-10 rounded-xl text-xl mx-auto">
+                    تشغيل خط الإنتاج 🏭
+                </button>
+                <button onclick="resetFactory()" id="btn-reset-factory" class="hidden text-gray-500 font-bold mt-4 underline hover:text-gray-700">
+                    أخطأت؟ أعد الترتيب 🔄
+                </button>
+                <p id="factory-feedback" class="hidden mt-4 text-center font-bold text-lg p-4 rounded-xl"></p>
+            </div>
+
+        </section>
+
+        <!-- -->
+        <section id="phase2" class="bg-white rounded-3xl shadow-xl border-4 border-fuchsia-500 p-6 md:p-8 opacity-50 pointer-events-none transition-all duration-500 relative">
+            
+            <div id="p2-lock" class="absolute inset-0 z-20 flex flex-col items-center justify-center bg-white/70 backdrop-blur-sm rounded-3xl">
+                <span class="text-6xl mb-4">🔒</span>
+                <p class="text-2xl font-bold text-gray-800 text-center px-4">شغّل مصنع السيارات بنجاح لفتح آلة الرياضيات!</p>
+            </div>
+
+            <div class="flex items-center gap-3 mb-6 border-b-2 border-fuchsia-100 pb-4">
+                <span class="text-4xl">🧮</span>
+                <h2 class="text-2xl md:text-3xl font-black text-fuchsia-800">تعلّم: آلة الرياضيات الخادعة</h2>
+            </div>
+
+            <p class="text-lg font-bold text-gray-700 mb-6 text-center leading-relaxed">
+                كما أن للمصنع ترتيباً صارماً، للرياضيات أيضاً <strong class="text-fuchsia-600">"ترتيب عمليات"</strong>! <br>
+                انظر إلى هذه المسألة. أي عملية يجب أن ننفذها أولاً لنحصل على إجابة صحيحة عالمياً؟
+            </p>
+
+            <div class="bg-fuchsia-50 border-4 border-fuchsia-200 rounded-3xl p-8 mb-8 text-center shadow-inner relative overflow-hidden">
+                <div class="absolute -right-4 -bottom-4 text-8xl opacity-10">🤖</div>
+                <div class="font-mono text-5xl md:text-6xl font-black text-gray-800 tracking-widest" dir="ltr">
+                    5 + 2 <span class="text-fuchsia-500">×</span> 3
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <!-- المسار الخاطئ (الجمع أولاً) -->
+                <button onclick="checkMathOrder(false, this)" class="btn-math btn-playful bg-white border-4 border-gray-300 hover:bg-gray-50 text-gray-800 font-bold p-6 rounded-2xl text-right flex flex-col gap-3 transition-colors">
+                    <span class="text-xl font-black text-rose-600">الطريق (أ): نجمع أولاً</span>
+                    <span class="font-mono text-lg" dir="ltr">5 + 2 = 7</span>
+                    <span class="font-mono text-lg" dir="ltr">7 × 3 = 21</span>
+                    <span class="text-sm text-gray-500 mt-2">الناتج سيكون 21</span>
+                </button>
+
+                <!-- المسار الصحيح (الضرب أولاً) -->
+                <button onclick="checkMathOrder(true, this)" class="btn-math btn-playful bg-white border-4 border-gray-300 hover:bg-gray-50 text-gray-800 font-bold p-6 rounded-2xl text-right flex flex-col gap-3 transition-colors">
+                    <span class="text-xl font-black text-emerald-600">الطريق (ب): نضرب أولاً</span>
+                    <span class="font-mono text-lg" dir="ltr">2 × 3 = 6</span>
+                    <span class="font-mono text-lg" dir="ltr">5 + 6 = 11</span>
+                    <span class="text-sm text-gray-500 mt-2">الناتج سيكون 11</span>
+                </button>
+            </div>
+
+            <div id="math-feedback" class="hidden mt-8 text-center p-6 bg-gradient-to-r from-emerald-100 to-teal-100 border-4 border-emerald-500 rounded-3xl shadow-lg relative overflow-hidden pop-in">
+                <div class="text-6xl mb-4 animate-bounce">🏆</div>
+                <h3 class="text-2xl font-black text-emerald-900 mb-3">أنت عبقري الرياضيات!</h3>
+                <p class="text-lg font-bold text-gray-800 leading-relaxed bg-white p-4 rounded-xl border border-emerald-200">
+                    الرياضيات لغة عالمية! لكي يحصل الجميع في العالم على نفس الناتج (11)، اتفق علماء الرياضيات على <strong class="text-fuchsia-700">ترتيب العمليات</strong>.<br>
+                    <span class="inline-block mt-2 text-emerald-700 font-black">الضرب والقسمة أقوى من الجمع والطرح، لذلك ننفذهما أولاً!</span>
+                </p>
+                <button onclick="location.reload()" class="mt-6 btn-playful bg-emerald-600 hover:bg-emerald-700 text-white font-black py-3 px-10 rounded-2xl text-xl w-full md:w-auto">
+                    فهمت السر! 🔄
+                </button>
+            </div>
+
+        </section>
+
+    </main>
+
+    <!-- -->
+    <script>
+        // --- Phase 1: Factory Logic ---
+        let currentOrder = [];
+        const correctOrder = ['chassis', 'engine', 'paint']; // هيكل، محرك، دهان
+
+        function addStep(stepId, emoji, btn) {
+            if (currentOrder.length < 3) {
+                // إضافة للترتيب
+                currentOrder.push(stepId);
+                
+                // تحديث العرض البصري
+                const slotIndex = currentOrder.length - 1;
+                const slot = document.getElementById(`slot-${slotIndex}`);
+                slot.innerText = emoji;
+                slot.classList.add('filled');
+                
+                // تعطيل الزر المختار
+                btn.disabled = true;
+                btn.classList.add('opacity-50', 'grayscale');
+
+                // إظهار زر إعادة الضبط بمجرد اختيار عنصر واحد
+                document.getElementById('btn-reset-factory').classList.remove('hidden');
+
+                // إظهار زر التحقق إذا اكتملت الـ 3 خطوات
+                if (currentOrder.length === 3) {
+                    document.getElementById('btn-check-factory').classList.remove('hidden');
+                    document.getElementById('btn-reset-factory').classList.add('hidden'); // نخفيه هنا لنركز على التحقق
+                }
+            }
+        }
+
+        function resetFactory() {
+            currentOrder = [];
+            
+            // إعادة تفريغ الخانات
+            for(let i=0; i<3; i++) {
+                const slot = document.getElementById(`slot-${i}`);
+                slot.innerText = `${i+1}️⃣`;
+                slot.classList.remove('filled');
+            }
+
+            // تفعيل الأزرار
+            const btns = document.getElementById('step-buttons').querySelectorAll('button');
+            btns.forEach(b => {
+                b.disabled = false;
+                b.classList.remove('opacity-50', 'grayscale');
+            });
+
+            // إخفاء أزرار التحكم
+            document.getElementById('btn-check-factory').classList.add('hidden');
+            document.getElementById('btn-reset-factory').classList.add('hidden');
+            document.getElementById('factory-feedback').classList.add('hidden');
+        }
+
+        function checkFactoryOrder() {
+            const fb = document.getElementById('factory-feedback');
+            const btnCheck = document.getElementById('btn-check-factory');
+            
+            // التحقق من تطابق المصفوفتين
+            const isCorrect = currentOrder.every((val, index) => val === correctOrder[index]);
+
+            if (isCorrect) {
+                btnCheck.style.display = 'none';
+                fb.innerHTML = "✅ عمل ممتاز! تم تصنيع السيارة بنجاح. الترتيب ضروري جداً!";
+                fb.className = "mt-4 text-center font-bold text-lg p-4 rounded-xl bg-green-100 text-green-800 border-2 border-green-400 block pop-in";
+                
+                // فك قفل المرحلة الثانية
+                setTimeout(() => {
+                    document.getElementById('p2-lock').style.display = 'none';
+                    const p2 = document.getElementById('phase2');
+                    p2.classList.remove('opacity-50', 'pointer-events-none');
+                    p2.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }, 1500);
+
+            } else {
+                fb.innerHTML = "❌ كارثة! لا يمكنك تنفيذ هذه الخطوات بهذا الترتيب. جرب بناء الهيكل أولاً!";
+                fb.className = "mt-4 text-center font-bold text-lg p-4 rounded-xl bg-red-100 text-red-800 border-2 border-red-300 block shake";
+                
+                // إظهار زر إعادة الضبط بعد الخطأ
+                document.getElementById('btn-reset-factory').classList.remove('hidden');
+                btnCheck.classList.add('hidden');
+            }
+        }
+
+        // --- Phase 2: Math Logic ---
+        function checkMathOrder(isCorrect, btn) {
+            const btns = document.querySelectorAll('.btn-math');
+            
+            if (isCorrect) {
+                // إجابة صحيحة
+                btn.classList.replace('border-gray-300', 'border-emerald-500');
+                btn.classList.replace('bg-white', 'bg-emerald-50');
+                
+                btns.forEach(b => {
+                    if (b !== btn) {
+                        b.style.opacity = '0.5';
+                        b.disabled = true;
+                    }
+                });
+
+                document.getElementById('math-feedback').classList.remove('hidden');
+                setTimeout(() => {
+                    document.getElementById('math-feedback').scrollIntoView({ behavior: 'smooth', block: 'end' });
+                }, 100);
+
+            } else {
+                // إجابة خاطئة
+                btn.classList.add('shake', 'border-red-400', 'bg-red-50');
+                setTimeout(() => btn.classList.remove('shake', 'border-red-400', 'bg-red-50'), 500);
+            }
+        }
+    </script>
+</body>
+</html>

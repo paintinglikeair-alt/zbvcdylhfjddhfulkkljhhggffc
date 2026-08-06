@@ -1,0 +1,616 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>العامل المشترك الأكبر (ع.م.أ)</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700;900&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Tajawal', sans-serif;
+            background-color: #f5f3ff; /* خلفية بنفسجي فاتح (الوحدة 6) */
+            background-image: radial-gradient(#ede9fe 2px, transparent 2px);
+            background-size: 30px 30px;
+            overflow-x: hidden;
+        }
+
+        .btn-playful {
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 6px 0 rgba(0,0,0,0.2);
+        }
+        .btn-playful:active:not(:disabled) {
+            transform: translateY(6px);
+            box-shadow: 0 0 0 rgba(0,0,0,0);
+        }
+        .btn-playful:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none !important;
+            box-shadow: 0 6px 0 rgba(0,0,0,0.2) !important;
+        }
+
+        .math-input {
+            width: 4rem;
+            text-align: center;
+            font-size: 1.5rem;
+            font-weight: 900;
+            border: 3px solid #cbd5e1;
+            border-radius: 0.75rem;
+            background-color: white;
+            transition: all 0.3s;
+            font-family: monospace;
+        }
+        .math-input:focus {
+            outline: none;
+            border-color: #8b5cf6;
+            box-shadow: 0 0 0 4px rgba(139, 92, 246, 0.3);
+        }
+        
+        .factors-input {
+            width: 100%;
+            text-align: right;
+            font-size: 1.25rem;
+            font-weight: 700;
+            border: 2px solid #cbd5e1;
+            border-radius: 0.5rem;
+            padding: 0.5rem 1rem;
+            font-family: monospace;
+            letter-spacing: 2px;
+        }
+        .factors-input:focus {
+            outline: none;
+            border-color: #8b5cf6;
+            box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.2);
+        }
+
+        .input-correct {
+            background-color: #dcfce7 !important;
+            border-color: #22c55e !important;
+            color: #166534 !important;
+        }
+
+        .shake { animation: shake 0.5s cubic-bezier(.36,.07,.19,.97) both; }
+        @keyframes shake {
+            10%, 90% { transform: translate3d(-1px, 0, 0); }
+            20%, 80% { transform: translate3d(2px, 0, 0); }
+            30%, 50%, 70% { transform: translate3d(-4px, 0, 0); }
+            40%, 60% { transform: translate3d(4px, 0, 0); }
+        }
+
+        /* Timer Animation */
+        .timer-bar {
+            width: 100%;
+            height: 100%;
+            background-color: #ef4444; /* Red */
+            transform-origin: right;
+            transition: transform 1s linear;
+        }
+
+        /* Factor Pills */
+        .factor-pill {
+            display: inline-block;
+            background-color: white;
+            border: 2px solid #cbd5e1;
+            border-radius: 9999px;
+            padding: 0.25rem 0.75rem;
+            margin: 0.25rem;
+            font-weight: 900;
+            font-family: monospace;
+            font-size: 1.25rem;
+            transition: all 0.3s;
+        }
+        
+        /* Shared Factor Highlight */
+        .shared-factor {
+            background-color: #fef08a; /* Yellow */
+            border-color: #eab308;
+            color: #854d0e;
+            transform: scale(1.1);
+            box-shadow: 0 2px 4px rgba(234, 179, 8, 0.3);
+        }
+        
+        /* GCF Highlight */
+        .gcf-factor {
+            background-color: #4ade80; /* Green */
+            border-color: #16a34a;
+            color: #14532d;
+            transform: scale(1.2);
+            box-shadow: 0 0 15px rgba(34, 197, 94, 0.5);
+            animation: pulse-green 1.5s infinite;
+        }
+        @keyframes pulse-green {
+            0% { box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.7); }
+            70% { box-shadow: 0 0 0 10px rgba(34, 197, 94, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(34, 197, 94, 0); }
+        }
+
+        .pop-in { animation: popIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; }
+        @keyframes popIn {
+            0% { transform: scale(0.5); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+    </style>
+</head>
+<body class="min-h-screen text-gray-800 flex flex-col items-center py-6 px-4 relative">
+
+    <header class="w-full max-w-4xl text-center mb-8 z-10">
+        <div class="bg-white rounded-3xl p-6 shadow-xl border-4 border-purple-500 relative overflow-hidden">
+            <span class="bg-purple-600 text-white font-bold px-4 py-1 rounded-full text-sm absolute top-4 right-4">الدرس الثالث - الوحدة 6</span>
+            
+            <h1 class="text-3xl md:text-5xl font-black text-purple-900 mb-2 mt-4 flex items-center justify-center gap-3">
+                <span>🏆</span> العامل المشترك الأكبر (ع.م.أ) <span>🌟</span>
+            </h1>
+            <p class="text-lg md:text-xl text-purple-700 font-bold mb-4">
+                اكتشف العوامل المشتركة بين الأعداد وابحث عن الأكبر بينها!
+            </p>
+        </div>
+    </header>
+
+    <main class="w-full max-w-4xl z-10 flex flex-col gap-8">
+        
+        <!-- القسم الأول: سباق السرعة -->
+        <section id="speedRaceSection" class="bg-white rounded-3xl shadow-xl border-4 border-rose-400 p-6 md:p-8">
+            <div class="flex items-center justify-between mb-4 border-b-2 border-rose-100 pb-4">
+                <div class="flex items-center gap-3">
+                    <span class="text-4xl">⏱️</span>
+                    <h2 class="text-2xl md:text-3xl font-black text-rose-800">استكشف: سباق الـ 60 ثانية</h2>
+                </div>
+                <div class="bg-rose-100 text-rose-800 font-black px-4 py-2 rounded-xl text-xl" id="scoreDisplay">
+                    النقاط: 0
+                </div>
+            </div>
+
+            <p class="text-lg font-bold text-gray-700 mb-6 text-center" id="raceIntroText">
+                مراجعة حقائق الضرب سريعة! أجب عن أكبر عدد ممكن من المسائل في 60 ثانية.
+            </p>
+
+            <!-- منطقة اللعب -->
+            <div id="racePlayArea" class="hidden">
+                <!-- شريط الوقت -->
+                <div class="w-full h-4 bg-gray-200 rounded-full mb-8 overflow-hidden border border-gray-300">
+                    <div id="timerBar" class="timer-bar"></div>
+                </div>
+
+                <!-- المسألة -->
+                <div class="flex flex-col items-center justify-center gap-6 mb-4">
+                    <div id="equationDisplay" class="text-6xl font-black font-mono text-gray-800 tracking-widest" dir="ltr">
+                        5 × 6 = 
+                    </div>
+                    <input type="number" id="raceAnswer" class="math-input text-4xl w-32 h-20" placeholder="؟" dir="ltr">
+                </div>
+            </div>
+
+            <!-- زر البداية -->
+            <div class="text-center mt-6" id="raceStartBox">
+                <button onclick="startRace()" class="btn-playful bg-rose-500 hover:bg-rose-600 text-white font-black py-4 px-12 rounded-2xl text-2xl">
+                    ابدأ السباق 🚀
+                </button>
+            </div>
+
+            <!-- رسالة انتهاء الوقت -->
+            <div id="raceEndBox" class="hidden mt-6 bg-rose-50 border-2 border-rose-200 rounded-2xl p-6 text-center">
+                <h3 class="text-3xl font-black text-rose-800 mb-2">انتهى الوقت! 🏁</h3>
+                <p class="text-xl font-bold text-gray-700 mb-6">لقد أجبت على <span id="finalScore" class="text-3xl font-black text-rose-600 mx-2">0</span> مسائل بشكل صحيح.</p>
+                <button onclick="unlockLearning()" class="btn-playful bg-purple-600 hover:bg-purple-700 text-white font-black py-3 px-8 rounded-xl text-xl">
+                    انتقل لدرس العوامل (ع.م.أ) ➡️
+                </button>
+            </div>
+        </section>
+
+
+        <!-- القسم الثاني: مختبر العوامل المشتركة -->
+        <section id="learningSection" class="bg-white rounded-3xl shadow-xl border-4 border-indigo-400 p-6 md:p-8 opacity-50 pointer-events-none transition-all duration-500 relative">
+            
+            <!-- القفل -->
+            <div id="learningLock" class="absolute inset-0 z-20 flex flex-col items-center justify-center bg-white/70 backdrop-blur-sm rounded-3xl">
+                <span class="text-6xl mb-4">🔒</span>
+                <p class="text-2xl font-bold text-gray-800 text-center px-4">أنهِ سباق السرعة أولاً لفتح مختبر العوامل!</p>
+            </div>
+
+            <div class="flex justify-between items-center mb-6 border-b-2 border-indigo-100 pb-4">
+                <div class="flex items-center gap-3">
+                    <span class="text-4xl">🔬</span>
+                    <h2 class="text-2xl md:text-3xl font-black text-indigo-800">تعلّم: العوامل المشتركة</h2>
+                </div>
+                <div class="bg-indigo-100 text-indigo-800 font-bold px-3 py-1 rounded-lg text-sm">
+                    مسألة <span id="gcfLevelCounter">1</span>/5
+                </div>
+            </div>
+
+            <p class="text-lg font-bold text-gray-700 mb-6 text-center leading-relaxed">
+                اكتب جميع عوامل كل عدد، مع فصلها بمسافة أو فاصلة (مثال: 1 2 3 6). 
+                <br>سيقوم المختبر بتظليل العوامل المشتركة باللون <span class="bg-yellow-200 text-yellow-900 px-1 rounded">الأصفر</span>.
+            </p>
+
+            <div class="bg-indigo-50 border-2 border-indigo-200 rounded-2xl p-6 mb-8">
+                <h3 class="text-2xl font-black text-center text-indigo-900 mb-6" dir="ltr" id="gcfNumbersDisplay">
+                    <!-- e.g., 36 , 42 -->
+                </h3>
+
+                <!-- العدد الأول -->
+                <div class="mb-6 relative">
+                    <div class="flex justify-between items-end mb-2">
+                        <label class="block font-bold text-gray-700">عوامل العدد <span id="num1Label" class="text-indigo-600 font-black text-xl">36</span>:</label>
+                        <div class="flex gap-2">
+                            <span id="counter1" class="text-sm font-bold bg-indigo-100 text-indigo-800 px-3 py-1 rounded-lg transition-colors">0 / 9 عوامل</span>
+                            <button onclick="giveHint(1)" class="text-sm bg-yellow-100 hover:bg-yellow-200 text-yellow-800 font-bold px-3 py-1 rounded-lg shadow-sm transition-all active:scale-95">مساعدة 💡</button>
+                        </div>
+                    </div>
+                    <input type="text" id="factors1Input" class="factors-input transition-colors" placeholder="اكتب العوامل هنا... مسافة بين كل رقم" dir="ltr" oninput="updateCounter(1)">
+                    <div id="factors1Pills" class="mt-3 min-h-[40px] flex flex-wrap gap-2" dir="ltr"></div>
+                </div>
+
+                <!-- العدد الثاني -->
+                <div class="mb-6 relative">
+                    <div class="flex justify-between items-end mb-2">
+                        <label class="block font-bold text-gray-700">عوامل العدد <span id="num2Label" class="text-indigo-600 font-black text-xl">42</span>:</label>
+                        <div class="flex gap-2">
+                            <span id="counter2" class="text-sm font-bold bg-indigo-100 text-indigo-800 px-3 py-1 rounded-lg transition-colors">0 / 8 عوامل</span>
+                            <button onclick="giveHint(2)" class="text-sm bg-yellow-100 hover:bg-yellow-200 text-yellow-800 font-bold px-3 py-1 rounded-lg shadow-sm transition-all active:scale-95">مساعدة 💡</button>
+                        </div>
+                    </div>
+                    <input type="text" id="factors2Input" class="factors-input transition-colors" placeholder="اكتب العوامل هنا... مسافة بين كل رقم" dir="ltr" oninput="updateCounter(2)">
+                    <div id="factors2Pills" class="mt-3 min-h-[40px] flex flex-wrap gap-2" dir="ltr"></div>
+                </div>
+
+                <div class="text-center border-t-2 border-indigo-200 pt-6 mt-4 hidden" id="gcfResultArea">
+                    <p class="font-bold text-gray-700 mb-3">ما هو العامل المشترك الأكبر (ع.م.أ)؟</p>
+                    <div class="flex items-center justify-center gap-4">
+                        <span class="text-2xl font-black text-indigo-800">ع.م.أ = </span>
+                        <input type="number" id="gcfFinalInput" class="math-input text-green-700" placeholder="؟">
+                        <button onclick="checkGCF()" id="btnCheckGcf" class="btn-playful bg-green-500 hover:bg-green-600 text-white font-black py-2 px-6 rounded-xl text-xl">
+                            تأكيد ✅
+                        </button>
+                    </div>
+                </div>
+
+                <div class="text-center mt-6" id="btnAnalyzeBox">
+                    <button onclick="analyzeFactors()" class="btn-playful bg-indigo-600 hover:bg-indigo-700 text-white font-black py-3 px-10 rounded-xl text-xl w-full md:w-auto">
+                        تحليل ومقارنة العوامل ⚙️
+                    </button>
+                </div>
+                
+                <p id="analysisFeedback" class="hidden mt-4 text-center font-bold text-red-600"></p>
+
+            </div>
+
+            <div class="text-center">
+                <button id="btnNextGcf" onclick="nextGcfLevel()" class="hidden btn-playful bg-purple-500 hover:bg-purple-600 text-white font-black py-3 px-8 rounded-xl text-xl mx-auto">
+                    المسألة التالية ➡️
+                </button>
+            </div>
+
+        </section>
+
+        <!-- نافذة الفوز النهائية -->
+        <div id="finalVictory" class="hidden fixed inset-0 bg-black/80 z-50 flex items-center justify-center p-4 backdrop-blur-md">
+            <div class="bg-white rounded-3xl p-10 shadow-2xl border-8 border-purple-500 text-center max-w-lg w-full transform transition-all duration-300">
+                <div class="text-8xl mb-4 animate-bounce">🏆</div>
+                <h2 class="text-4xl font-black text-purple-800 mb-4">أنت بطل العوامل!</h2>
+                <p class="text-xl text-gray-700 font-bold mb-6 leading-relaxed">
+                    لقد أثبتّ قدرتك الفائقة في إيجاد العوامل المشتركة، ونجحت في تحديد "العامل المشترك الأكبر" في جميع المسائل.
+                </p>
+                <button onclick="location.reload()" class="btn-playful bg-purple-600 hover:bg-purple-700 text-white font-black py-4 px-10 rounded-2xl text-2xl w-full">
+                    العب مرة أخرى 🔄
+                </button>
+            </div>
+        </div>
+
+    </main>
+
+    <script>
+        // ==========================================
+        // القسم الأول: سباق السرعة (حقائق الضرب)
+        // ==========================================
+        let score = 0;
+        let timeLeft = 60; // 60 seconds
+        let timerInterval;
+        let currentAns = 0;
+
+        function startRace() {
+            document.getElementById('raceIntroText').style.display = 'none';
+            document.getElementById('raceStartBox').style.display = 'none';
+            document.getElementById('racePlayArea').classList.remove('hidden');
+            
+            score = 0;
+            timeLeft = 60;
+            document.getElementById('scoreDisplay').innerText = `النقاط: ${score}`;
+            document.getElementById('raceAnswer').value = '';
+            document.getElementById('raceAnswer').focus();
+
+            // Start Timer Animation
+            const timerBar = document.getElementById('timerBar');
+            timerBar.style.transform = 'scaleX(1)';
+            
+            // Generate first problem
+            nextRaceProblem();
+
+            timerInterval = setInterval(() => {
+                timeLeft--;
+                timerBar.style.transform = `scaleX(${timeLeft / 60})`;
+                
+                if (timeLeft <= 0) {
+                    endRace();
+                }
+            }, 1000);
+        }
+
+        function nextRaceProblem() {
+            // Generate basic multiplication facts (factors 1-12)
+            const num1 = Math.floor(Math.random() * 10) + 2; // 2 to 11
+            const num2 = Math.floor(Math.random() * 10) + 2; // 2 to 11
+            currentAns = num1 * num2;
+            
+            document.getElementById('equationDisplay').innerText = `${num1} × ${num2} = `;
+            const input = document.getElementById('raceAnswer');
+            input.value = '';
+            input.classList.remove('input-correct', 'shake', 'bg-red-50', 'border-red-400');
+        }
+
+        // Listen for "Enter" key or input event on the race answer box
+        document.getElementById('raceAnswer').addEventListener('input', function(e) {
+            if (parseInt(this.value) === currentAns) {
+                // Correct
+                this.classList.add('input-correct');
+                score++;
+                document.getElementById('scoreDisplay').innerText = `النقاط: ${score}`;
+                
+                // Slight delay before next problem
+                setTimeout(() => {
+                    nextRaceProblem();
+                }, 200);
+            }
+        });
+
+        function endRace() {
+            clearInterval(timerInterval);
+            document.getElementById('racePlayArea').classList.add('hidden');
+            document.getElementById('raceEndBox').classList.remove('hidden');
+            document.getElementById('finalScore').innerText = score;
+        }
+
+        function unlockLearning() {
+            document.getElementById('learningLock').style.display = 'none';
+            document.getElementById('learningSection').classList.remove('opacity-50', 'pointer-events-none');
+            document.getElementById('learningSection').scrollIntoView({ behavior: 'smooth', block: 'start' });
+            
+            // Initialize first GCF level
+            initGcfLevel();
+        }
+
+        // ==========================================
+        // القسم الثاني: مختبر العوامل المشتركة
+        // ==========================================
+        
+        // Data from the book page
+        const gcfProblems = [
+            { n1: 36, n2: 42, f1: [1,2,3,4,6,9,12,18,36], f2: [1,2,3,6,7,14,21,42], gcf: 6 },
+            { n1: 18, n2: 4, f1: [1,2,3,6,9,18], f2: [1,2,4], gcf: 2 },
+            { n1: 20, n2: 30, f1: [1,2,4,5,10,20], f2: [1,2,3,5,6,10,15,30], gcf: 10 },
+            { n1: 21, n2: 35, f1: [1,3,7,21], f2: [1,5,7,35], gcf: 7 },
+            { n1: 17, n2: 22, f1: [1,17], f2: [1,2,11,22], gcf: 1 }
+        ];
+
+        let currentGcfLevel = 0;
+
+        function initGcfLevel() {
+            const data = gcfProblems[currentGcfLevel];
+            
+            // Update UI
+            document.getElementById('gcfLevelCounter').innerText = currentGcfLevel + 1;
+            document.getElementById('gcfNumbersDisplay').innerText = `${data.n1} , ${data.n2}`;
+            
+            document.getElementById('num1Label').innerText = data.n1;
+            document.getElementById('num2Label').innerText = data.n2;
+            
+            // Reset Counters
+            document.getElementById('counter1').innerText = `0 / ${data.f1.length} عوامل`;
+            document.getElementById('counter1').className = "text-sm font-bold bg-indigo-100 text-indigo-800 px-3 py-1 rounded-lg transition-colors";
+            document.getElementById('counter2').innerText = `0 / ${data.f2.length} عوامل`;
+            document.getElementById('counter2').className = "text-sm font-bold bg-indigo-100 text-indigo-800 px-3 py-1 rounded-lg transition-colors";
+            
+            // Reset Inputs & Areas
+            const in1 = document.getElementById('factors1Input');
+            const in2 = document.getElementById('factors2Input');
+            in1.value = ''; in2.value = '';
+            in1.disabled = false; in2.disabled = false;
+            in1.classList.remove('input-correct'); in2.classList.remove('input-correct');
+
+            document.getElementById('factors1Pills').innerHTML = '';
+            document.getElementById('factors2Pills').innerHTML = '';
+            
+            document.getElementById('btnAnalyzeBox').classList.remove('hidden');
+            document.getElementById('gcfResultArea').classList.add('hidden');
+            document.getElementById('btnNextGcf').classList.add('hidden');
+            
+            const gcfInput = document.getElementById('gcfFinalInput');
+            gcfInput.value = ''; gcfInput.disabled = false;
+            gcfInput.classList.remove('input-correct');
+            document.getElementById('btnCheckGcf').style.display = 'inline-block';
+            
+            document.getElementById('analysisFeedback').classList.add('hidden');
+        }
+
+        // Helper: parse string to array of sorted unique numbers
+        function parseFactors(str) {
+            // Replace non-digits with spaces, split, filter empty, convert to num, remove duplicates, sort
+            return [...new Set(str.replace(/[^0-9]/g, ' ').split(' ').filter(s => s !== '').map(Number))].sort((a, b) => a - b);
+        }
+
+        // Helper: compare two arrays
+        function arraysEqual(a1, a2) {
+            return a1.length === a2.length && a1.every((val, index) => val === a2[index]);
+        }
+
+        function updateCounter(numIndex) {
+            const data = gcfProblems[currentGcfLevel];
+            const input = document.getElementById(`factors${numIndex}Input`);
+            const counter = document.getElementById(`counter${numIndex}`);
+            const targetFactors = numIndex === 1 ? data.f1 : data.f2;
+            
+            const userFactors = parseFactors(input.value);
+            const correctCount = userFactors.filter(f => targetFactors.includes(f)).length;
+            
+            counter.innerText = `${correctCount} / ${targetFactors.length} عوامل`;
+            
+            if (correctCount === targetFactors.length && userFactors.length === targetFactors.length) {
+                counter.classList.replace('bg-indigo-100', 'bg-green-100');
+                counter.classList.replace('text-indigo-800', 'text-green-800');
+            } else {
+                counter.classList.replace('bg-green-100', 'bg-indigo-100');
+                counter.classList.replace('text-green-800', 'text-indigo-800');
+            }
+        }
+
+        function giveHint(numIndex) {
+            const data = gcfProblems[currentGcfLevel];
+            const input = document.getElementById(`factors${numIndex}Input`);
+            const targetFactors = numIndex === 1 ? data.f1 : data.f2;
+            
+            const userFactors = parseFactors(input.value);
+            // البحث عن أول عامل ناقص
+            const missingFactor = targetFactors.find(f => !userFactors.includes(f));
+            
+            if (missingFactor !== undefined) {
+                let currentVal = input.value.trim();
+                input.value = currentVal ? currentVal + '  ' + missingFactor : missingFactor;
+                
+                input.classList.add('bg-yellow-50', 'border-yellow-400');
+                setTimeout(() => input.classList.remove('bg-yellow-50', 'border-yellow-400'), 500);
+                
+                updateCounter(numIndex);
+            }
+        }
+
+        function analyzeFactors() {
+            const data = gcfProblems[currentGcfLevel];
+            const in1 = document.getElementById('factors1Input');
+            const in2 = document.getElementById('factors2Input');
+            const feedback = document.getElementById('analysisFeedback');
+            
+            const userF1 = parseFactors(in1.value);
+            const userF2 = parseFactors(in2.value);
+
+            let isError = false;
+            let errorMsg = "";
+
+            if (!arraysEqual(userF1, data.f1)) {
+                isError = true;
+                errorMsg += `عوامل ${data.n1} غير مكتملة أو خاطئة. `;
+                in1.classList.add('shake', 'border-red-400');
+                setTimeout(() => in1.classList.remove('shake', 'border-red-400'), 500);
+            }
+            if (!arraysEqual(userF2, data.f2)) {
+                isError = true;
+                errorMsg += `عوامل ${data.n2} غير مكتملة أو خاطئة.`;
+                in2.classList.add('shake', 'border-red-400');
+                setTimeout(() => in2.classList.remove('shake', 'border-red-400'), 500);
+            }
+
+            if (isError) {
+                feedback.innerText = errorMsg;
+                feedback.classList.remove('hidden');
+                return;
+            }
+
+            // Success: Proceed to comparison
+            feedback.classList.add('hidden');
+            in1.disabled = true; in1.classList.add('input-correct');
+            in2.disabled = true; in2.classList.add('input-correct');
+            document.getElementById('btnAnalyzeBox').classList.add('hidden');
+
+            // Render Pills
+            renderPills(userF1, userF2, data.gcf);
+        }
+
+        function renderPills(f1, f2, targetGcf) {
+            const container1 = document.getElementById('factors1Pills');
+            const container2 = document.getElementById('factors2Pills');
+            
+            // Find shared
+            const shared = f1.filter(value => f2.includes(value));
+
+            // Render Function
+            const createPill = (num, container) => {
+                const span = document.createElement('span');
+                span.innerText = num;
+                span.className = "factor-pill pop-in";
+                
+                if (shared.includes(num)) {
+                    // Stagger animation
+                    setTimeout(() => {
+                        span.classList.add('shared-factor');
+                    }, 500);
+                }
+                
+                container.appendChild(span);
+            };
+
+            f1.forEach(num => createPill(num, container1));
+            f2.forEach(num => createPill(num, container2));
+
+            // Show GCF input area after animations
+            setTimeout(() => {
+                document.getElementById('gcfResultArea').classList.remove('hidden');
+                document.getElementById('gcfResultArea').classList.add('pop-in');
+            }, 1200);
+        }
+
+        function checkGCF() {
+            const data = gcfProblems[currentGcfLevel];
+            const input = document.getElementById('gcfFinalInput');
+            const btn = document.getElementById('btnCheckGcf');
+            
+            if (parseInt(input.value) === data.gcf) {
+                input.classList.add('input-correct');
+                input.disabled = true;
+                btn.style.display = 'none';
+
+                // Highlight the GCF pill
+                const pills = document.querySelectorAll('.shared-factor');
+                pills.forEach(pill => {
+                    if (parseInt(pill.innerText) === data.gcf) {
+                        pill.classList.replace('shared-factor', 'gcf-factor');
+                    }
+                });
+
+                document.getElementById('btnNextGcf').classList.remove('hidden');
+            } else {
+                input.classList.add('shake', 'border-red-400', 'bg-red-50');
+                setTimeout(() => input.classList.remove('shake', 'border-red-400', 'bg-red-50'), 500);
+            }
+        }
+
+        function nextGcfLevel() {
+            currentGcfLevel++;
+            if (currentGcfLevel >= gcfProblems.length) {
+                // Game Over Win
+                document.getElementById('finalVictory').classList.remove('hidden');
+                confettiEffect();
+            } else {
+                initGcfLevel();
+            }
+        }
+
+        // --- Celebration Effect ---
+        function confettiEffect() {
+            const colors = ['#a855f7', '#3b82f6', '#10b981', '#f59e0b'];
+            for(let i=0; i<60; i++) {
+                const conf = document.createElement('div');
+                conf.className = 'absolute w-3 h-3 rounded-sm opacity-90 z-50'; // Squares for GCF
+                conf.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                conf.style.left = Math.random() * 100 + 'vw';
+                conf.style.top = -20 + 'px';
+                conf.style.transition = 'all 3s ease-in';
+                document.body.appendChild(conf);
+                
+                setTimeout(() => {
+                    conf.style.top = '100vh';
+                    conf.style.transform = `rotate(${Math.random() * 720}deg) translateX(${Math.random() * 150 - 75}px)`;
+                }, 50);
+            }
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,551 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>مستكشف النماذج الشريطية - ألغاز النمل</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700;900&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Tajawal', sans-serif;
+            background-color: #fdf4ff; /* خلفية بنفسجي فاتح (الوحدة الثانية) */
+            background-image: radial-gradient(#f5d0fe 2px, transparent 2px);
+            background-size: 30px 30px;
+            overflow-x: hidden;
+        }
+
+        .btn-playful {
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 6px 0 rgba(0,0,0,0.2);
+        }
+        .btn-playful:active:not(:disabled) {
+            transform: translateY(6px);
+            box-shadow: 0 0 0 rgba(0,0,0,0);
+        }
+        .btn-playful:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none !important;
+            box-shadow: 0 6px 0 rgba(0,0,0,0.2) !important;
+        }
+
+        /* تنسيقات النموذج الشريطي */
+        .bar-model-container {
+            width: 100%;
+            max-width: 500px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            gap: 4px; /* المسافة بين الجزء العلوي (الكل) والجزء السفلي (الأجزاء) */
+        }
+
+        .bar-whole {
+            width: 100%;
+            height: 60px;
+            background-color: #e0e7ff; /* أزرق فاتح */
+            border: 3px solid #6366f1; /* أزرق غامق */
+            border-radius: 8px 8px 0 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            font-weight: 900;
+            color: #312e81;
+            position: relative;
+            transition: all 0.3s;
+        }
+
+        .bar-parts-row {
+            display: flex;
+            width: 100%;
+            height: 60px;
+            gap: 4px; /* المسافة بين الأجزاء */
+        }
+
+        .bar-part {
+            height: 100%;
+            background-color: #d1fae5; /* أخضر فاتح */
+            border: 3px solid #10b981; /* أخضر غامق */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            font-weight: 900;
+            color: #064e3b;
+            position: relative;
+            transition: all 0.3s;
+        }
+        
+        .bar-part-left { border-radius: 0 0 8px 0; }
+        .bar-part-right { border-radius: 0 0 0 8px; }
+
+        /* منطقة الإسقاط (Drop Zones) */
+        .droppable {
+            border: 3px dashed #94a3b8 !important;
+            background-color: #f8fafc !important;
+            color: #94a3b8 !important;
+        }
+        .droppable.drag-over {
+            background-color: #fef08a !important; /* لون أصفر عند السحب فوقها */
+            border-color: #eab308 !important;
+            border-style: solid !important;
+        }
+        .droppable.filled {
+            border-style: solid !important;
+        }
+        .droppable.filled-whole {
+            background-color: #e0e7ff !important;
+            border-color: #6366f1 !important;
+            color: #312e81 !important;
+        }
+        .droppable.filled-part {
+            background-color: #d1fae5 !important;
+            border-color: #10b981 !important;
+            color: #064e3b !important;
+        }
+
+
+        /* العناصر القابلة للسحب (Draggable Items) */
+        .draggable-item {
+            cursor: grab;
+            user-select: none;
+            transition: transform 0.1s;
+        }
+        .draggable-item:active {
+            cursor: grabbing;
+        }
+        .draggable-item.dragging {
+            opacity: 0.5;
+            transform: scale(1.05);
+        }
+
+        /* حركات النمل */
+        .ant-helper {
+            animation: bounce-gentle 2s infinite;
+        }
+        @keyframes bounce-gentle {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-5px); }
+        }
+
+        .shake { animation: shake 0.5s cubic-bezier(.36,.07,.19,.97) both; }
+        @keyframes shake {
+            10%, 90% { transform: translate3d(-1px, 0, 0); }
+            20%, 80% { transform: translate3d(2px, 0, 0); }
+            30%, 50%, 70% { transform: translate3d(-4px, 0, 0); }
+            40%, 60% { transform: translate3d(4px, 0, 0); }
+        }
+
+        .equation-input {
+            width: 4rem;
+            text-align: center;
+            border: 2px solid #cbd5e1;
+            border-radius: 0.5rem;
+            padding: 0.25rem;
+            font-family: monospace;
+            font-weight: bold;
+            font-size: 1.25rem;
+        }
+        .equation-input:focus {
+            outline: none;
+            border-color: #8b5cf6;
+            box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.3);
+        }
+    </style>
+</head>
+<body class="min-h-screen text-gray-800 flex flex-col items-center py-6 px-4 relative">
+
+    <header class="w-full max-w-4xl text-center mb-8 z-10">
+        <div class="bg-white rounded-3xl p-6 shadow-xl border-4 border-purple-500 relative overflow-hidden">
+            <span class="bg-purple-600 text-white font-bold px-4 py-1 rounded-full text-sm absolute top-4 right-4">الدرس الرابع - الوحدة 2</span>
+            
+            <h1 class="text-3xl md:text-5xl font-black text-purple-900 mb-2 mt-4 flex items-center justify-center gap-3">
+                <span class="ant-helper text-4xl">📊</span> ألغاز النماذج الشريطية
+            </h1>
+            <p class="text-xl text-purple-700 font-bold mb-4">
+                استخدم النماذج الشريطية والمتغيرات لحل المسائل الكلامية في المستعمرة!
+            </p>
+        </div>
+    </header>
+
+    <main class="w-full max-w-4xl z-10 flex flex-col gap-8">
+
+        <!-- قسم المقدمة: استكشف -->
+        <section id="intro-section" class="bg-white rounded-3xl shadow-xl border-4 border-amber-400 p-6 md:p-8">
+            <div class="flex items-center gap-3 mb-4 border-b-2 border-amber-100 pb-4">
+                <span class="text-4xl">🤔</span>
+                <h2 class="text-2xl font-black text-amber-800">استكشف: ما هو المتغير؟</h2>
+            </div>
+            
+            <div class="flex flex-col md:flex-row gap-6 items-center">
+                <div class="flex-1 text-lg font-bold text-gray-700 leading-relaxed">
+                    <p class="mb-2">في الرياضيات، عندما لا نعرف قيمة رقم معين في مسألة، نضع مكانه حرفاً ليحجز مكانه حتى نكتشفه!</p>
+                    <p>هذا الحرف (مثل: <span class="text-purple-600 font-black">a, b, x, y</span>) يسمى <strong class="bg-amber-100 px-2 rounded text-amber-900">متغيراً</strong>.</p>
+                </div>
+                
+                <div class="bg-amber-50 p-4 rounded-2xl border-2 border-amber-200 text-center relative">
+                    <div class="absolute -top-3 -right-3 text-2xl">🐜</div>
+                    <p class="font-bold text-gray-600 mb-2">مثال بسيط:</p>
+                    <p class="text-2xl font-black font-mono text-gray-800" dir="ltr">5 + <span class="text-purple-600">x</span> = 8</p>
+                    <p class="text-sm font-bold text-gray-500 mt-2">ما قيمة <span class="text-purple-600">x</span> هنا؟ (إنها 3!)</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- التحدي الأول: بناء النموذج الشريطي -->
+        <section id="challenge-section" class="bg-white rounded-3xl shadow-xl border-4 border-indigo-400 p-6 md:p-8 relative">
+            
+            <div class="flex justify-between items-center mb-6 border-b-2 border-indigo-100 pb-4">
+                <div class="flex items-center gap-3">
+                    <span class="text-4xl">🧩</span>
+                    <h2 class="text-2xl md:text-3xl font-black text-indigo-800">تعلّم: بناء النموذج الشريطي</h2>
+                </div>
+                <span class="bg-indigo-100 text-indigo-800 font-bold px-3 py-1 rounded-lg text-sm">المسألة <span id="level-counter">1</span>/2</span>
+            </div>
+
+            <!-- نص المسألة -->
+            <div class="bg-indigo-50 p-5 rounded-2xl border-2 border-indigo-200 mb-8">
+                <h3 class="text-xl font-bold text-gray-800 mb-3 flex items-start gap-2">
+                    <span class="mt-1">📜</span>
+                    <span id="problem-text">
+                        <!-- سيتم حقن النص هنا -->
+                        يوجد <span class="font-black text-indigo-700 mx-1">5328</span> نملة في المستعمرة. <span class="font-black text-emerald-700 mx-1">2164</span> نملة من الإناث والباقي من الذكور. ما عدد النمل الذكور في المستعمرة؟
+                    </span>
+                </h3>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-10">
+                
+                <!-- منطقة النموذج الشريطي (Drop Area) -->
+                <div class="flex flex-col items-center">
+                    <h4 class="font-bold text-gray-600 mb-4">اسحب الأرقام والمتغير وضعها في المكان الصحيح:</h4>
+                    
+                    <div class="bar-model-container mb-4">
+                        <!-- الكل (العلوي) -->
+                        <div class="bar-whole droppable" id="drop-whole" data-role="whole">
+                            الكل (المجموع)
+                        </div>
+                        <!-- الأجزاء (السفلي) -->
+                        <div class="bar-parts-row">
+                            <div class="bar-part bar-part-right w-1/2 droppable" id="drop-part1" data-role="part">
+                                جزء 1
+                            </div>
+                            <div class="bar-part bar-part-left w-1/2 droppable" id="drop-part2" data-role="part">
+                                جزء 2
+                            </div>
+                        </div>
+                    </div>
+
+                    <p id="bar-feedback" class="text-sm font-bold text-red-500 h-5 hidden">أكمل النموذج بشكل صحيح!</p>
+                </div>
+
+                <!-- العناصر القابلة للسحب (Drag Items) -->
+                <div class="flex flex-col items-center justify-center bg-gray-50 rounded-2xl border-2 border-dashed border-gray-300 p-6">
+                    <h4 class="font-bold text-gray-600 mb-4">العناصر المتوفرة:</h4>
+                    
+                    <div class="flex flex-wrap gap-4 justify-center" id="drag-items-container">
+                        <!-- سيتم إنشاؤها بـ JS -->
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- قسم كتابة المعادلة والحل (يظهر بعد إكمال النموذج) -->
+            <div id="equation-section" class="mt-10 pt-6 border-t-2 border-gray-200 hidden opacity-0 transition-opacity duration-500">
+                <h4 class="text-xl font-black text-indigo-800 mb-4 text-center">ممتاز! الآن لنكتب المعادلة ونحلها:</h4>
+                
+                <div class="flex flex-col md:flex-row justify-center items-center gap-8">
+                    <!-- المعادلة -->
+                    <div class="bg-white p-4 rounded-xl border-2 border-indigo-200 text-center flex-1">
+                        <p class="font-bold text-gray-500 mb-2">المعادلة (باستخدام النموذج):</p>
+                        <div class="text-2xl font-black font-mono text-gray-800 flex items-center justify-center gap-2" dir="ltr" id="equation-display">
+                            <!-- e.g., 2164 + a = 5328 -->
+                        </div>
+                    </div>
+
+                    <!-- خطوات الحل -->
+                    <div class="bg-indigo-50 p-4 rounded-xl border-2 border-indigo-200 text-center flex-1 w-full md:w-auto">
+                        <p class="font-bold text-gray-500 mb-2">الحل (لإيجاد المتغير):</p>
+                        <div class="flex flex-col items-center gap-2">
+                            <div class="text-lg font-bold font-mono text-gray-700" dir="ltr" id="solution-step">
+                                <!-- e.g., a = 5328 - 2164 -->
+                            </div>
+                            <div class="flex items-center gap-2 text-2xl font-black font-mono text-indigo-900 mt-2" dir="ltr">
+                                <span id="var-name" class="text-purple-600">a</span> = 
+                                <input type="number" id="final-answer" class="equation-input bg-white w-24">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="text-center mt-6">
+                    <button onclick="checkFinalAnswer()" class="btn-playful bg-indigo-600 hover:bg-indigo-700 text-white font-black py-3 px-8 rounded-xl text-xl">
+                        تحقق من الإجابة ✅
+                    </button>
+                    <p id="final-feedback" class="mt-2 font-bold text-lg hidden"></p>
+                </div>
+            </div>
+
+            <!-- زر الانتقال للمسألة التالية -->
+            <div class="text-center mt-6">
+                 <button id="next-btn" onclick="loadNextProblem()" class="hidden btn-playful bg-emerald-500 hover:bg-emerald-600 text-white font-black py-3 px-8 rounded-xl text-xl mx-auto">
+                    المسألة التالية ➡️
+                </button>
+            </div>
+
+        </section>
+
+    </main>
+
+    <script>
+        // --- بيانات المسائل (من الكتاب) ---
+        const problems = [
+            {
+                text: "يوجد <span class='font-black text-indigo-700 mx-1' dir='ltr'>5328</span> نملة في المستعمرة. <span class='font-black text-emerald-700 mx-1' dir='ltr'>2164</span> نملة من الإناث والباقي من الذكور. ما عدد النمل الذكور في المستعمرة؟",
+                whole: 5328,
+                part1: 2164,
+                variable: 'a', // النمل الذكور المجهول
+                answer: 3164, // 5328 - 2164
+                equation: "2164 + a = 5328",
+                solutionStep: "a = 5328 - 2164"
+            },
+            {
+                text: "يوجد <span class='font-black text-indigo-700 mx-1' dir='ltr'>20000</span> نملة في المستعمرة. منها <span class='font-black text-emerald-700 mx-1' dir='ltr'>12000</span> نملة من الإناث والباقي من الذكور. ما عدد النمل الذكور في المستعمرة؟",
+                whole: 20000,
+                part1: 12000,
+                variable: 'b',
+                answer: 8000, // 20000 - 12000
+                equation: "12000 + b = 20000",
+                solutionStep: "b = 20000 - 12000"
+            }
+        ];
+
+        let currentProblemIndex = 0;
+        let placedItems = 0; // Number of items successfully placed in the bar model
+
+        // --- تهيئة اللعبة ---
+        function initGame() {
+            loadProblem(currentProblemIndex);
+            setupDragAndDrop();
+        }
+
+        function loadProblem(index) {
+            const problem = problems[index];
+            placedItems = 0;
+
+            // تحديث الواجهة
+            document.getElementById('level-counter').innerText = index + 1;
+            document.getElementById('problem-text').innerHTML = problem.text;
+            
+            // إخفاء الأقسام اللاحقة وإعادة تعيين الحقول
+            document.getElementById('equation-section').classList.add('hidden', 'opacity-0');
+            document.getElementById('next-btn').classList.add('hidden');
+            document.getElementById('final-answer').value = '';
+            document.getElementById('final-answer').classList.remove('bg-green-100', 'border-green-500', 'text-green-800', 'shake', 'border-red-400');
+            document.getElementById('final-feedback').classList.add('hidden');
+            document.getElementById('bar-feedback').classList.add('hidden');
+
+            // إعادة تعيين النموذج الشريطي
+            const dropZones = document.querySelectorAll('.droppable');
+            dropZones.forEach(zone => {
+                zone.innerHTML = zone.id === 'drop-whole' ? 'الكل (المجموع)' : (zone.id === 'drop-part1' ? 'جزء 1' : 'جزء 2');
+                zone.classList.remove('filled', 'filled-whole', 'filled-part');
+                zone.dataset.filledWith = "";
+            });
+
+            // إنشاء العناصر القابلة للسحب
+            const dragContainer = document.getElementById('drag-items-container');
+            dragContainer.innerHTML = '';
+            
+            const itemsToDrag = [
+                { value: problem.whole, type: 'whole', text: problem.whole },
+                { value: problem.part1, type: 'part', text: problem.part1 },
+                { value: problem.variable, type: 'variable', text: problem.variable }
+            ];
+
+            // خلط العناصر العشوائي
+            itemsToDrag.sort(() => Math.random() - 0.5);
+
+            itemsToDrag.forEach((item, i) => {
+                const el = document.createElement('div');
+                el.className = "draggable-item bg-white px-6 py-3 rounded-xl border-2 border-gray-300 shadow-sm font-black font-mono text-2xl text-gray-800";
+                el.draggable = true;
+                el.id = `drag-${i}`;
+                el.innerText = item.text;
+                // تخزين نوع العنصر لمعرفة هل يجب وضعه في الأعلى (الكل) أم الأسفل (جزء)
+                el.dataset.type = item.type;
+                el.dataset.value = item.value;
+                
+                // متغيرات الألوان الخاصة
+                if(item.type === 'variable') el.classList.add('text-purple-600', 'bg-purple-50', 'border-purple-300');
+
+                dragContainer.appendChild(el);
+            });
+
+            setupDragAndDrop(); // إعادة ربط الأحداث للعناصر الجديدة
+        }
+
+
+        // --- منطق السحب والإفلات (Drag and Drop) ---
+        function setupDragAndDrop() {
+            const draggables = document.querySelectorAll('.draggable-item');
+            const droppables = document.querySelectorAll('.droppable');
+
+            draggables.forEach(draggable => {
+                draggable.addEventListener('dragstart', () => {
+                    draggable.classList.add('dragging');
+                });
+
+                draggable.addEventListener('dragend', () => {
+                    draggable.classList.remove('dragging');
+                });
+            });
+
+            droppables.forEach(zone => {
+                // منع السلوك الافتراضي للسماح بالإفلات
+                zone.addEventListener('dragover', e => {
+                    e.preventDefault();
+                    if(!zone.classList.contains('filled')) {
+                        zone.classList.add('drag-over');
+                    }
+                });
+
+                zone.addEventListener('dragleave', () => {
+                    zone.classList.remove('drag-over');
+                });
+
+                zone.addEventListener('drop', e => {
+                    e.preventDefault();
+                    zone.classList.remove('drag-over');
+                    
+                    if (zone.classList.contains('filled')) return; // لا تقبل إذا كانت ممتلئة
+
+                    const draggable = document.querySelector('.dragging');
+                    if (!draggable) return;
+
+                    const itemType = draggable.dataset.type; // 'whole', 'part', 'variable'
+                    const zoneRole = zone.dataset.role;      // 'whole', 'part'
+
+                    // منطق التحقق: 
+                    // - المجموع (whole) يجب أن يذهب إلى منطقة 'الكل' (whole)
+                    // - الأجزاء والمتغير (part, variable) تذهب إلى مناطق 'الأجزاء' (part)
+                    
+                    let isCorrectPlacement = false;
+                    
+                    if (itemType === 'whole' && zoneRole === 'whole') {
+                        isCorrectPlacement = true;
+                    } else if ((itemType === 'part' || itemType === 'variable') && zoneRole === 'part') {
+                        isCorrectPlacement = true;
+                    }
+
+                    if (isCorrectPlacement) {
+                        // وضع صحيح
+                        zone.innerHTML = draggable.innerText;
+                        zone.classList.add('filled');
+                        if (zoneRole === 'whole') {
+                            zone.classList.add('filled-whole');
+                        } else {
+                            zone.classList.add('filled-part');
+                            if(itemType === 'variable') zone.classList.add('text-purple-700'); // تمييز المتغير
+                        }
+                        
+                        // إخفاء العنصر من قائمة السحب
+                        draggable.style.display = 'none';
+                        placedItems++;
+
+                        checkBarModelComplete();
+                    } else {
+                        // وضع خاطئ (هز منطقة الإفلات)
+                        zone.classList.add('shake', 'border-red-400', 'bg-red-50');
+                        setTimeout(() => zone.classList.remove('shake', 'border-red-400', 'bg-red-50'), 500);
+                        
+                        const fb = document.getElementById('bar-feedback');
+                        fb.innerText = itemType === 'whole' ? "المجموع الكلي يوضع في المستطيل العلوي!" : "الأجزاء والمتغيرات توضع في المستطيلات السفلية!";
+                        fb.classList.remove('hidden');
+                        setTimeout(() => fb.classList.add('hidden'), 2000);
+                    }
+                });
+            });
+        }
+
+        // --- التحقق من اكتمال النموذج الشريطي ---
+        function checkBarModelComplete() {
+            if (placedItems === 3) {
+                // اكتمل النموذج، إظهار قسم المعادلة
+                const problem = problems[currentProblemIndex];
+                
+                document.getElementById('equation-display').innerText = problem.equation;
+                document.getElementById('solution-step').innerText = problem.solutionStep;
+                document.getElementById('var-name').innerText = problem.variable;
+
+                const eqSection = document.getElementById('equation-section');
+                eqSection.classList.remove('hidden');
+                setTimeout(() => eqSection.classList.remove('opacity-0'), 100);
+                
+                // التمرير للأسفل قليلاً
+                setTimeout(() => {
+                    eqSection.scrollIntoView({ behavior: 'smooth', block: 'end' });
+                }, 300);
+            }
+        }
+
+        // --- التحقق من الإجابة النهائية ---
+        function checkFinalAnswer() {
+            const inputEl = document.getElementById('final-answer');
+            const feedback = document.getElementById('final-feedback');
+            const answer = parseInt(inputEl.value);
+            const problem = problems[currentProblemIndex];
+
+            if (answer === problem.answer) {
+                // إجابة صحيحة
+                inputEl.classList.add('bg-green-100', 'border-green-500', 'text-green-800');
+                feedback.innerHTML = `✅ أحسنت! عدد الذكور هو ${problem.answer} نملة.`;
+                feedback.className = "mt-4 font-bold text-lg text-green-700 bg-green-100 px-6 py-2 rounded-xl inline-block";
+                feedback.classList.remove('hidden');
+                
+                // إظهار زر المسألة التالية
+                document.getElementById('next-btn').classList.remove('hidden');
+
+            } else {
+                // إجابة خاطئة
+                inputEl.classList.add('shake', 'border-red-400', 'bg-red-50');
+                feedback.innerHTML = "❌ راجع عملية الطرح مرة أخرى.";
+                feedback.className = "mt-4 font-bold text-lg text-red-700";
+                feedback.classList.remove('hidden');
+                
+                setTimeout(() => {
+                    inputEl.classList.remove('shake', 'border-red-400', 'bg-red-50');
+                }, 500);
+            }
+        }
+
+        function loadNextProblem() {
+            currentProblemIndex++;
+            if (currentProblemIndex < problems.length) {
+                loadProblem(currentProblemIndex);
+                // التمرير لأعلى الصفحة
+                document.getElementById('challenge-section').scrollIntoView({ behavior: 'smooth', block: 'start' });
+            } else {
+                // نهاية الدرس
+                document.getElementById('challenge-section').innerHTML = `
+                    <div class="text-center p-10">
+                        <div class="text-7xl mb-6 animate-bounce">🏆</div>
+                        <h2 class="text-4xl font-black text-indigo-800 mb-4">أنت خبير النماذج الشريطية!</h2>
+                        <p class="text-xl text-gray-700 font-bold mb-8">لقد ساعدت المستعمرة في حل جميع المسائل المعقدة بنجاح.</p>
+                        <button onclick="location.reload()" class="btn-playful bg-indigo-600 hover:bg-indigo-700 text-white font-black py-3 px-8 rounded-xl text-xl">
+                            إعادة اللعب 🔄
+                        </button>
+                    </div>
+                `;
+            }
+        }
+
+        // بدء اللعبة عند تحميل الصفحة
+        window.onload = initGame;
+
+    </script>
+</body>
+</html>
+```
+ 

@@ -1,0 +1,612 @@
+ <!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>مختبر الأنماط السحري - لوحة المائة</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700;900&display=swap" rel="stylesheet">
+    
+    <style>
+        body {
+            font-family: 'Tajawal', sans-serif;
+            background-color: #f0fdfa; /* Teal-50: A fresh, engaging background */
+            background-image: 
+                radial-gradient(#ccfbf1 2px, transparent 2px), /* Teal-100 dots */
+                linear-gradient(to right, rgba(204, 251, 241, 0.5) 1px, transparent 1px),
+                linear-gradient(to bottom, rgba(204, 251, 241, 0.5) 1px, transparent 1px);
+            background-size: 30px 30px, 100px 100px, 100px 100px;
+            overflow-x: hidden;
+            color: #1e293b; /* Slate-800 for better contrast */
+        }
+
+        .btn-playful {
+            transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1); /* Bouncy transition */
+            position: relative;
+            transform-style: preserve-3d;
+            box-shadow: 0 6px 0 rgba(0,0,0,0.15);
+        }
+        .btn-playful:active:not(:disabled) {
+            transform: translateY(6px);
+            box-shadow: 0 0px 0 rgba(0,0,0,0);
+        }
+        .btn-playful:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none !important;
+            box-shadow: 0 6px 0 rgba(0,0,0,0.1) !important;
+            filter: grayscale(0.5);
+        }
+
+        .hundreds-grid {
+            display: grid;
+            grid-template-columns: repeat(10, 1fr);
+            gap: 4px;
+            background: linear-gradient(135deg, #475569, #334155); /* Sophisticated Slate gradient */
+            border: 6px solid #1e293b;
+            padding: 6px;
+            border-radius: 16px;
+            margin: 0 auto;
+            width: fit-content;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3), inset 0 2px 10px rgba(0,0,0,0.5);
+            position: relative;
+        }
+
+        /* Grid coordinate labels (optional enhancement) */
+        .grid-wrapper {
+            position: relative;
+            padding: 1rem;
+        }
+
+        .grid-cell {
+            width: 38px;
+            height: 38px;
+            background-color: #f8fafc;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.1rem;
+            font-weight: 800;
+            font-family: monospace;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            user-select: none;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1), inset 0 -2px 0 rgba(0,0,0,0.05);
+            color: #475569;
+            border: 1px solid #e2e8f0;
+        }
+        
+        @media (min-width: 768px) {
+            .grid-cell { width: 50px; height: 50px; font-size: 1.4rem; border-radius: 8px;}
+        }
+
+        .grid-cell:hover:not(.locked) {
+            background-color: #e2e8f0;
+            transform: scale(1.1) translateY(-2px);
+            z-index: 10;
+            box-shadow: 0 6px 10px rgba(0,0,0,0.15);
+            color: #0f172a;
+            border-color: #cbd5e1;
+        }
+
+        /* Factor 2: Bouncy Blue */
+        .factor-2 { 
+            background: linear-gradient(135deg, #60a5fa, #3b82f6) !important; 
+            color: white; 
+            border: 2px solid #2563eb; 
+            font-weight: 900; 
+            box-shadow: 0 4px 6px rgba(59, 130, 246, 0.3), inset 0 2px 0 rgba(255,255,255,0.4);
+            text-shadow: 1px 1px 0 rgba(0,0,0,0.2);
+        }
+        /* Factor 5: Grass Green */
+        .factor-5 { 
+            background: linear-gradient(135deg, #4ade80, #22c55e) !important; 
+            color: white; 
+            border: 2px solid #16a34a; 
+            font-weight: 900; 
+            box-shadow: 0 4px 6px rgba(34, 197, 94, 0.3), inset 0 2px 0 rgba(255,255,255,0.4);
+            text-shadow: 1px 1px 0 rgba(0,0,0,0.2);
+        }
+        /* Factor 10: Golden Yellow */
+        .factor-10 { 
+            background: linear-gradient(135deg, #facc15, #eab308) !important; 
+            color: #713f12; 
+            border: 2px solid #ca8a04; 
+            font-weight: 900; 
+            box-shadow: 0 4px 6px rgba(234, 179, 8, 0.3), inset 0 2px 0 rgba(255,255,255,0.6);
+        }
+
+        /* Special combined class for multi-factors (optional if you expand later) */
+        .factor-overlap {
+            background: linear-gradient(45deg, #3b82f6 50%, #22c55e 50%) !important;
+            color: white;
+            border-radius: 50%; /* Make overlap distinct */
+        }
+
+        .shake { animation: shake 0.5s cubic-bezier(.36,.07,.19,.97) both; }
+        @keyframes shake {
+            10%, 90% { transform: translate3d(-1px, 0, 0); background-color: #fecaca; color: #991b1b; }
+            20%, 80% { transform: translate3d(2px, 0, 0); background-color: #fecaca; color: #991b1b; }
+            30%, 50%, 70% { transform: translate3d(-4px, 0, 0); background-color: #fca5a5; color: #991b1b; }
+            40%, 60% { transform: translate3d(4px, 0, 0); background-color: #fca5a5; color: #991b1b; }
+        }
+
+        .pop-in { animation: popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; }
+        @keyframes popIn {
+            0% { transform: scale(0.3) rotate(-10deg); opacity: 0; }
+            50% { transform: scale(1.2) rotate(5deg); opacity: 1; }
+            100% { transform: scale(1) rotate(0deg); opacity: 1; }
+        }
+
+        .flash-magic { animation: flashMagic 1.2s ease-out; }
+        @keyframes flashMagic {
+            0% { box-shadow: 0 0 0 0 rgba(14, 165, 233, 0.8); }
+            50% { box-shadow: 0 0 0 30px rgba(14, 165, 233, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(14, 165, 233, 0); }
+        }
+
+        .float-emoji { animation: floatEmoji 3s ease-in-out infinite; }
+        @keyframes floatEmoji {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+        
+        .pulse-border { animation: pulseBorder 2s infinite; }
+        @keyframes pulseBorder {
+            0% { box-shadow: 0 0 0 0 rgba(59, 130, 246, 0.4); }
+            70% { box-shadow: 0 0 0 10px rgba(59, 130, 246, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(59, 130, 246, 0); }
+        }
+
+    </style>
+</head>
+<body class="min-h-screen flex flex-col items-center py-6 px-4 relative">
+
+    <header class="w-full max-w-6xl text-center mb-8 z-10">
+        <div class="bg-white rounded-3xl p-6 shadow-2xl border-4 border-teal-500 relative overflow-hidden">
+            <!-- Decorative Elements -->
+            <div class="absolute -top-6 -left-6 text-6xl opacity-10 rotate-12">🔢</div>
+            <div class="absolute -bottom-4 -right-4 text-7xl opacity-10 -rotate-12">✨</div>
+            
+            <span class="bg-teal-600 text-white font-bold px-4 py-1 rounded-full text-sm absolute top-4 right-4 shadow-sm">الدرس الأول - الوحدة 6</span>
+            
+            <h1 class="text-3xl md:text-5xl font-black text-teal-900 mb-2 mt-4 flex items-center justify-center gap-3">
+                <span class="float-emoji">🧩</span> مختبر الأنماط السحري <span class="float-emoji" style="animation-delay: 1.5s;">✨</span>
+            </h1>
+            <p class="text-lg md:text-xl text-teal-700 font-bold mb-4 max-w-2xl mx-auto">
+                استكشف لوحة المائة واكتشف الأسرار المخبأة خلف القفز بالأرقام (2، 5، 10). هل أنت مستعد لتكون عالم رياضيات؟
+            </p>
+        </div>
+    </header>
+
+    <main class="w-full max-w-6xl z-10 flex flex-col xl:flex-row gap-8">
+        
+        <!-- Left/Top Section: Controls & Instructions -->
+        <section class="w-full xl:w-1/3 flex flex-col gap-6">
+            
+            <div class="bg-white rounded-3xl p-6 shadow-xl border-4 border-slate-300 relative">
+                <div class="absolute top-0 right-0 bg-slate-200 text-slate-700 text-xs font-bold px-3 py-1 rounded-bl-xl rounded-tr-2xl">لوحة التحكم</div>
+                <h2 class="text-2xl font-black text-slate-800 mb-6 mt-2 text-center flex justify-center items-center gap-2">
+                    <span>🎮</span> اختر التحدي:
+                </h2>
+                
+                <div class="flex flex-col gap-4">
+                    <button onclick="startTask(2)" id="btn-task-2" class="btn-playful bg-blue-50 hover:bg-blue-100 border-2 border-blue-400 text-blue-900 font-black py-4 px-6 rounded-2xl text-xl flex justify-between items-center transition-all pulse-border">
+                        <div class="flex items-center gap-3">
+                            <span class="bg-blue-200 text-blue-800 rounded-lg p-2 font-mono">x2</span>
+                            <span>القفز بمقدار 2</span>
+                        </div>
+                        <span class="text-3xl">🐸</span>
+                    </button>
+                    
+                    <button onclick="startTask(5)" id="btn-task-5" class="btn-playful bg-green-50 hover:bg-green-100 border-2 border-green-400 text-green-900 font-black py-4 px-6 rounded-2xl text-xl flex justify-between items-center transition-all opacity-50" disabled>
+                        <div class="flex items-center gap-3">
+                            <span class="bg-green-200 text-green-800 rounded-lg p-2 font-mono">x5</span>
+                            <span>القفز بمقدار 5</span>
+                        </div>
+                        <span class="text-3xl">🦘</span>
+                    </button>
+                    
+                    <button onclick="startTask(10)" id="btn-task-10" class="btn-playful bg-yellow-50 hover:bg-yellow-100 border-2 border-yellow-400 text-yellow-900 font-black py-4 px-6 rounded-2xl text-xl flex justify-between items-center transition-all opacity-50" disabled>
+                        <div class="flex items-center gap-3">
+                            <span class="bg-yellow-200 text-yellow-800 rounded-lg p-2 font-mono">x10</span>
+                            <span>القفز بمقدار 10</span>
+                        </div>
+                        <span class="text-3xl">🚀</span>
+                    </button>
+                </div>
+            </div>
+
+            <div id="instruction-panel" class="bg-blue-50 rounded-3xl p-6 shadow-inner border-4 border-blue-200 text-center min-h-[250px] flex flex-col justify-center relative overflow-hidden transition-colors duration-500">
+                <div class="absolute -top-4 -left-4 text-6xl opacity-20">🎯</div>
+                
+                <h3 id="instruction-title" class="text-2xl font-black text-blue-900 mb-3">مهمة العامل (2)</h3>
+                <p id="instruction-text" class="text-gray-700 font-bold mb-6 text-lg leading-relaxed">
+                    انقر على لوحة المائة <strong>بالترتيب</strong> للقفز بـ 2 (2, 4, 6...). <br>
+                    <span class="text-blue-600 bg-blue-100 px-2 py-1 rounded-md inline-block mt-2">اكتشف أول 5 أرقام لفتح السحر!</span>
+                </p>
+                
+                <!-- Progress Indicator -->
+                <div class="flex flex-col items-center gap-2 mb-4">
+                    <span class="text-sm font-bold text-gray-500">التقدم:</span>
+                    <div class="flex justify-center gap-3" id="progress-dots" dir="ltr">
+                        <!-- Dots injected via JS -->
+                    </div>
+                </div>
+                
+                <!-- Magic Button (Hidden initially) -->
+                <button onclick="magicFill()" id="btn-magic" class="hidden pop-in btn-playful bg-gradient-to-r from-purple-500 to-indigo-600 hover:from-purple-600 hover:to-indigo-700 text-white font-black py-3 px-6 rounded-xl w-full text-xl shadow-lg mt-2">
+                    إكمال النمط سحرياً ✨
+                </button>
+            </div>
+
+            <div id="rule-box" class="hidden bg-gradient-to-br from-amber-50 to-yellow-100 border-4 border-yellow-400 rounded-3xl p-6 text-center shadow-lg pop-in relative">
+                <div class="absolute -top-5 left-1/2 transform -translate-x-1/2 bg-yellow-400 text-yellow-900 font-black px-4 py-1 rounded-full shadow-sm text-sm border-2 border-white">
+                    القاعدة الذهبية 💡
+                </div>
+                <h4 id="rule-title" class="text-xl font-black text-yellow-800 mt-2 mb-3">نمط مذهل!</h4>
+                <div id="rule-text" class="text-yellow-900 font-bold leading-relaxed text-lg bg-white/60 p-4 rounded-xl border border-yellow-200">
+                    <!-- Rule text injected via JS -->
+                </div>
+                
+                <button onclick="unlockNextTask()" id="btn-next-task" class="mt-6 btn-playful bg-green-500 hover:bg-green-600 text-white font-black py-3 px-6 rounded-xl w-full text-xl shadow-md">
+                    انتقل للمهمة التالية 🔓
+                </button>
+            </div>
+
+        </section>
+
+        <section class="w-full xl:w-2/3 bg-white rounded-3xl shadow-2xl border-4 border-slate-200 p-4 md:p-8 flex flex-col items-center justify-center relative">
+            
+            <div class="absolute top-4 left-4 text-sm font-bold text-slate-400 bg-slate-100 px-3 py-1 rounded-full border border-slate-200">
+                من أسفل إلى أعلى ⬆️
+            </div>
+
+            <div class="grid-wrapper">
+                <!-- Row Labels (10, 20, 30...) - Optional enhancement -->
+                <!-- The Grid Container -->
+                <div id="grid-container" class="hundreds-grid" dir="ltr">
+                    <!-- Cells injected via JS -->
+                </div>
+            </div>
+
+            <!-- Current Pattern Display -->
+            <div id="current-pattern-display" class="mt-8 bg-slate-50 border-2 border-slate-200 rounded-xl p-4 w-full max-w-2xl text-center hidden">
+                <p class="text-sm font-bold text-slate-500 mb-2">النمط المكتشف حتى الآن:</p>
+                <div id="pattern-sequence" class="font-mono text-xl md:text-2xl font-black text-slate-800 flex flex-wrap justify-center gap-2" dir="ltr">
+                    <!-- Sequence injected via JS -->
+                </div>
+            </div>
+
+        </section>
+
+    </main>
+
+    <div id="finalVictory" class="hidden fixed inset-0 bg-slate-900/80 z-50 flex items-center justify-center p-4 backdrop-blur-sm">
+        <div class="bg-white rounded-3xl p-8 md:p-12 shadow-2xl border-8 border-teal-500 text-center max-w-2xl w-full transform transition-all duration-500 scale-95 relative overflow-hidden">
+            <!-- Decorative Confetti bg inside modal -->
+            <div class="absolute inset-0 opacity-10" style="background-image: url('data:image/svg+xml,%3Csvg width=\'60\' height=\'60\' viewBox=\'0 0 60 60\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cg fill=\'none\' fill-rule=\'evenodd\'%3E%3Cg fill=\'%230f172a\' fill-opacity=\'1\'%3E%3Cpath d=\'M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z\'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E');"></div>
+            
+            <div class="text-8xl mb-6 relative z-10 animate-bounce">🎓</div>
+            <h2 class="text-4xl md:text-5xl font-black text-teal-800 mb-6 relative z-10">أنت خبير الأنماط!</h2>
+            
+            <div class="bg-teal-50 p-6 rounded-2xl text-right mb-8 border-4 border-teal-100 shadow-inner relative z-10">
+                <h3 class="text-xl font-bold text-teal-900 mb-4 border-b-2 border-teal-200 pb-2">ملخص ما تعلمناه اليوم:</h3>
+                <ul class="list-none space-y-4">
+                    <li class="flex items-center gap-3">
+                        <span class="w-10 h-10 rounded-full bg-blue-500 flex items-center justify-center text-white font-black shadow-md shrink-0">2</span>
+                        <span class="text-lg font-bold text-slate-700">أرقام تبدأ بـ <strong class="text-blue-600 bg-blue-100 px-1 rounded">0, 2, 4, 6, 8</strong> (تسمى أعداد زوجية وتشكل أعمدة مخططة).</span>
+                    </li>
+                    <li class="flex items-center gap-3">
+                        <span class="w-10 h-10 rounded-full bg-green-500 flex items-center justify-center text-white font-black shadow-md shrink-0">5</span>
+                        <span class="text-lg font-bold text-slate-700">أرقام تنتهي بـ <strong class="text-green-600 bg-green-100 px-1 rounded">0 أو 5</strong> (تشكل عمودين مستقيمين).</span>
+                    </li>
+                    <li class="flex items-center gap-3">
+                        <span class="w-10 h-10 rounded-full bg-yellow-400 flex items-center justify-center text-yellow-900 font-black shadow-md shrink-0">10</span>
+                        <span class="text-lg font-bold text-slate-700">أرقام تنتهي بـ <strong class="text-yellow-600 bg-yellow-100 px-1 rounded">0</strong> فقط (تشكل عموداً واحداً في الطرف).</span>
+                    </li>
+                </ul>
+            </div>
+            
+            <button onclick="location.reload()" class="btn-playful bg-teal-600 hover:bg-teal-700 text-white font-black py-4 px-12 rounded-2xl text-2xl w-full shadow-lg relative z-10">
+                إعادة اللعب والتجربة 🔄
+            </button>
+        </div>
+    </div>
+
+    <script>
+        // --- Application State ---
+        let currentTask = 2; // Active factor (2, 5, or 10)
+        let foundCount = 0;  // How many correct numbers clicked
+        const requiredToFind = { 2: 5, 5: 5, 10: 3 }; // Target clicks per task
+        let highestFound = 0; // Tracks sequence progression
+        let discoveredSequence = []; // Stores clicked numbers for display
+
+        // Theme colors for dynamic UI updates
+        const themes = {
+            2: { bg: 'bg-blue-50', border: 'border-blue-200', text: 'text-blue-900', highlight: 'text-blue-600', dot: 'bg-blue-500 border-blue-600' },
+            5: { bg: 'bg-green-50', border: 'border-green-200', text: 'text-green-900', highlight: 'text-green-600', dot: 'bg-green-500 border-green-600' },
+            10: { bg: 'bg-yellow-50', border: 'border-yellow-200', text: 'text-yellow-900', highlight: 'text-yellow-600', dot: 'bg-yellow-400 border-yellow-500' }
+        };
+
+        // --- Initialization ---
+        window.onload = () => {
+            initGrid();
+            startTask(2); // Start with factor 2
+        };
+
+        function initGrid() {
+            const container = document.getElementById('grid-container');
+            container.innerHTML = '';
+            
+            // Build grid bottom-up (Row 9 to 0) based on standard 100-chart layout
+            for (let row = 9; row >= 0; row--) {
+                for (let col = 1; col <= 10; col++) {
+                    const num = (row * 10) + col;
+                    const cell = document.createElement('div');
+                    cell.className = 'grid-cell';
+                    cell.innerText = num;
+                    cell.id = `cell-${num}`;
+                    // Attach click handler
+                    cell.onclick = () => handleCellClick(num, cell);
+                    container.appendChild(cell);
+                }
+            }
+        }
+
+        function startTask(factor) {
+            currentTask = factor;
+            foundCount = 0;
+            highestFound = 0;
+            discoveredSequence = [];
+            
+            // Reset UI Elements
+            document.getElementById('rule-box').classList.add('hidden');
+            document.getElementById('btn-magic').classList.add('hidden');
+            document.getElementById('btn-magic').disabled = false; // إصلاح: إعادة تفعيل الزر السحري
+            document.getElementById('current-pattern-display').classList.remove('hidden');
+            updateSequenceDisplay();
+            
+            // Update Instruction Panel Styling
+            const panel = document.getElementById('instruction-panel');
+            const title = document.getElementById('instruction-title');
+            const text = document.getElementById('instruction-text');
+            const theme = themes[factor];
+            
+            // Reset panel classes
+            panel.className = `rounded-3xl p-6 shadow-inner border-4 text-center min-h-[250px] flex flex-col justify-center relative overflow-hidden transition-colors duration-500 ${theme.bg} ${theme.border}`;
+            title.className = `text-2xl font-black mb-3 ${theme.text}`;
+            
+            // Set dynamic instructions
+            let emoji = factor === 2 ? '🐸' : factor === 5 ? '🦘' : '🚀';
+            title.innerText = `مهمة العامل (${factor}) ${emoji}`;
+            
+            const targetClicks = requiredToFind[factor];
+            text.innerHTML = `انقر على لوحة المائة <strong>بالترتيب</strong> للقفز بـ ${factor} (${factor}, ${factor*2}, ${factor*3}...). <br><span class="${theme.highlight} ${theme.bg} px-2 py-1 rounded-md inline-block mt-2 font-black border border-current opacity-80">اكتشف أول ${targetClicks} أرقام لفتح السحر!</span>`;
+
+            // Reset Grid Cells (Clear locked states and colors)
+            const cells = document.querySelectorAll('.grid-cell');
+            cells.forEach(cell => {
+                cell.className = 'grid-cell'; 
+            });
+
+            // Update Task Buttons Visual State
+            [2, 5, 10].forEach(f => {
+                const btn = document.getElementById(`btn-task-${f}`);
+                if (f === factor) {
+                    btn.classList.add('pulse-border', 'ring-4', 'ring-opacity-50');
+                    if(f===2) btn.classList.add('ring-blue-400');
+                    if(f===5) btn.classList.add('ring-green-400');
+                    if(f===10) btn.classList.add('ring-yellow-400');
+                } else {
+                    btn.classList.remove('pulse-border', 'ring-4', 'ring-opacity-50', 'ring-blue-400', 'ring-green-400', 'ring-yellow-400');
+                }
+            });
+
+            updateProgressDots();
+        }
+
+        function updateProgressDots() {
+            const dotsContainer = document.getElementById('progress-dots');
+            dotsContainer.innerHTML = '';
+            const target = requiredToFind[currentTask];
+            const theme = themes[currentTask];
+            
+            for (let i = 0; i < target; i++) {
+                const dot = document.createElement('div');
+                let dotClass = `w-5 h-5 rounded-full border-2 transition-all duration-300 `;
+                
+                if (i < foundCount) {
+                    // Filled dot
+                    dotClass += `${theme.dot} scale-110 shadow-sm`;
+                } else {
+                    // Empty dot
+                    dotClass += `bg-white border-slate-300`;
+                }
+                
+                dot.className = dotClass;
+                dotsContainer.appendChild(dot);
+            }
+        }
+
+        function updateSequenceDisplay() {
+            const seqContainer = document.getElementById('pattern-sequence');
+            if (discoveredSequence.length === 0) {
+                seqContainer.innerHTML = '<span class="text-slate-400 font-sans text-lg">ابدأ النقر...</span>';
+            } else {
+                seqContainer.innerHTML = discoveredSequence.map(n => `<span class="bg-white px-2 py-1 rounded shadow-sm border border-slate-200">${n}</span>`).join(' , ') + ' ...';
+            }
+        }
+
+        function handleCellClick(num, cell) {
+            // Ignore if already clicked/locked
+            if (cell.classList.contains('locked')) return;
+
+            const expectedNext = highestFound + currentTask;
+
+            if (num === expectedNext) {
+                // Correct Selection
+                cell.classList.add(`factor-${currentTask}`, 'locked', 'pop-in');
+                foundCount++;
+                highestFound = num;
+                discoveredSequence.push(num);
+                
+                updateProgressDots();
+                updateSequenceDisplay();
+
+                const target = requiredToFind[currentTask];
+                if (foundCount === target) {
+                    // Target reached, reveal Magic Button
+                    const magicBtn = document.getElementById('btn-magic');
+                    magicBtn.classList.remove('hidden');
+                    // Stop pulsing the task button
+                    document.getElementById(`btn-task-${currentTask}`).classList.remove('pulse-border');
+                }
+
+            } else {
+                // Incorrect Selection (Wrong number or out of order)
+                cell.classList.add('shake');
+                setTimeout(() => cell.classList.remove('shake'), 500);
+            }
+        }
+
+        function magicFill() {
+            const magicBtn = document.getElementById('btn-magic');
+            magicBtn.classList.add('hidden');
+            magicBtn.disabled = true; // prevent double clicks
+
+            const gridContainer = document.getElementById('grid-container');
+            gridContainer.classList.add('flash-magic');
+            setTimeout(() => gridContainer.classList.remove('flash-magic'), 1200);
+
+            let delayMultiplier = 0;
+            
+            // Loop through remaining numbers and highlight multiples
+            for (let i = 1; i <= 100; i++) {
+                if (i % currentTask === 0) {
+                    const cell = document.getElementById(`cell-${i}`);
+                    if (!cell.classList.contains('locked')) {
+                        delayMultiplier++;
+                        // Staggered animation effect
+                        setTimeout(() => {
+                            cell.classList.add(`factor-${currentTask}`, 'locked', 'pop-in');
+                        }, delayMultiplier * 40); // 40ms per cell
+                    }
+                }
+            }
+
+            // Calculate total animation time before showing rule
+            const totalDelay = (delayMultiplier * 40) + 500;
+            setTimeout(showGoldenRule, totalDelay);
+        }
+
+        function showGoldenRule() {
+            const ruleBox = document.getElementById('rule-box');
+            const ruleText = document.getElementById('rule-text');
+            const ruleTitle = document.getElementById('rule-title');
+            const btnNext = document.getElementById('btn-next-task');
+
+            ruleBox.classList.remove('hidden');
+            
+            // Scroll to rule box smoothly
+            ruleBox.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+
+            if (currentTask === 2) {
+                ruleTitle.innerText = "سر الأعداد الزوجية!";
+                ruleText.innerHTML = `هل تلاحظ النمط البصري؟ لقد تشكلت <strong>أعمدة مقلمة</strong>! <br>كل الأعداد المظللة تنتهي (رقم آحادها) بـ: <br><div class="mt-2 text-3xl font-black text-blue-600 font-mono tracking-widest" dir="ltr">0, 2, 4, 6, 8</div>هذه هي الأعداد الزوجية!`;
+                btnNext.innerText = "انتقل لمهمة القفز بـ 5 🔓";
+                btnNext.className = "mt-6 btn-playful bg-green-500 hover:bg-green-600 text-white font-black py-3 px-6 rounded-xl w-full text-xl shadow-md";
+            } else if (currentTask === 5) {
+                ruleTitle.innerText = "عمودان فقط!";
+                ruleText.innerHTML = `رائع! انظر للوحة، لقد تشكل <strong>عمودان فقط</strong>.<br>كل الأعداد التي تتضمن العامل 5 تنتهي دائماً بـ: <br><div class="mt-2 text-3xl font-black text-green-600 font-mono tracking-widest" dir="ltr">0 أو 5</div>في خانة الآحاد!`;
+                btnNext.innerText = "انتقل لمهمة القفز بـ 10 🔓";
+                btnNext.className = "mt-6 btn-playful bg-yellow-500 hover:bg-yellow-600 text-yellow-900 font-black py-3 px-6 rounded-xl w-full text-xl shadow-md";
+            } else if (currentTask === 10) {
+                ruleTitle.innerText = "عمود واحد مستقيم!";
+                ruleText.innerHTML = `أسهل نمط! عمود واحد فقط في أقصى اليمين. <br>كل مضاعفات العدد 10 تنتهي دائماً بـ: <br><div class="mt-2 text-4xl font-black text-yellow-600 font-mono" dir="ltr">0</div>في خانة الآحاد.`;
+                btnNext.innerText = "إنهاء التحدي 🏆";
+                btnNext.className = "mt-6 btn-playful bg-gradient-to-r from-teal-500 to-emerald-500 hover:from-teal-600 hover:to-emerald-600 text-white font-black py-3 px-6 rounded-xl w-full text-xl shadow-md";
+            }
+        }
+
+        function unlockNextTask() {
+            if (currentTask === 2) {
+                // Unlock 5
+                const btn5 = document.getElementById('btn-task-5');
+                btn5.classList.remove('opacity-50');
+                btn5.disabled = false;
+                
+                // Mark 2 as done
+                const btn2 = document.getElementById('btn-task-2');
+                btn2.classList.replace('bg-blue-50', 'bg-slate-100');
+                btn2.classList.replace('border-blue-400', 'border-slate-300');
+                btn2.querySelector('span').innerText += " ✓";
+                
+                startTask(5);
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+                
+            } else if (currentTask === 5) {
+                // Unlock 10
+                const btn10 = document.getElementById('btn-task-10');
+                btn10.classList.remove('opacity-50');
+                btn10.disabled = false;
+                
+                // Mark 5 as done
+                const btn5 = document.getElementById('btn-task-5');
+                btn5.classList.replace('bg-green-50', 'bg-slate-100');
+                btn5.classList.replace('border-green-400', 'border-slate-300');
+                btn5.querySelector('span').innerText += " ✓";
+
+                startTask(10);
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+                
+            } else if (currentTask === 10) {
+                // Finish Game
+                const modal = document.getElementById('finalVictory');
+                modal.classList.remove('hidden');
+                setTimeout(() => {
+                    modal.querySelector('div').classList.remove('scale-95');
+                    modal.querySelector('div').classList.add('scale-100');
+                }, 50);
+                
+                confettiEffect();
+            }
+        }
+
+        function confettiEffect() {
+            const colors = ['#3b82f6', '#22c55e', '#eab308', '#a855f7', '#06b6d4'];
+            for(let i=0; i<80; i++) {
+                const conf = document.createElement('div');
+                conf.className = 'absolute w-3 h-3 rounded-sm opacity-90 z-50 pointer-events-none';
+                
+                // Randomize shape (circle or square)
+                if(Math.random() > 0.5) conf.classList.add('rounded-full');
+                
+                conf.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                conf.style.left = Math.random() * 100 + 'vw';
+                conf.style.top = -20 + 'px';
+                
+                // Randomize fall duration and rotation
+                const duration = Math.random() * 3 + 2; 
+                conf.style.transition = `all ${duration}s cubic-bezier(0.25, 0.46, 0.45, 0.94)`;
+                
+                document.body.appendChild(conf);
+                
+                // Trigger animation
+                setTimeout(() => {
+                    conf.style.top = '100vh';
+                    const rotation = Math.random() * 1080;
+                    const drift = Math.random() * 200 - 100;
+                    conf.style.transform = `rotate(${rotation}deg) translateX(${drift}px)`;
+                }, 50);
+                
+                // Cleanup
+                setTimeout(() => {
+                    if (conf.parentNode) conf.parentNode.removeChild(conf);
+                }, duration * 1000 + 100);
+            }
+        }
+    </script>
+</body>
+</html>

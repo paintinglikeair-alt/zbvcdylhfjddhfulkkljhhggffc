@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>القسمة والضرب - التحقق</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700;900&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Tajawal', sans-serif;
+            background-color: #f8fafc; /* خلفية رمادية فاتحة للوحدة */
+            background-image: radial-gradient(#cbd5e1 2px, transparent 2px);
+            background-size: 30px 30px;
+            overflow-x: hidden;
+        }
+
+        .btn-playful {
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 6px 0 rgba(0,0,0,0.2);
+        }
+        .btn-playful:active:not(:disabled) {
+            transform: translateY(6px);
+            box-shadow: 0 0 0 rgba(0,0,0,0);
+        }
+        .btn-playful:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none !important;
+            box-shadow: 0 6px 0 rgba(0,0,0,0.2) !important;
+        }
+
+        .math-input {
+            text-align: center;
+            font-size: 1.5rem;
+            font-weight: 900;
+            border: 3px solid #cbd5e1;
+            border-radius: 0.75rem;
+            background-color: white;
+            transition: all 0.3s;
+            font-family: monospace;
+        }
+        .math-input:focus {
+            outline: none;
+            border-color: #8b5cf6;
+            box-shadow: 0 0 0 4px rgba(139, 92, 246, 0.3);
+        }
+        .input-correct {
+            background-color: #dcfce7 !important;
+            border-color: #22c55e !important;
+            color: #166534 !important;
+        }
+
+        .shake { animation: shake 0.5s cubic-bezier(.36,.07,.19,.97) both; }
+        @keyframes shake {
+            10%, 90% { transform: translate3d(-1px, 0, 0); }
+            20%, 80% { transform: translate3d(2px, 0, 0); }
+            30%, 50%, 70% { transform: translate3d(-4px, 0, 0); }
+            40%, 60% { transform: translate3d(4px, 0, 0); }
+        }
+
+        .pop-in { animation: popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; }
+        @keyframes popIn {
+            0% { transform: scale(0.5); opacity: 0; }
+            80% { transform: scale(1.05); opacity: 1; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        /* تنسيق علامة القسمة المطولة المصغرة للاستكشاف */
+        .div-bracket {
+            border-right: 2px solid #475569;
+            border-top: 2px solid #475569;
+            padding-right: 8px;
+            padding-top: 2px;
+            display: inline-block;
+        }
+        
+        .opt-btn.selected {
+            background-color: #dbeafe !important;
+            border-color: #3b82f6 !important;
+            color: #1e3a8a !important;
+        }
+    </style>
+</head>
+<body class="min-h-screen text-gray-800 flex flex-col items-center py-6 px-4 relative">
+
+    <header class="w-full max-w-5xl text-center mb-8 z-10">
+        <div class="bg-white rounded-3xl p-6 shadow-xl border-4 border-indigo-500 relative overflow-hidden">
+            <span class="bg-indigo-600 text-white font-bold px-4 py-1 rounded-full text-sm absolute top-4 right-4">الدرس الحادي عشر</span>
+            
+            <h1 class="text-3xl md:text-5xl font-black text-indigo-900 mb-2 mt-4 flex items-center justify-center gap-3">
+                <span>🔄</span> القسمة والضرب <span>✅</span>
+            </h1>
+            <p class="text-lg md:text-xl text-indigo-700 font-bold mb-4">
+                تحديد القيمة المكانية للناتج، واستخدام الضرب كسلاح للتحقق!
+            </p>
+        </div>
+    </header>
+
+    <main class="w-full max-w-5xl z-10 flex flex-col gap-8">
+        
+        <!-- القسم الأول: حدد الاختلاف -->
+        <section id="phase1" class="bg-white rounded-3xl shadow-xl border-4 border-sky-400 p-6 md:p-8">
+            <div class="flex items-center gap-3 mb-6 border-b-2 border-sky-100 pb-4">
+                <span class="text-4xl">🕵️‍♂️</span>
+                <h2 class="text-2xl md:text-3xl font-black text-sky-800">استكشف: حدّد الاختلاف</h2>
+            </div>
+            
+            <p class="text-lg font-bold text-gray-700 mb-6 text-center">
+                تأمل مسألتي القسمة التاليتين بعناية. اضغط على <strong>جميع الاختلافات الصحيحة</strong> التي تلاحظها بينهما!
+            </p>
+
+            <div class="flex flex-col md:flex-row justify-center gap-10 mb-8 font-mono text-xl font-bold text-gray-800" dir="ltr">
+                
+                <!-- المسألة 1 -->
+                <div class="bg-sky-50 border-2 border-sky-200 p-6 rounded-2xl flex flex-col items-center w-full max-w-xs shadow-sm">
+                    <p class="text-sm font-bold text-sky-700 font-sans mb-4 border-b border-sky-200 pb-2 w-full text-center" dir="rtl">المسألة (1)</p>
+                    <div class="text-center mb-1 text-indigo-700">313</div>
+                    <div class="flex items-start">
+                        <div class="mt-1 mr-2 text-gray-600">3</div>
+                        <div class="div-bracket flex flex-col items-end">
+                            <div>939</div>
+                            <div class="text-red-500 border-b border-gray-400 pb-1 w-full text-right">- 900</div>
+                            <div>39</div>
+                            <div class="text-red-500 border-b border-gray-400 pb-1 w-full text-right">- 30</div>
+                            <div>9</div>
+                            <div class="text-red-500 border-b border-gray-400 pb-1 w-full text-right">- 9</div>
+                            <div>0</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- المسألة 2 -->
+                <div class="bg-sky-50 border-2 border-sky-200 p-6 rounded-2xl flex flex-col items-center w-full max-w-xs shadow-sm">
+                    <p class="text-sm font-bold text-sky-700 font-sans mb-4 border-b border-sky-200 pb-2 w-full text-center" dir="rtl">المسألة (2)</p>
+                    <div class="text-center mb-1 text-indigo-700 flex flex-col items-center">
+                        <span class="text-xs text-gray-500 font-sans">(باقي القسمة 1)</span>
+                        <span>92</span>
+                    </div>
+                    <div class="flex items-start">
+                        <div class="mt-1 mr-2 text-gray-600">3</div>
+                        <div class="div-bracket flex flex-col items-end">
+                            <div>277</div>
+                            <div class="text-red-500 border-b border-gray-400 pb-1 w-full text-right">- 270</div>
+                            <div>7</div>
+                            <div class="text-red-500 border-b border-gray-400 pb-1 w-full text-right">- 6</div>
+                            <div>1</div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- خيارات الاختلافات -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4" id="diff-options">
+                <button onclick="toggleOption(this, true)" class="opt-btn bg-white border-2 border-gray-300 text-gray-700 font-bold py-3 px-4 rounded-xl text-lg text-right transition-colors">
+                    المسألة (1) انتهت بدون باقٍ (صفر)، بينما المسألة (2) لها باقٍ (1).
+                </button>
+                <button onclick="toggleOption(this, false)" class="opt-btn bg-white border-2 border-gray-300 text-gray-700 font-bold py-3 px-4 rounded-xl text-lg text-right transition-colors">
+                    المقسوم عليه مختلف في المسألتين.
+                </button>
+                <button onclick="toggleOption(this, true)" class="opt-btn bg-white border-2 border-gray-300 text-gray-700 font-bold py-3 px-4 rounded-xl text-lg text-right transition-colors">
+                    الناتج في المسألة (1) مكون من 3 أرقام (مئات)، بينما في المسألة (2) مكون من رقمين (عشرات).
+                </button>
+                <button onclick="toggleOption(this, true)" class="opt-btn bg-white border-2 border-gray-300 text-gray-700 font-bold py-3 px-4 rounded-xl text-lg text-right transition-colors">
+                    الرقم الأول (من اليسار) في المسألة (2) أصغر من المقسوم عليه (2 < 3)، لذلك بدأنا بخانتين (27).
+                </button>
+            </div>
+
+            <div class="text-center mt-8">
+                <button onclick="checkPhase1()" id="btn-p1" class="btn-playful bg-sky-500 hover:bg-sky-600 text-white font-black py-3 px-10 rounded-xl text-xl">
+                    تأكيد ملاحظاتي 🔍
+                </button>
+                <p id="fb-p1" class="hidden mt-4 bg-green-100 text-green-800 border-2 border-green-300 p-4 rounded-xl font-bold text-lg"></p>
+            </div>
+        </section>
+
+        <!-- القسم الثاني: القيمة المكانية والتقدير -->
+        <section id="phase2" class="bg-white rounded-3xl shadow-xl border-4 border-amber-400 p-6 md:p-8 opacity-50 pointer-events-none transition-all duration-500 relative">
+            
+            <div id="p2-lock" class="absolute inset-0 z-20 flex flex-col items-center justify-center bg-white/70 backdrop-blur-sm rounded-3xl">
+                <span class="text-6xl mb-4">🔒</span>
+                <p class="text-2xl font-bold text-gray-800 text-center px-4">اكتشف الاختلافات أولاً لفتح هذه المرحلة!</p>
+            </div>
+
+            <div class="flex items-center gap-3 mb-6 border-b-2 border-amber-100 pb-4">
+                <span class="text-4xl">🧠</span>
+                <h2 class="text-2xl md:text-3xl font-black text-amber-800">تعلّم: أين نضع الرقم الأول؟</h2>
+            </div>
+
+            <div class="bg-amber-50 rounded-2xl p-6 border-2 border-amber-200 mb-8 text-center">
+                <p class="text-xl font-bold text-gray-700 mb-4">قبل أن نحل المسألة التالية، دعنا نفكر في القيمة المكانية للناتج:</p>
+                <p class="text-4xl font-black text-amber-900 font-mono tracking-widest mb-6" dir="ltr">346 ÷ 5</p>
+                
+                <div class="flex flex-col gap-6 max-w-lg mx-auto">
+                    
+                    <div class="bg-white p-4 rounded-xl border border-amber-100 shadow-sm text-right">
+                        <p class="font-bold text-gray-800 mb-3 flex items-center gap-2">
+                            <span class="bg-amber-200 text-amber-900 shrink-0 w-6 h-6 flex items-center justify-center rounded-full text-sm">1</span>
+                            الرقم (3) في خانة المئات أصغر من الرقم (5). كيف نتصرف؟
+                        </p>
+                        <div class="flex flex-col gap-3 justify-center" id="q2-a-btns">
+                            <button onclick="checkQ2A(false, this)" class="w-full text-right bg-gray-100 hover:bg-gray-200 text-gray-700 font-bold py-3 px-4 rounded-lg border-2 border-transparent transition-colors">نقول أن الـ 3 لا تقبل القسمة ونتوقف عن الحل.</button>
+                            <button onclick="checkQ2A(true, this)" class="w-full text-right bg-gray-100 hover:bg-gray-200 text-gray-700 font-bold py-3 px-4 rounded-lg border-2 border-transparent leading-relaxed transition-colors">يوجد حلان: إما أن نأخذ معه العشرات (4) فيصبح 34، أو نضع له صفريه ليصبح 300 (لأن 300 ÷ 5 = 60).</button>
+                        </div>
+                    </div>
+
+                    <div id="q2-b-box" class="hidden mt-4 bg-white p-4 rounded-xl border border-amber-100 shadow-sm text-right pop-in">
+                        <p class="font-bold text-gray-800 mb-3 flex items-center gap-2">
+                            <span class="bg-amber-200 text-amber-900 shrink-0 w-6 h-6 flex items-center justify-center rounded-full text-sm">2</span>
+                            إذن، بما أننا بدأنا بالعشرات (34 عشرة)، أين سنضع أول رقم في ناتج القسمة؟
+                        </p>
+                        <div class="flex gap-3 justify-center" id="q2-b-btns">
+                            <button onclick="checkQ2B(false, this)" class="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-700 font-bold py-2 rounded-lg border-2 border-transparent">فوق خانة المئات</button>
+                            <button onclick="checkQ2B(true, this)" class="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-700 font-bold py-2 rounded-lg border-2 border-transparent">فوق خانة العشرات</button>
+                        </div>
+                    </div>
+
+                    <div id="q2-c-box" class="hidden mt-4 bg-white p-4 rounded-xl border border-amber-100 shadow-sm text-right pop-in">
+                        <p class="font-bold text-gray-800 mb-3 flex items-center gap-2">
+                            <span class="bg-amber-200 text-amber-900 w-6 h-6 flex items-center justify-center rounded-full text-sm">3</span>
+                            ممتاز! بما أننا بدأنا بالعشرات، فالناتج سيتكون من رقمين (عشرات وآحاد). قدر النطاق:
+                        </p>
+                        <div class="flex items-center justify-center gap-3 font-mono text-xl font-black">
+                            <span class="font-sans text-gray-600 font-bold text-base">سيكون الناتج بين</span>
+                            <input type="number" id="est-min" class="math-input text-amber-800 w-20 h-12" placeholder="؟">
+                            <span class="font-sans text-gray-500 font-bold text-sm">(لأن 5×60=300)</span>
+                            <span class="font-sans text-gray-600 font-bold text-base">و</span>
+                            <input type="number" id="est-max" class="math-input text-amber-800 w-20 h-12" placeholder="؟">
+                            <span class="font-sans text-gray-500 font-bold text-sm">(لأن 5×70=350)</span>
+                        </div>
+                        <button onclick="checkEstimation()" id="btn-est" class="mt-4 btn-playful bg-amber-500 hover:bg-amber-600 text-white font-bold py-2 px-6 rounded-xl w-full">تأكيد التقدير</button>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+
+        <!-- القسم الثالث: الحل والتحقق بالضرب -->
+        <section id="phase3" class="bg-white rounded-3xl shadow-xl border-4 border-emerald-400 p-6 md:p-8 opacity-50 pointer-events-none transition-all duration-500 relative">
+            
+            <div id="p3-lock" class="absolute inset-0 z-20 flex flex-col items-center justify-center bg-white/70 backdrop-blur-sm rounded-3xl">
+                <span class="text-6xl mb-4">🔒</span>
+                <p class="text-2xl font-bold text-gray-800 text-center px-4">أكمل التقدير لفتح الحل والتحقق!</p>
+            </div>
+
+            <div class="flex items-center gap-3 mb-6 border-b-2 border-emerald-100 pb-4">
+                <span class="text-4xl">✅</span>
+                <h2 class="text-2xl md:text-3xl font-black text-emerald-800">الحل والتحقق بعملية الضرب</h2>
+            </div>
+
+            <div class="flex flex-col md:flex-row gap-8 items-stretch">
+                
+                <!-- إدخال الحل -->
+                <div class="flex-1 bg-gray-50 rounded-2xl p-6 border-2 border-gray-200 text-center shadow-sm">
+                    <p class="text-xl font-bold text-gray-800 mb-6">بعد إجراء عملية القسمة <span dir="ltr" class="font-mono text-emerald-700 bg-emerald-100 px-2 rounded">346 ÷ 5</span>، اكتب الناتج:</p>
+                    
+                    <div class="flex items-center justify-center gap-4 text-2xl font-black font-mono" dir="ltr">
+                        <span class="font-sans text-gray-600 font-bold text-lg" dir="rtl">خارج القسمة:</span>
+                        <input type="number" id="ans-q" class="math-input text-emerald-800 w-24 h-14" placeholder="؟">
+                        <span class="font-sans text-gray-600 font-bold text-lg" dir="rtl">والباقي:</span>
+                        <input type="number" id="ans-r" class="math-input text-red-600 border-red-300 bg-red-50 w-20 h-14" placeholder="؟">
+                    </div>
+                </div>
+
+                <!-- التحقق بالضرب -->
+                <div class="flex-1 bg-emerald-50 rounded-2xl p-6 border-2 border-emerald-200 text-center shadow-sm relative">
+                    <div class="absolute -top-4 right-4 bg-emerald-500 text-white font-bold px-3 py-1 rounded-full text-sm shadow-md">التحقق 🪄</div>
+                    <p class="text-lg font-bold text-emerald-900 mb-6 mt-2">
+                        للتحقق من إجابتك، استخدم القاعدة:<br>
+                        <span class="bg-white px-3 py-1 rounded-lg border border-emerald-300 mt-2 inline-block shadow-sm">
+                            (خارج القسمة × المقسوم عليه) + الباقي = المقسوم
+                        </span>
+                    </p>
+                    
+                    <div class="flex flex-wrap items-center justify-center gap-3 text-2xl font-black font-mono" dir="ltr">
+                        <span class="text-gray-500">(</span>
+                        <input type="number" id="chk-q" class="math-input text-emerald-800 w-20 h-12" placeholder="الناتج">
+                        <span class="text-emerald-500">×</span>
+                        <span class="text-gray-800">5</span>
+                        <span class="text-gray-500">)</span>
+                        <span class="text-emerald-500">+</span>
+                        <input type="number" id="chk-r" class="math-input text-red-600 bg-red-50 border-red-300 w-16 h-12" placeholder="الباقي">
+                        <span class="text-emerald-500">=</span>
+                        <input type="number" id="chk-div" class="math-input text-indigo-900 w-24 h-12 border-indigo-300" placeholder="المقسوم">
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="text-center mt-8">
+                <button onclick="checkFinalPhase()" id="btn-final" class="btn-playful bg-emerald-600 hover:bg-emerald-700 text-white font-black py-4 px-12 rounded-2xl text-2xl w-full md:w-auto shadow-lg">
+                    تأكيد واختبار التحقق 🏁
+                </button>
+            </div>
+
+        </section>
+
+        <!-- رسالة الفوز النهائية -->
+        <div id="finalVictory" class="hidden fixed inset-0 bg-black/80 z-50 flex items-center justify-center p-4 backdrop-blur-md">
+            <div class="bg-white rounded-3xl p-10 shadow-2xl border-8 border-emerald-500 text-center max-w-lg w-full transform transition-all duration-300 pop-in">
+                <div class="text-8xl mb-4 animate-bounce">🎓</div>
+                <h2 class="text-4xl font-black text-emerald-800 mb-4">أنت أستاذ الرياضيات!</h2>
+                <p class="text-xl text-gray-700 font-bold mb-6 leading-relaxed">
+                    لقد أدركت أهمية تحديد القيمة المكانية قبل الحل، واستخدمت عملية الضرب العكسية لتتأكد من إجابتك بنفسك!
+                </p>
+                <div class="bg-emerald-100 text-emerald-900 font-black font-mono text-2xl py-4 rounded-xl mb-6 border-2 border-emerald-300" dir="ltr">
+                    (69 × 5) + 1 = 346
+                </div>
+                <button onclick="location.reload()" class="btn-playful bg-emerald-600 hover:bg-emerald-700 text-white font-black py-4 px-10 rounded-2xl text-2xl w-full">
+                    تدريب جديد 🔄
+                </button>
+            </div>
+        </div>
+
+    </main>
+
+    <script>
+        function shakeInput(el) {
+            el.classList.add('shake', 'bg-red-50', 'border-red-400', 'text-red-700');
+            setTimeout(() => el.classList.remove('shake', 'bg-red-50', 'border-red-400', 'text-red-700'), 500);
+        }
+
+        // --- Phase 1: Spot the Difference ---
+        let selectedOptions = 0;
+        const correctOptionsNeeded = 3;
+
+        function toggleOption(btn, isCorrectTarget) {
+            btn.classList.toggle('selected');
+            // Allow multiple selections. We check when they click "Confirm"
+        }
+
+        function checkPhase1() {
+            const btns = document.querySelectorAll('.opt-btn');
+            let isAllCorrect = true;
+            let countSelectedCorrect = 0;
+            let countSelectedWrong = 0;
+
+            // Option 1: True
+            // Option 2: False (Divisor is 3 in both)
+            // Option 3: True
+            // Option 4: True
+
+            if (btns[0].classList.contains('selected')) countSelectedCorrect++;
+            if (btns[1].classList.contains('selected')) countSelectedWrong++;
+            if (btns[2].classList.contains('selected')) countSelectedCorrect++;
+            if (btns[3].classList.contains('selected')) countSelectedCorrect++;
+
+            const btnP1 = document.getElementById('btn-p1');
+            const fbP1 = document.getElementById('fb-p1');
+
+            if (countSelectedCorrect === 3 && countSelectedWrong === 0) {
+                btnP1.style.display = 'none';
+                fbP1.innerHTML = "✅ ملاحظة دقيقة! الاختلاف الأساسي هو أن المسألة الثانية تبدأ من خانة العشرات لأن (2 أصغر من 3)، وينتج عنها باقٍ.";
+                fbP1.classList.remove('hidden');
+
+                // Unlock Phase 2
+                setTimeout(() => {
+                    document.getElementById('p2-lock').style.display = 'none';
+                    const p2 = document.getElementById('phase2');
+                    p2.classList.remove('opacity-50', 'pointer-events-none');
+                    p2.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }, 2000);
+
+            } else {
+                btnP1.classList.add('shake', 'bg-red-500');
+                fbP1.innerHTML = "❌ هناك خطأ في اختياراتك. تذكر أن المقسوم عليه هو (3) في كلتا المسألتين! ابحث عن 3 اختلافات صحيحة.";
+                fbP1.className = "mt-4 bg-red-100 text-red-800 border-2 border-red-300 p-4 rounded-xl font-bold text-lg block";
+                setTimeout(() => btnP1.classList.remove('shake', 'bg-red-500'), 500);
+            }
+        }
+
+        // --- Phase 2: Place Value & Estimation ---
+        function checkQ2A(isCorrect, btn) {
+            const btns = document.getElementById('q2-a-btns').children;
+            if (isCorrect) {
+                btn.className = "w-full text-right bg-green-100 border-2 border-green-500 text-green-800 font-bold py-3 px-4 rounded-lg leading-relaxed";
+                for(let b of btns) { if(b !== btn) { b.style.opacity = '0.5'; b.disabled = true; } }
+                
+                const nextBox = document.getElementById('q2-b-box');
+                nextBox.classList.remove('hidden');
+            } else {
+                btn.classList.add('shake', 'bg-red-100', 'border-red-400', 'text-red-800');
+                setTimeout(() => btn.classList.remove('shake', 'bg-red-100', 'border-red-400', 'text-red-800'), 500);
+            }
+        }
+
+        function checkQ2B(isCorrect, btn) {
+            const btns = document.getElementById('q2-b-btns').children;
+            if (isCorrect) {
+                btn.className = "flex-1 bg-green-100 border-2 border-green-500 text-green-800 font-bold py-2 rounded-lg";
+                for(let b of btns) { if(b !== btn) { b.style.opacity = '0.5'; b.disabled = true; } }
+                
+                const nextBox = document.getElementById('q2-c-box');
+                nextBox.classList.remove('hidden');
+            } else {
+                btn.classList.add('shake', 'bg-red-100', 'border-red-400', 'text-red-800');
+                setTimeout(() => btn.classList.remove('shake', 'bg-red-100', 'border-red-400', 'text-red-800'), 500);
+            }
+        }
+
+        function checkEstimation() {
+            const minIn = document.getElementById('est-min');
+            const maxIn = document.getElementById('est-max');
+            const btn = document.getElementById('btn-est');
+            let allCorrect = true;
+
+            if (parseInt(minIn.value) === 60) { minIn.classList.add('input-correct'); minIn.disabled = true; } else { shakeInput(minIn); allCorrect = false; }
+            if (parseInt(maxIn.value) === 70) { maxIn.classList.add('input-correct'); maxIn.disabled = true; } else { shakeInput(maxIn); allCorrect = false; }
+
+            if (allCorrect) {
+                btn.style.display = 'none';
+                
+                // Unlock Phase 3
+                setTimeout(() => {
+                    document.getElementById('p3-lock').style.display = 'none';
+                    const p3 = document.getElementById('phase3');
+                    p3.classList.remove('opacity-50', 'pointer-events-none');
+                    p3.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    document.getElementById('ans-q').focus();
+                }, 1000);
+            }
+        }
+
+        // --- Phase 3: Solve & Check ---
+        function checkFinalPhase() {
+            // 346 / 5 = 69 R 1
+            const ansQ = document.getElementById('ans-q');
+            const ansR = document.getElementById('ans-r');
+            
+            const chkQ = document.getElementById('chk-q');
+            const chkR = document.getElementById('chk-r');
+            const chkDiv = document.getElementById('chk-div');
+
+            let allCorrect = true;
+
+            if (parseInt(ansQ.value) === 69) { ansQ.classList.add('input-correct'); ansQ.disabled = true; } else { shakeInput(ansQ); allCorrect = false; }
+            if (parseInt(ansR.value) === 1) { ansR.classList.add('input-correct', 'bg-green-50'); ansR.classList.replace('border-red-300', 'border-green-500'); ansR.classList.replace('text-red-600', 'text-green-800'); ansR.disabled = true; } else { shakeInput(ansR); allCorrect = false; }
+
+            if (parseInt(chkQ.value) === 69) { chkQ.classList.add('input-correct'); chkQ.disabled = true; } else { shakeInput(chkQ); allCorrect = false; }
+            if (parseInt(chkR.value) === 1) { chkR.classList.add('input-correct', 'bg-green-50'); chkR.classList.replace('border-red-300', 'border-green-500'); chkR.classList.replace('text-red-600', 'text-green-800'); chkR.disabled = true; } else { shakeInput(chkR); allCorrect = false; }
+            if (parseInt(chkDiv.value) === 346) { chkDiv.classList.add('input-correct', 'bg-indigo-50'); chkDiv.classList.replace('border-indigo-300', 'border-green-500'); chkDiv.disabled = true; } else { shakeInput(chkDiv); allCorrect = false; }
+
+            if (allCorrect) {
+                document.getElementById('btn-final').style.display = 'none';
+                
+                setTimeout(() => {
+                    document.getElementById('finalVictory').classList.remove('hidden');
+                    confettiEffect();
+                }, 800);
+            }
+        }
+
+        // --- Celebration Effect ---
+        function confettiEffect() {
+            const colors = ['#10b981', '#3b82f6', '#f59e0b', '#8b5cf6'];
+            for(let i=0; i<60; i++) {
+                const conf = document.createElement('div');
+                conf.className = 'absolute w-3 h-3 rounded-full opacity-90 z-50 pointer-events-none';
+                conf.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                conf.style.left = Math.random() * 100 + 'vw';
+                conf.style.top = (window.scrollY - 20) + 'px';
+                
+                const duration = Math.random() * 3 + 2; 
+                conf.style.transition = `all ${duration}s cubic-bezier(0.25, 0.46, 0.45, 0.94)`;
+                
+                document.body.appendChild(conf);
+                
+                setTimeout(() => {
+                    conf.style.top = (window.scrollY + window.innerHeight + 100) + 'px';
+                    const rotation = Math.random() * 1080;
+                    const drift = Math.random() * 200 - 100;
+                    conf.style.transform = `rotate(${rotation}deg) translateX(${drift}px)`;
+                }, 50);
+                
+                setTimeout(() => { if (conf.parentNode) conf.parentNode.removeChild(conf); }, duration * 1000 + 100);
+            }
+        }
+    </script>
+</body>
+</html>

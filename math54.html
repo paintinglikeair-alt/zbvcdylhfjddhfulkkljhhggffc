@@ -1,0 +1,533 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>خوارزمية القسمة المعيارية</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700;900&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Tajawal', sans-serif;
+            background-color: #faf5ff; /* خلفية بنفسجي فاتح جداً */
+            background-image: radial-gradient(#e9d5ff 2px, transparent 2px);
+            background-size: 30px 30px;
+            overflow-x: hidden;
+        }
+
+        .btn-playful {
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 6px 0 rgba(0,0,0,0.2);
+        }
+        .btn-playful:active:not(:disabled) {
+            transform: translateY(6px);
+            box-shadow: 0 0 0 rgba(0,0,0,0);
+        }
+        .btn-playful:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none !important;
+            box-shadow: 0 6px 0 rgba(0,0,0,0.2) !important;
+        }
+
+        .math-input {
+            text-align: center;
+            font-weight: 900;
+            border: 3px solid #cbd5e1;
+            border-radius: 0.5rem;
+            background-color: white;
+            transition: all 0.3s;
+            font-family: monospace;
+        }
+        .math-input:focus {
+            outline: none;
+            border-color: #8b5cf6;
+            box-shadow: 0 0 0 4px rgba(139, 92, 246, 0.3);
+        }
+        .input-correct {
+            background-color: #dcfce7 !important;
+            border-color: #22c55e !important;
+            color: #166534 !important;
+        }
+
+        .shake { animation: shake 0.5s cubic-bezier(.36,.07,.19,.97) both; }
+        @keyframes shake {
+            10%, 90% { transform: translate3d(-1px, 0, 0); }
+            20%, 80% { transform: translate3d(2px, 0, 0); }
+            30%, 50%, 70% { transform: translate3d(-4px, 0, 0); }
+            40%, 60% { transform: translate3d(4px, 0, 0); }
+        }
+
+        /* تنسيقات القسمة المطولة */
+        .long-division-container {
+            display: grid;
+            grid-template-columns: auto auto auto;
+            gap: 4px;
+            font-family: monospace;
+            font-size: 2rem;
+            font-weight: 900;
+            color: #1e293b;
+            align-items: center;
+            justify-items: center;
+        }
+
+        .division-bracket {
+            border-right: 4px solid #6366f1;
+            border-top: 4px solid #6366f1;
+            padding-right: 12px;
+            padding-top: 8px;
+            position: relative;
+        }
+
+        .sub-line {
+            border-bottom: 4px solid #94a3b8;
+            width: 100%;
+            margin: 4px 0;
+        }
+
+        /* حركات التوجيه */
+        .highlight-box {
+            animation: pulseGlow 1.5s infinite;
+        }
+        @keyframes pulseGlow {
+            0% { box-shadow: 0 0 0 0 rgba(99, 102, 241, 0.5); }
+            70% { box-shadow: 0 0 0 10px rgba(99, 102, 241, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(99, 102, 241, 0); }
+        }
+    </style>
+</head>
+<body class="min-h-screen text-gray-800 flex flex-col items-center py-6 px-4 relative">
+
+    <header class="w-full max-w-4xl text-center mb-8 z-10">
+        <div class="bg-white rounded-3xl p-6 shadow-xl border-4 border-indigo-400 relative overflow-hidden">
+            <span class="bg-indigo-600 text-white font-bold px-4 py-1 rounded-full text-sm absolute top-4 right-4">الدرس العاشر</span>
+            
+            <h1 class="text-3xl md:text-5xl font-black text-indigo-900 mb-2 mt-4 flex items-center justify-center gap-3">
+                <span>➗</span> خوارزمية القسمة المعيارية <span>🎯</span>
+            </h1>
+            <p class="text-lg md:text-xl text-indigo-700 font-bold mb-4">
+                توقع الناتج ذهنياً، ثم احسبه بالخطوات الدقيقة!
+            </p>
+        </div>
+    </header>
+
+    <main class="w-full max-w-4xl z-10 flex flex-col gap-8">
+        
+        <!-- القسم الأول: لعبة التقدير -->
+        <section id="phase1" class="bg-white rounded-3xl shadow-xl border-4 border-fuchsia-400 p-6 md:p-8">
+            <div class="flex items-center justify-between mb-6 border-b-2 border-fuchsia-100 pb-4">
+                <div class="flex items-center gap-3">
+                    <span class="text-4xl">🤔</span>
+                    <h2 class="text-2xl md:text-3xl font-black text-fuchsia-800">استكشف: لعبة التقدير</h2>
+                </div>
+                <div class="bg-fuchsia-100 text-fuchsia-800 font-bold px-4 py-2 rounded-xl border border-fuchsia-200">
+                    تقدم: <span id="est-score" class="font-black text-2xl ml-1">0</span> / 4
+                </div>
+            </div>
+            
+            <p class="text-lg font-bold text-gray-700 mb-6 text-center leading-relaxed">
+                استخدم التقدير للإجابة عن الأسئلة. اختر الإجابة الأقرب في كل مرة.
+            </p>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6" id="estimation-questions">
+                
+                <!-- س1 -->
+                <div class="bg-fuchsia-50 border-2 border-fuchsia-200 rounded-2xl p-6 text-center shadow-sm">
+                    <p class="font-bold text-gray-800 mb-4 text-lg">هل سيكون ناتج <span class="font-mono text-xl text-fuchsia-700" dir="ltr">1,836 ÷ 3</span> أقرب إلى 60 أم 600؟</p>
+                    <div class="flex gap-4 justify-center" id="est-btns-1">
+                        <button onclick="checkEstimation(1, 60, 600, this, 'لأن 3 × 600 = 1800، وهي قريبة جداً من 1836')" class="btn-playful flex-1 bg-white border-2 border-fuchsia-300 text-fuchsia-900 font-black py-2 rounded-xl text-xl font-mono">60</button>
+                        <button onclick="checkEstimation(1, 600, 600, this, 'لأن 3 × 600 = 1800، وهي قريبة جداً من 1836')" class="btn-playful flex-1 bg-white border-2 border-fuchsia-300 text-fuchsia-900 font-black py-2 rounded-xl text-xl font-mono">600</button>
+                    </div>
+                    <p id="est-fb-1" class="hidden mt-3 text-sm font-bold p-2 rounded-lg"></p>
+                </div>
+
+                <!-- س2 -->
+                <div class="bg-fuchsia-50 border-2 border-fuchsia-200 rounded-2xl p-6 text-center shadow-sm">
+                    <p class="font-bold text-gray-800 mb-4 text-lg">هل سيكون ناتج <span class="font-mono text-xl text-fuchsia-700" dir="ltr">7,158 ÷ 3</span> أقرب إلى 2,000 أم 3,000؟</p>
+                    <div class="flex gap-4 justify-center" id="est-btns-2">
+                        <button onclick="checkEstimation(2, 2000, 2000, this, 'لأن 3 × 2000 = 6000، بينما 3 × 3000 = 9000')" class="btn-playful flex-1 bg-white border-2 border-fuchsia-300 text-fuchsia-900 font-black py-2 rounded-xl text-xl font-mono">2,000</button>
+                        <button onclick="checkEstimation(2, 3000, 2000, this, 'لأن 3 × 2000 = 6000، بينما 3 × 3000 = 9000')" class="btn-playful flex-1 bg-white border-2 border-fuchsia-300 text-fuchsia-900 font-black py-2 rounded-xl text-xl font-mono">3,000</button>
+                    </div>
+                    <p id="est-fb-2" class="hidden mt-3 text-sm font-bold p-2 rounded-lg"></p>
+                </div>
+
+                <!-- س3 -->
+                <div class="bg-fuchsia-50 border-2 border-fuchsia-200 rounded-2xl p-6 text-center shadow-sm">
+                    <p class="font-bold text-gray-800 mb-4 text-lg">هل سيكون ناتج <span class="font-mono text-xl text-fuchsia-700" dir="ltr">735 ÷ 4</span> أقرب إلى 100 أم 200؟</p>
+                    <div class="flex gap-4 justify-center" id="est-btns-3">
+                        <button onclick="checkEstimation(3, 100, 200, this, 'لأن 4 × 200 = 800، وهي قريبة من 735')" class="btn-playful flex-1 bg-white border-2 border-fuchsia-300 text-fuchsia-900 font-black py-2 rounded-xl text-xl font-mono">100</button>
+                        <button onclick="checkEstimation(3, 200, 200, this, 'لأن 4 × 200 = 800، وهي قريبة من 735')" class="btn-playful flex-1 bg-white border-2 border-fuchsia-300 text-fuchsia-900 font-black py-2 rounded-xl text-xl font-mono">200</button>
+                    </div>
+                    <p id="est-fb-3" class="hidden mt-3 text-sm font-bold p-2 rounded-lg"></p>
+                </div>
+
+                <!-- س4 -->
+                <div class="bg-fuchsia-50 border-2 border-fuchsia-200 rounded-2xl p-6 text-center shadow-sm">
+                    <p class="font-bold text-gray-800 mb-4 text-lg">هل سيكون ناتج <span class="font-mono text-xl text-fuchsia-700" dir="ltr">491 ÷ 4</span> أقرب إلى 120 أم 150؟</p>
+                    <div class="flex gap-4 justify-center" id="est-btns-4">
+                        <button onclick="checkEstimation(4, 120, 120, this, 'لأن 4 × 120 = 480، وهي قريبة جداً من 491')" class="btn-playful flex-1 bg-white border-2 border-fuchsia-300 text-fuchsia-900 font-black py-2 rounded-xl text-xl font-mono">120</button>
+                        <button onclick="checkEstimation(4, 150, 120, this, 'لأن 4 × 120 = 480، وهي قريبة جداً من 491')" class="btn-playful flex-1 bg-white border-2 border-fuchsia-300 text-fuchsia-900 font-black py-2 rounded-xl text-xl font-mono">150</button>
+                    </div>
+                    <p id="est-fb-4" class="hidden mt-3 text-sm font-bold p-2 rounded-lg"></p>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- القسم الثاني: الخوارزمية المعيارية -->
+        <section id="phase2" class="bg-white rounded-3xl shadow-xl border-4 border-indigo-500 p-6 md:p-8 opacity-50 pointer-events-none transition-all duration-500 relative">
+            
+            <div id="phase2-lock" class="absolute inset-0 z-20 flex flex-col items-center justify-center bg-white/70 backdrop-blur-sm rounded-3xl">
+                <span class="text-6xl mb-4">🔒</span>
+                <p class="text-2xl font-bold text-gray-800 text-center px-4">أنهِ لعبة التقدير أولاً لفتح مختبر القسمة المطولة!</p>
+            </div>
+
+            <div class="flex items-center gap-3 mb-6 border-b-2 border-indigo-100 pb-4">
+                <span class="text-4xl">📝</span>
+                <h2 class="text-2xl md:text-3xl font-black text-indigo-800">تعلّم: الخوارزمية المعيارية (القسمة المطولة)</h2>
+            </div>
+
+            <!-- نطاق التقدير -->
+            <div class="bg-indigo-50 rounded-2xl p-6 border-2 border-indigo-200 mb-8 text-center">
+                <p class="text-xl font-black text-indigo-900 mb-4 font-mono tracking-widest" dir="ltr">68 ÷ 4</p>
+                <p class="font-bold text-gray-700 mb-3">قبل أن نحل، لنقدر نطاق الإجابة:</p>
+                <div class="flex flex-wrap items-center justify-center gap-3 text-lg font-bold text-gray-800">
+                    <span>سيكون خارج القسمة بين</span>
+                    <input type="number" id="range-min" class="math-input text-indigo-700 w-20 h-10" placeholder="؟">
+                    <span class="text-sm text-gray-500">(لأن 4×10=40)</span>
+                    <span class="mx-2">و</span>
+                    <input type="number" id="range-max" class="math-input text-indigo-700 w-20 h-10" placeholder="؟">
+                    <span class="text-sm text-gray-500">(لأن 4×20=80)</span>
+                    <button onclick="checkRange()" id="btn-range" class="btn-playful bg-indigo-500 hover:bg-indigo-600 text-white px-4 py-2 rounded-xl text-sm font-black mr-2">تحقق</button>
+                </div>
+            </div>
+
+            <!-- مختبر القسمة (مخفي حتى الانتهاء من التقدير) -->
+            <div id="division-lab" class="hidden flex flex-col md:flex-row gap-8 items-start justify-center pop-in">
+                
+                <!-- لوحة القسمة -->
+                <div class="bg-slate-50 border-4 border-slate-300 rounded-2xl p-8 shadow-inner flex flex-col items-center w-full md:w-1/2">
+                    <h3 class="font-bold text-slate-500 mb-6 text-center w-full border-b border-slate-200 pb-2">منطقة العمليات (اقسم ⬅️ اضرب ⬅️ اطرح ⬅️ نزّل)</h3>
+                    
+                    <div class="long-division-container" dir="ltr">
+                        
+                        <!-- Row 1: Quotient -->
+                        <div></div>
+                        <div></div>
+                        <div class="flex gap-2">
+                            <input type="number" id="q-tens" class="math-input w-10 h-12 text-2xl text-green-700 highlight-box" placeholder="؟">
+                            <input type="number" id="q-ones" class="math-input w-10 h-12 text-2xl text-green-700" placeholder="؟" disabled>
+                        </div>
+                        
+                        <!-- Row 2: Divisor & Dividend -->
+                        <div class="text-indigo-800 pr-2">4</div>
+                        <div class="division-bracket flex gap-2 w-full col-span-2">
+                            <span class="w-10 text-center">6</span>
+                            <span class="w-10 text-center">8</span>
+                        </div>
+
+                        <!-- Row 3: First Subtraction -->
+                        <div></div>
+                        <div class="text-rose-600 text-right w-full pr-2 text-xl">-</div>
+                        <div class="flex gap-2 w-full relative">
+                            <input type="number" id="sub-1" class="math-input w-10 h-10 text-xl text-rose-700" placeholder="؟" disabled>
+                            <!-- The line below subtraction -->
+                            <div class="absolute -bottom-2 w-[5rem] h-1 bg-gray-400"></div>
+                        </div>
+
+                        <!-- Row 4: Remainder 1 & Bring Down -->
+                        <div></div>
+                        <div></div>
+                        <div class="flex gap-2 mt-4">
+                            <input type="number" id="rem-1" class="math-input w-10 h-10 text-xl text-indigo-900 bg-indigo-50" placeholder="؟" disabled>
+                            <input type="number" id="bring-down" class="math-input w-10 h-10 text-xl text-indigo-900 bg-indigo-50" placeholder="؟" disabled>
+                        </div>
+
+                        <!-- Row 5: Second Subtraction -->
+                        <div></div>
+                        <div class="text-rose-600 text-right w-full pr-2 text-xl">-</div>
+                        <div class="flex gap-2 w-full relative">
+                            <!-- Single input for 28 since it's one number visually -->
+                            <input type="number" id="sub-2" class="math-input w-[5.5rem] h-10 text-xl text-rose-700" placeholder="؟" disabled>
+                            <div class="absolute -bottom-2 w-[5.5rem] h-1 bg-gray-400"></div>
+                        </div>
+
+                        <!-- Row 6: Final Remainder -->
+                        <div></div>
+                        <div></div>
+                        <div class="flex gap-2 mt-4 w-full justify-center pr-4">
+                            <input type="number" id="rem-2" class="math-input w-12 h-10 text-xl text-gray-500 bg-gray-100" placeholder="R" disabled>
+                        </div>
+
+                    </div>
+                </div>
+
+                <!-- المعلم الآلي -->
+                <div class="w-full md:w-1/2 bg-sky-50 border-2 border-sky-300 rounded-2xl p-6 shadow-sm min-h-[250px] flex flex-col">
+                    <div class="flex items-center gap-2 mb-4 border-b border-sky-200 pb-2">
+                        <span class="text-3xl">🤖</span>
+                        <h3 class="font-black text-sky-900 text-xl">المعلم الآلي يُرشدك:</h3>
+                    </div>
+                    <div id="ai-assistant-text" class="text-gray-800 font-bold leading-relaxed text-lg flex-1">
+                        أهلاً بك! لنبدأ بأكبر خانة. اقسم (6 عشرات) على (4). ما هو أقرب ناتج؟ اكتبه في المربع الأخضر المضيء بالأعلى.
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- رسالة الفوز النهائية -->
+        <div id="finalVictory" class="hidden fixed inset-0 bg-black/80 z-50 flex items-center justify-center p-4 backdrop-blur-md">
+            <div class="bg-white rounded-3xl p-10 shadow-2xl border-8 border-indigo-500 text-center max-w-lg w-full transform transition-all duration-300 pop-in">
+                <div class="text-8xl mb-4 animate-bounce">🎓</div>
+                <h2 class="text-4xl font-black text-indigo-800 mb-4">أنت أستاذ القسمة!</h2>
+                <p class="text-xl text-gray-700 font-bold mb-6 leading-relaxed">
+                    لقد أتقنت الخوارزمية المعيارية! الخطوات (اقسم، اضرب، اطرح، نزّل الرقم) أصبحت سهلة بالنسبة لك.
+                </p>
+                <div class="bg-indigo-100 text-indigo-900 font-black font-mono text-3xl py-4 rounded-xl mb-6 border-2 border-indigo-300" dir="ltr">
+                    68 ÷ 4 = 17
+                </div>
+                <button onclick="location.reload()" class="btn-playful bg-indigo-600 hover:bg-indigo-700 text-white font-black py-4 px-10 rounded-2xl text-2xl w-full">
+                    تدريب جديد 🔄
+                </button>
+            </div>
+        </div>
+
+    </main>
+
+    <script>
+        function shakeInput(el) {
+            el.classList.add('shake', 'bg-red-50', 'border-red-400', 'text-red-700');
+            setTimeout(() => el.classList.remove('shake', 'bg-red-50', 'border-red-400', 'text-red-700'), 500);
+        }
+
+        // --- Phase 1: Estimation Game ---
+        let estScore = 0;
+
+        function checkEstimation(qNum, selected, correct, btn, explanation) {
+            const container = document.getElementById(`est-btns-${qNum}`);
+            const fb = document.getElementById(`est-fb-${qNum}`);
+            const btns = container.querySelectorAll('button');
+
+            if (selected === correct) {
+                btn.classList.replace('bg-white', 'bg-green-500');
+                btn.classList.replace('text-fuchsia-900', 'text-white');
+                btn.classList.replace('border-fuchsia-300', 'border-green-600');
+                
+                fb.innerHTML = `✅ صحيح! <span class="font-normal">${explanation}</span>`;
+                fb.className = "mt-3 text-sm font-bold p-2 rounded-lg bg-green-100 text-green-800 border border-green-300";
+                
+                estScore++;
+                document.getElementById('est-score').innerText = estScore;
+
+                // Disable buttons
+                btns.forEach(b => {
+                    b.disabled = true;
+                    if (b !== btn) b.style.opacity = '0.5';
+                });
+
+                // Unlock Phase 2 if all correct
+                if (estScore === 4) {
+                    setTimeout(() => {
+                        document.getElementById('phase2-lock').style.display = 'none';
+                        const p2 = document.getElementById('phase2');
+                        p2.classList.remove('opacity-50', 'pointer-events-none');
+                        p2.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                        document.getElementById('range-min').focus();
+                    }, 1000);
+                }
+
+            } else {
+                btn.classList.add('shake', 'bg-red-100', 'border-red-400', 'text-red-900');
+                setTimeout(() => btn.classList.remove('shake', 'bg-red-100', 'border-red-400', 'text-red-900'), 500);
+                fb.innerHTML = `❌ حاول مرة أخرى!`;
+                fb.className = "mt-3 text-sm font-bold p-2 rounded-lg bg-red-50 text-red-700";
+            }
+            fb.classList.remove('hidden');
+        }
+
+        // --- Phase 2: Algorithm Lab ---
+        
+        // 1. Check Range
+        function checkRange() {
+            const min = document.getElementById('range-min');
+            const max = document.getElementById('range-max');
+            const btn = document.getElementById('btn-range');
+
+            let correct = true;
+            if (parseInt(min.value) === 10) { min.classList.add('input-correct'); min.disabled = true; } else { shakeInput(min); correct = false; }
+            if (parseInt(max.value) === 20) { max.classList.add('input-correct'); max.disabled = true; } else { shakeInput(max); correct = false; }
+
+            if (correct) {
+                btn.style.display = 'none';
+                const lab = document.getElementById('division-lab');
+                lab.classList.remove('hidden');
+                setTimeout(() => document.getElementById('q-tens').focus(), 100);
+            }
+        }
+
+        // 2. Division Steps State Machine
+        const aiText = document.getElementById('ai-assistant-text');
+        
+        // Step 1: Quotient Tens (6 / 4 = 1)
+        const qTens = document.getElementById('q-tens');
+        qTens.addEventListener('input', function() {
+            if (parseInt(this.value) === 1) {
+                this.classList.add('input-correct');
+                this.classList.remove('highlight-box');
+                this.disabled = true;
+                
+                const nextInput = document.getElementById('sub-1');
+                nextInput.disabled = false;
+                nextInput.classList.add('highlight-box');
+                nextInput.focus();
+                
+                aiText.innerHTML = "ممتاز! 1 في العشرات. الآن خطوة <strong>الضرب</strong>: اضرب (1 × 4). اكتب الناتج تحت الـ 6.";
+            } else if (this.value !== '') {
+                shakeInput(this);
+            }
+        });
+
+        // Step 2: Subtraction 1 (1 * 4 = 4)
+        const sub1 = document.getElementById('sub-1');
+        sub1.addEventListener('input', function() {
+            if (parseInt(this.value) === 4) {
+                this.classList.add('input-correct', 'bg-rose-50');
+                this.classList.remove('highlight-box');
+                this.disabled = true;
+                
+                const nextInput = document.getElementById('rem-1');
+                nextInput.disabled = false;
+                nextInput.classList.add('highlight-box');
+                nextInput.focus();
+                
+                aiText.innerHTML = "صحيح! الآن خطوة <strong>الطرح</strong>: اطرح (6 - 4). اكتب الباقي.";
+            } else if (this.value !== '') {
+                shakeInput(this);
+            }
+        });
+
+        // Step 3: Remainder 1 (6 - 4 = 2)
+        const rem1 = document.getElementById('rem-1');
+        rem1.addEventListener('input', function() {
+            if (parseInt(this.value) === 2) {
+                this.classList.add('input-correct');
+                this.classList.remove('highlight-box');
+                this.disabled = true;
+                
+                const nextInput = document.getElementById('bring-down');
+                nextInput.disabled = false;
+                nextInput.classList.add('highlight-box');
+                nextInput.focus();
+                
+                aiText.innerHTML = "عظيم! الباقي 2. الآن خطوة <strong>إنزال الرقم</strong>: قم بإنزال الآحاد (8) بجوار الـ 2 ليصبح الرقم 28.";
+            } else if (this.value !== '') {
+                shakeInput(this);
+            }
+        });
+
+        // Step 4: Bring Down (8)
+        const bringDown = document.getElementById('bring-down');
+        bringDown.addEventListener('input', function() {
+            if (parseInt(this.value) === 8) {
+                this.classList.add('input-correct');
+                this.classList.remove('highlight-box');
+                this.disabled = true;
+                
+                const nextInput = document.getElementById('q-ones');
+                nextInput.disabled = false;
+                nextInput.classList.add('highlight-box');
+                nextInput.focus();
+                
+                aiText.innerHTML = "أحسنت! الرقم الجديد هو 28. الآن نعيد الدورة.. <strong>اقسم</strong>: (28 ÷ 4). ما هو الناتج؟ اكتبه في الآحاد بالأعلى.";
+            } else if (this.value !== '') {
+                shakeInput(this);
+            }
+        });
+
+        // Step 5: Quotient Ones (28 / 4 = 7)
+        const qOnes = document.getElementById('q-ones');
+        qOnes.addEventListener('input', function() {
+            if (parseInt(this.value) === 7) {
+                this.classList.add('input-correct');
+                this.classList.remove('highlight-box');
+                this.disabled = true;
+                
+                const nextInput = document.getElementById('sub-2');
+                nextInput.disabled = false;
+                nextInput.classList.add('highlight-box');
+                nextInput.focus();
+                
+                aiText.innerHTML = "بطل! الناتج 7. خطوة <strong>الضرب</strong> الأخيرة: (7 × 4). اكتب الناتج بالأسفل للطرح.";
+            } else if (this.value !== '') {
+                shakeInput(this);
+            }
+        });
+
+        // Step 6: Subtraction 2 (7 * 4 = 28)
+        const sub2 = document.getElementById('sub-2');
+        sub2.addEventListener('input', function() {
+            if (parseInt(this.value) === 28) {
+                this.classList.add('input-correct', 'bg-rose-50');
+                this.classList.remove('highlight-box');
+                this.disabled = true;
+                
+                const nextInput = document.getElementById('rem-2');
+                nextInput.disabled = false;
+                nextInput.classList.add('highlight-box');
+                nextInput.focus();
+                
+                aiText.innerHTML = "ممتاز. خطوة <strong>الطرح</strong> الأخيرة: (28 - 28). كم الباقي النهائي؟";
+            } else if (this.value !== '') {
+                shakeInput(this);
+            }
+        });
+
+        // Step 7: Final Remainder (28 - 28 = 0)
+        const rem2 = document.getElementById('rem-2');
+        rem2.addEventListener('input', function() {
+            if (parseInt(this.value) === 0) {
+                this.classList.add('input-correct');
+                this.classList.remove('highlight-box');
+                this.disabled = true;
+                
+                aiText.innerHTML = "🎉 انتهت المسألة! لا يوجد باقٍ. الناتج النهائي هو 17.";
+                
+                setTimeout(() => {
+                    document.getElementById('finalVictory').classList.remove('hidden');
+                    confettiEffect();
+                }, 1000);
+            } else if (this.value !== '') {
+                shakeInput(this);
+            }
+        });
+
+        // --- Celebration Effect ---
+        function confettiEffect() {
+            const colors = ['#6366f1', '#a855f7', '#10b981', '#f43f5e'];
+            for(let i=0; i<60; i++) {
+                const conf = document.createElement('div');
+                conf.className = 'absolute w-3 h-3 rounded-sm opacity-90 z-50 pointer-events-none';
+                if(Math.random() > 0.5) conf.classList.add('rounded-full');
+                conf.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                conf.style.left = Math.random() * 100 + 'vw';
+                conf.style.top = (window.scrollY - 20) + 'px';
+                
+                const duration = Math.random() * 3 + 2; 
+                conf.style.transition = `all ${duration}s cubic-bezier(0.25, 0.46, 0.45, 0.94)`;
+                
+                document.body.appendChild(conf);
+                
+                setTimeout(() => {
+                    conf.style.top = (window.scrollY + window.innerHeight + 100) + 'px';
+                    const rotation = Math.random() * 1080;
+                    const drift = Math.random() * 200 - 100;
+                    conf.style.transform = `rotate(${rotation}deg) translateX(${drift}px)`;
+                }, 50);
+                
+                setTimeout(() => { if (conf.parentNode) conf.parentNode.removeChild(conf); }, duration * 1000 + 100);
+            }
+        }
+    </script>
+</body>
+</html>
